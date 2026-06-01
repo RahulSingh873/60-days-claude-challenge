@@ -57,4 +57,4 @@ The Visionary Prompt Architect
 
 ## AI Portrait
 
-![AI Portrait](<img width="1024" height="1536" alt="754dfbb3-3bde-4d31-b2a4-cc989f584fec" src="https://github.com/user-attachments/assets/cb7e501d-bf63-47d3-84e4-22d9d5dfaf31" />)
+![AI Portrait](754dfbb3-3bde-4d31-b2a4-cc989f584fec.png)
