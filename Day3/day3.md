@@ -43,3 +43,65 @@ Explain the architecture in a beginner-friendly way and include code structure r
 - Giving AI a role improves response quality.
 - Different roles produce different perspectives.
 - Better prompts lead to better results.
+- 
+## Some Diagrams/code generated with the prompt
+## simple prompt
+
+this code comes as a result to create react project
+
+## CODE GENERATED--
+
+npm create vite@latest my-flashcard-app -- --template react
+cd my-flashcard-app
+npm install
+npm run dev
+
+## Founder Role Based Prompt
+<img width="1440" height="1250" alt="image" src="https://github.com/user-attachments/assets/be08333e-2164-49ef-a11a-e1c822550eda" />
+<img width="1440" height="680" alt="image" src="https://github.com/user-attachments/assets/e6bd16f7-ea46-473c-9d52-c92e5f3fc250" />
+
+## THE CODE GENERATED--
+
+// backend/services/ai-tutor/index.js
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic();
+
+export async function askTutor(req, res) {
+  const { question, lessonContext, studentLevel } = req.body;
+
+  // Set headers for streaming
+  res.setHeader("Content-Type", "text/event-stream");
+
+  const stream = await client.messages.stream({
+    model: "claude-sonnet-4-5",
+    max_tokens: 1024,
+    system: `You are a patient, encouraging tutor teaching ${studentLevel}-level students.
+             Current lesson context: ${lessonContext}
+             Keep answers concise. Use simple analogies. Always end with a check-in question.`,
+    messages: [{ role: "user", content: question }],
+  });
+
+  // Stream tokens directly to the browser
+  for await (const chunk of stream) {
+    if (chunk.type === "content_block_delta") {
+      res.write(`data: ${chunk.delta.text}\n\n`);
+    }
+  }
+  res.end();
+}
+
+
+## Developer Role Based Prompt
+<img width="1440" height="640" alt="image" src="https://github.com/user-attachments/assets/909ae281-5af4-405e-a01e-f97355d3b5a6" />
+<img width="1440" height="800" alt="image" src="https://github.com/user-attachments/assets/84a7be68-1607-498f-acff-4f999f67b4af" />
+<img width="1440" height="912" alt="image" src="https://github.com/user-attachments/assets/058cc0c1-a4f3-4f9f-9de2-829b5f4a632a" />
+<img width="1440" height="860" alt="image" src="https://github.com/user-attachments/assets/dc0d6996-f4c6-4024-a14e-b523b0a22b83" />
+
+
+
+
+
+
+
+
