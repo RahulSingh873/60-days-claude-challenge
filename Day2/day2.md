@@ -103,7 +103,7 @@ This activity demonstrated the importance of Prompt Engineering. A simple prompt
 
 ## Lazy Prompt Output
 
-![Lazy Prompt Output]("prompt_engineering_explainer.doc")
+![Lazy Prompt Output]("https://github.com/RahulSingh873/60-days-claude-challenge/blob/main/Day2/prompt_engineering_explainer.doc")
 
 ## Engineered Prompt Output
 
