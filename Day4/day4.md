@@ -52,4 +52,20 @@ The most valuable insight was that landing an internship is not only about learn
 
 This exercise demonstrated how Chain-of-Thought Prompting improves AI reasoning and creates practical, personalized guidance. The roadmap provided a clear path for skill development, portfolio building, networking, and internship preparation.
 
+# Screenshots
+
+## Prompt Used
+
+![Prompt Used](prompt.png)
+![Prompt Used](prompt0.png)
+![Prompt Used](prompt01.png)
+
+## Questions and Answers
+
+![Questions and Answers](Questions&ans.png)
+
+## Generated Career Roadmap
+
+📄 [Open the Career Roadmap PDF](career_roadmap_v2.pdf)
+
 
