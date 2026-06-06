@@ -8,7 +8,7 @@ I ve not generated a resume before soi generated using claude by using meta prom
 
 ## ORIGINAL RESUME
 
-[original resume](./rahul_singh_resume.html)
+[original resume](./rahul_singh_resume.pdf)
 
 ## OPTIMIZED RESUME
 
