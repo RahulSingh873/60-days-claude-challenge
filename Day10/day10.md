@@ -14,6 +14,9 @@ This was one of the amazing task and i  am literally very curious about it like 
 
 [View My Portfolio](https://glowing-dasik-91a040.netlify.app)
 
+## HTML File
+[Open Portfolio HTML](./Rahul_Singh_Portfolio.html)
+
 ## Learnings
 - Learned how to create a portfolio website using Claude.
 - Learned to customize personal information and design.
