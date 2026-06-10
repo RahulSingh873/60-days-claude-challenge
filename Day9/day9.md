@@ -1,16 +1,17 @@
 # Day 9 – NutriScope Enhancement
 
 ## Files
-- NutriScope.html
-- NutriScope(1).html
+- [Original NutriScope](./NutriScope.html)
+- [Enhanced NutriScope](./NutriScope(1).html)
 
 ## Screenshots
-
+## By Prompt 1
 <img width="1918" height="908" alt="Screenshot 2026-06-09 201605" src="https://github.com/user-attachments/assets/3355698d-2986-47c2-94ac-030a57f96415" />
 <img width="1917" height="906" alt="Screenshot 2026-06-09 201719" src="https://github.com/user-attachments/assets/b2ba28ca-9512-41be-b5be-016f1d1d4df1" />
 <img width="1918" height="907" alt="Screenshot 2026-06-09 201751" src="https://github.com/user-attachments/assets/cb62104b-01a3-431d-bfb5-e23aa083b60d" />
 <img width="1918" height="906" alt="Screenshot 2026-06-09 201856" src="https://github.com/user-attachments/assets/061ac985-426e-4c79-b977-4dc2a7d8b86a" />
 
+## By adding Prompt 2
 <img width="1907" height="907" alt="Screenshot 2026-06-10 090902" src="https://github.com/user-attachments/assets/7a0d3f1a-170d-4c5b-af0b-9c8598f34e9b" />
 <img width="1917" height="902" alt="Screenshot 2026-06-10 090957" src="https://github.com/user-attachments/assets/8d2068da-be69-4238-84a0-7f71e8a288a5" />
 <img width="1918" height="901" alt="Screenshot 2026-06-10 091326" src="https://github.com/user-attachments/assets/a0fe847f-ac0f-4528-b228-7ab08175e416" />
