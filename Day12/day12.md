@@ -99,13 +99,14 @@ The analysis identified the following skills to focus on:
 * [PERSONAL TOOLKIT](Rahul_Singh_TargetCompany_Toolkit_v2.docx)
 
 * ## Screenshots
-* ![screenshot 1]()
-* ![screenshot 1]()
-* ![screenshot 1]()
-* ![screenshot 1]()
-* ![screenshot 1]()
-* ![screenshot 1]()
-* ![screenshot 1]()
-* ![screenshot 1]()
-* ![screenshot 1]()
+![Screenshot 1](Screenshot%202026-06-12%20095433.png)
+![Screenshot 2](Screenshot%202026-06-12%20095453.png)
+![Screenshot 3](Screenshot%202026-06-12%20095526.png)
+![Screenshot 4](Screenshot%202026-06-12%20095601.png)
+![Screenshot 5](Screenshot%202026-06-12%20095735.png)
+![Screenshot 6](Screenshot%202026-06-12%20095904.png)
+![Screenshot 7](Screenshot%202026-06-12%20095921.png)
+![Screenshot 8](Screenshot%202026-06-12%20100104.png)
+![Screenshot 9](Screenshot%202026-06-12%20100121.png)
+
 * 
