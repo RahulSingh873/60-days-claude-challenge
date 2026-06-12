@@ -95,5 +95,17 @@ The analysis identified the following skills to focus on:
 * Networking and recruiter outreach can increase job opportunities.
 * Continuous learning and practical implementation are essential for career growth.
 
-* ## SCREENSHOTS
+* ## Generated output docx
+* [PERSONAL TOOLKIT](Rahul_Singh_TargetCompany_Toolkit_v2.docx)
+
+* ## Screenshots
+* ![screenshot 1]()
+* ![screenshot 1]()
+* ![screenshot 1]()
+* ![screenshot 1]()
+* ![screenshot 1]()
+* ![screenshot 1]()
+* ![screenshot 1]()
+* ![screenshot 1]()
+* ![screenshot 1]()
 * 
