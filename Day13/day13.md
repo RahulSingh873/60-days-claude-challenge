@@ -7,8 +7,8 @@
 
 ## Screenshots and Files Generated
 
-![Professional Profile](./screenshots/Screenshot_2026-06-13_120215.png)
-![Job Discovery Dashboard](./screenshots/Screenshot_2026-06-13_120230.png)
+![Professional Profile](screenshots/Screenshot_2026-06-13_120215.png)
+![Job Discovery Dashboard](screenshots/Screenshot_2026-06-13_120230.png)
 
 [View Professional Profile](./cs_student_professional_profile.html)
 [View Job Discovery Dashboard](./job_discovery_analysis_dashboard.html)
