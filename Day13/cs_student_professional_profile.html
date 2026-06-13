@@ -1,0 +1,73 @@
+
+<style>
+  .profile-wrap { padding: 1.5rem 0; font-family: var(--font-sans); }
+  .avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--color-background-info); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500; color: var(--color-text-info); flex-shrink: 0; border: 0.5px solid var(--color-border-tertiary); }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 12px; }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: var(--border-radius-md); margin: 3px 4px 3px 0; background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+  .badge.blue { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+  .badge.teal { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+  .badge.purple { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+  .stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; text-align: center; }
+  .stat-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+  .stat-lbl { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .row i { font-size: 16px; color: var(--color-text-secondary); margin-top: 2px; flex-shrink: 0; }
+  .row span { font-size: 14px; color: var(--color-text-primary); line-height: 1.5; }
+  .muted { color: var(--color-text-secondary); }
+  .chip-goal { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 5px 12px; border-radius: 99px; background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; font-weight: 500; }
+</style>
+
+<div class="profile-wrap">
+  <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Professional profile card for a CS student seeking a web development internship</h2>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+      <div class="avatar">CS</div>
+      <div>
+        <div style="font-size:18px; font-weight:500; color:var(--color-text-primary);">Computer Science Student</div>
+        <div style="font-size:13px; color:var(--color-text-secondary); margin-top:2px;">B.Tech — Private University &nbsp;·&nbsp; 3rd / 4th Year</div>
+        <div style="margin-top:8px;"><span class="chip-goal"><i class="ti ti-target" aria-hidden="true"></i> Seeking Web Dev Internship</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+      <div class="stat"><div class="stat-val">7.5–8.5</div><div class="stat-lbl">CGPA</div></div>
+      <div class="stat"><div class="stat-val">1–2</div><div class="stat-lbl">Projects</div></div>
+      <div class="stat"><div class="stat-val">3rd/4th</div><div class="stat-lbl">Year</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Technical skills</div>
+    <div>
+      <span class="badge blue">C</span>
+      <span class="badge blue">C++</span>
+      <span class="badge blue">HTML / CSS</span>
+      <span class="badge blue">JavaScript</span>
+      <span class="badge teal">Web Development</span>
+      <span class="badge teal">Responsive Design</span>
+      <span class="badge purple">Git &amp; GitHub</span>
+      <span class="badge purple">DSA (in progress)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Experience &amp; background</div>
+    <div class="row"><i class="ti ti-school" aria-hidden="true"></i><span>Pursuing B.Tech in Computer Science / Engineering at a private university in India</span></div>
+    <div class="row"><i class="ti ti-code" aria-hidden="true"></i><span>Primary language: C / C++ — with a focus area in web development</span></div>
+    <div class="row"><i class="ti ti-folder" aria-hidden="true"></i><span>1–2 personal or academic projects demonstrating practical coding ability</span></div>
+    <div class="row"><i class="ti ti-map-pin" aria-hidden="true"></i><span>Based in India &nbsp;·&nbsp; Open to remote / on-site internships</span></div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Career goal</div>
+    <div class="row"><i class="ti ti-rocket" aria-hidden="true"></i><span>Land a <strong style="font-weight:500;">web development internship</strong> to gain industry exposure, contribute to real-world projects, and build towards a full-time software engineering role.</span></div>
+  </div>
+
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button onclick="sendPrompt('Help me write a resume based on my profile')">Write my resume ↗</button>
+    <button onclick="sendPrompt('Find internship openings that match my profile')">Find matching internships ↗</button>
+    <button onclick="sendPrompt('What skills should I add to strengthen my web dev profile?')">Strengthen my skills ↗</button>
+  </div>
+</div>
