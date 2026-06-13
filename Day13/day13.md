@@ -7,8 +7,8 @@
 
 ## Screenshots and Files Generated
 
-![Professional Profile](Screenshot_2026-06-13_120215.png)
-![Job Discovery Dashboard](Screenshot_2026-06-13_120230.png)
+<img width="1007" height="522" alt="Screenshot 2026-06-13 120215" src="https://github.com/user-attachments/assets/e38239fa-d1be-4a11-9e8c-6f119f6747da" />
+<img width="922" height="426" alt="Screenshot 2026-06-13 120230" src="https://github.com/user-attachments/assets/ced7fe44-69d2-45a0-8504-f8a2d91fc8cd" />
 
 [View Professional Profile](./cs_student_professional_profile.html)
 [View Job Discovery Dashboard](./job_discovery_analysis_dashboard.html)
