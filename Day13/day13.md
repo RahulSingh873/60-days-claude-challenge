@@ -1,9 +1,17 @@
-# AI Job Search Assistant — Web Development (June 2026)
+# Day 13 -- AI Job Search Assistant — Web Development (June 2026)
 
 **Profile:** B.Tech CS · 3rd/4th Year · Private University · CGPA 7.5–8.5
 **Target:** Remote Web Dev Internship · Product-based companies · India
 
 ---
+
+## Screenshots and Files Generated
+
+![Professional Profile](./screenshots/Screenshot_2026-06-13_120215.png)
+![Job Discovery Dashboard](./screenshots/Screenshot_2026-06-13_120230.png)
+
+[View Professional Profile](./cs_student_professional_profile.html)
+[View Job Discovery Dashboard](./job_discovery_analysis_dashboard.html)
 
 ## Discovered Opportunities
 
