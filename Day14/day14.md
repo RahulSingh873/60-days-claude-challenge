@@ -154,7 +154,8 @@ What specific measures are in place to prevent employee burnout and maintain wor
 ---
 
 ## Generated File
-
+[Red Flags Analysis](./red_flag.html)
+[Positive Insights](./positive_questions.html)
 
 ## Screenshots
 
