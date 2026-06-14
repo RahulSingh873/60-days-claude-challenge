@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Red Flag Detector — LinkedIn</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f0f13;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .card {
+    width: 900px;
+    background: #13131a;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+  }
+
+  /* Glow accents */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: -120px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(220,60,40,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,160,50,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 36px 40px 30px;
+    background: linear-gradient(135deg, #1a0e0e 0%, #1a120a 50%, #13131a 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .score-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .score-wrap svg { display: block; }
+  .score-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .score-number {
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, #ff6b4a, #ff3a1a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .score-denom {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .hero-meta { flex: 1; }
+
+  .brand-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .brand-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #ff4a2a;
+    display: block;
+  }
+
+  .hero-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 14px;
+  }
+
+  .verdict-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(220,50,30,0.15);
+    border: 1px solid rgba(220,50,30,0.4);
+    color: #ff7055;
+    letter-spacing: .02em;
+  }
+
+  /* ── BODY ── */
+  .body { padding: 32px 40px; }
+
+  /* Section label */
+  .sec-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sec-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+  }
+
+  /* ── FLAGS GRID ── */
+  .flags-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .flag-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: border-color .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .flag-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .flag-card.critical::before { background: #ff3a1a; }
+  .flag-card.high::before { background: #f5a623; }
+  .flag-card.medium::before { background: #e05b8a; }
+
+  .flag-card:hover { border-color: rgba(255,255,255,0.15); }
+
+  .sev {
+    min-width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .sev.critical { background: rgba(255,58,26,0.15); color: #ff6b4a; }
+  .sev.high { background: rgba(245,166,35,0.15); color: #f5a623; }
+  .sev.medium { background: rgba(224,91,138,0.15); color: #e05b8a; }
+
+  .flag-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .flag-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+  }
+
+  /* ── THREE COLUMNS: Risk + Positives + Verdict ── */
+  .three-col {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1.2fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .col-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 18px;
+  }
+
+  /* Risk bars */
+  .risk-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .risk-row:last-child { margin-bottom: 0; }
+  .risk-label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    width: 90px;
+    flex-shrink: 0;
+  }
+  .risk-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .risk-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .risk-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .rb-critical { background: rgba(255,58,26,0.15); color: #ff6b4a; }
+  .rb-high { background: rgba(245,166,35,0.15); color: #f5a623; }
+
+  /* Positives */
+  .pos-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+  .pos-row:last-child { margin-bottom: 0; }
+  .pos-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: rgba(52,199,89,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .pos-dot::after {
+    content: '✓';
+    font-size: 9px;
+    color: #34c759;
+    font-weight: 700;
+  }
+  .pos-text {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.45;
+  }
+
+  /* Verdict box */
+  .verdict-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px 16px;
+    background: rgba(220,40,20,0.07);
+    border: 1px solid rgba(220,40,20,0.2);
+    border-radius: 14px;
+  }
+  .verdict-emoji {
+    font-size: 36px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .verdict-head {
+    font-size: 15px;
+    font-weight: 800;
+    color: #ff5533;
+    margin-bottom: 6px;
+  }
+  .verdict-body {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+  }
+
+  /* ── QUESTIONS ── */
+  .q-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .q-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+  }
+  .q-num-badge {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    background: rgba(100,80,255,0.15);
+    border: 1px solid rgba(100,80,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #8b7eff;
+    flex-shrink: 0;
+  }
+  .q-body {}
+  .q-text {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+    margin-bottom: 5px;
+  }
+  .q-validates {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    font-style: italic;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 16px 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: .05em;
+  }
+  .footer-hashtags {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* ── PRINT / SCREENSHOT HINT ── */
+  .screenshot-hint {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    font-family: 'Inter', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div>
+<div class="card">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="score-wrap">
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        <!-- Track -->
+        <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="8"/>
+        <!-- Danger arc bg glow -->
+        <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(220,50,30,0.12)" stroke-width="12"/>
+        <!-- Score arc (82/100 = 82% of circumference = 82% × 2π×46 ≈ 237) -->
+        <circle cx="55" cy="55" r="46" fill="none"
+          stroke="url(#scoreGrad)" stroke-width="8"
+          stroke-dasharray="194 289" stroke-dashoffset="73"
+          stroke-linecap="round" transform="rotate(-90 55 55)"/>
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff6b4a"/>
+            <stop offset="100%" stop-color="#ff2200"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-inner">
+        <div class="score-number">82</div>
+        <div class="score-denom">/ 100</div>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div class="brand-tag">🚨 AI Red Flag Detector</div>
+      <div class="hero-title">Junior Full Stack Developer</div>
+      <div class="hero-sub">Early-stage startup · 8 months old · Remote (misleading) · No salary disclosed</div>
+      <div class="verdict-pill">❌ AVOID — Very High Risk (82/100)</div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- RED FLAGS -->
+    <div class="sec-label">🚩 Top Red Flags</div>
+    <div class="flags-grid">
+
+      <div class="flag-card critical">
+        <div class="sev critical">10</div>
+        <div>
+          <div class="flag-title">Experience paradox — "Junior" with 5+ years required</div>
+          <div class="flag-desc">0–2 yrs = junior. 5+ yrs = mid/senior. Classic bait-and-switch to underpay senior talent.</div>
+        </div>
+      </div>
+
+      <div class="flag-card critical">
+        <div class="sev critical">10</div>
+        <div>
+          <div class="flag-title">Unrealistic stack — 12 technologies for one person</div>
+          <div class="flag-desc">React + Angular + Vue + Node + Python + Java + Go + AWS + Azure + GCP + Docker + K8s. That's a team, not a hire.</div>
+        </div>
+      </div>
+
+      <div class="flag-card critical">
+        <div class="sev critical">9</div>
+        <div>
+          <div class="flag-title">Fake remote — relocation to Bengaluru after probation</div>
+          <div class="flag-desc">"Remote" that flips to mandatory relocation is not remote. Deliberate misrepresentation.</div>
+        </div>
+      </div>
+
+      <div class="flag-card critical">
+        <div class="sev critical">9</div>
+        <div>
+          <div class="flag-title">24/7 on-call support for a junior dev</div>
+          <div class="flag-desc">Severe burnout signal. Likely violates labour standards. No mention of rotation or compensation.</div>
+        </div>
+      </div>
+
+      <div class="flag-card high">
+        <div class="sev high">8</div>
+        <div>
+          <div class="flag-title">No salary + 8-month-old startup, no funding info</div>
+          <div class="flag-desc">Opacity on money = power imbalance. Zero salary range is a deliberate negotiation trap.</div>
+        </div>
+      </div>
+
+      <div class="flag-card high">
+        <div class="sev high">8</div>
+        <div>
+          <div class="flag-title">Toxic culture dog-whistles throughout</div>
+          <div class="flag-desc">"Work hard play hard" · "Fast-paced" · "Thrive under pressure" · "We're family" = overwork with no overtime.</div>
+        </div>
+      </div>
+
+      <div class="flag-card high">
+        <div class="sev high">7</div>
+        <div>
+          <div class="flag-title">Junior asked to lead clients, mentor & architect</div>
+          <div class="flag-desc">Senior responsibilities, junior pay. The company wants a team lead for an intern salary.</div>
+        </div>
+      </div>
+
+      <div class="flag-card medium">
+        <div class="sev medium">6</div>
+        <div>
+          <div class="flag-title">Long hours in reviews + rapid hiring surge</div>
+          <div class="flag-desc">High churn signal. People are leaving fast and the startup is scrambling to backfill quietly.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RISK + POSITIVES + VERDICT -->
+    <div class="three-col">
+
+      <!-- Risk Breakdown -->
+      <div class="col-box">
+        <div class="sec-label" style="margin-bottom:16px">📊 Risk Breakdown</div>
+        <div class="risk-row">
+          <span class="risk-label">Requirements</span>
+          <div class="risk-track"><div class="risk-fill" style="width:97%;background:linear-gradient(90deg,#ff4a2a,#ff2200)"></div></div>
+          <span class="risk-badge rb-critical">Critical</span>
+        </div>
+        <div class="risk-row">
+          <span class="risk-label">Culture</span>
+          <div class="risk-track"><div class="risk-fill" style="width:90%;background:linear-gradient(90deg,#ff4a2a,#ff2200)"></div></div>
+          <span class="risk-badge rb-critical">Critical</span>
+        </div>
+        <div class="risk-row">
+          <span class="risk-label">Remote</span>
+          <div class="risk-track"><div class="risk-fill" style="width:88%;background:linear-gradient(90deg,#ff4a2a,#ff2200)"></div></div>
+          <span class="risk-badge rb-critical">Critical</span>
+        </div>
+        <div class="risk-row">
+          <span class="risk-label">Hiring</span>
+          <div class="risk-track"><div class="risk-fill" style="width:75%;background:linear-gradient(90deg,#f5a623,#e08000)"></div></div>
+          <span class="risk-badge rb-high">High</span>
+        </div>
+        <div class="risk-row">
+          <span class="risk-label">Company</span>
+          <div class="risk-track"><div class="risk-fill" style="width:70%;background:linear-gradient(90deg,#f5a623,#e08000)"></div></div>
+          <span class="risk-badge rb-high">High</span>
+        </div>
+      </div>
+
+      <!-- Positives -->
+      <div class="col-box">
+        <div class="sec-label" style="margin-bottom:16px">✅ Positives</div>
+        <div class="pos-row">
+          <div class="pos-dot"></div>
+          <div class="pos-text">Small 12-person team — direct product impact possible</div>
+        </div>
+        <div class="pos-row">
+          <div class="pos-dot"></div>
+          <div class="pos-text">Broad tech exposure if workload is managed</div>
+        </div>
+        <div class="pos-row">
+          <div class="pos-dot"></div>
+          <div class="pos-text">Early-stage = potential equity upside if company survives</div>
+        </div>
+      </div>
+
+      <!-- Verdict -->
+      <div class="verdict-col">
+        <span class="verdict-emoji">❌</span>
+        <div class="verdict-head">AVOID</div>
+        <div class="verdict-body">Multiple critical flags across every category. Misrepresents seniority, location & scope. Financial opacity + burnout culture = high risk, low reward.</div>
+      </div>
+
+    </div>
+
+    <!-- QUESTIONS -->
+    <div class="sec-label">💡 5 Smart Interview Questions to Ask Anyway</div>
+    <div class="q-grid">
+      <div class="q-card">
+        <div class="q-num-badge">1</div>
+        <div class="q-body">
+          <div class="q-text">This is listed as "Junior" but requires 5+ yrs and senior responsibilities. What does compensation actually look like?</div>
+          <div class="q-validates">→ Experience paradox + pay fairness</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <div class="q-num-badge">2</div>
+        <div class="q-body">
+          <div class="q-text">The role says remote but mentions relocation. What are the exact conditions — is relocation truly optional?</div>
+          <div class="q-validates">→ Remote authenticity + hidden requirement</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <div class="q-num-badge">3</div>
+        <div class="q-body">
+          <div class="q-text">How is 24/7 support structured — rotation, overtime pay, and what does a typical week look like?</div>
+          <div class="q-validates">→ Burnout risk + work-life balance</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <div class="q-num-badge">4</div>
+        <div class="q-body">
+          <div class="q-text">What's the current funding status and runway? How do you plan to sustain payroll over the next 18 months?</div>
+          <div class="q-validates">→ Financial stability + company risk</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <div class="q-num-badge">5</div>
+        <div class="q-body">
+          <div class="q-text">Reviews mention long hours. What's the average weekly workload and how does the company protect personal time?</div>
+          <div class="q-validates">→ Culture signals + actual hours</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-brand">🤖 AI Red Flag Detector</div>
+    <div class="footer-hashtags">#JobSearch #CareerAdvice #RedFlags #HiringTips #TechJobs</div>
+  </div>
+
+</div>
+
+<div class="screenshot-hint">
+  📸 To save as PNG: Press <strong style="color:rgba(255,255,255,0.4)">Ctrl+Shift+P</strong> in Chrome → "Capture full size screenshot" · or use browser Print → Save as PDF
+</div>
+</div>
+
+</body>
+</html>

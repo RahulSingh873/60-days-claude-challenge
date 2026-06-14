@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Positive Insights & Interview Questions — LinkedIn</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a10;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  .page { width: 900px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── SHARED CARD ── */
+  .card {
+    background: #13131a;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+  }
+
+  .card-header {
+    padding: 26px 36px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .header-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .icon-green { background: rgba(52,199,89,0.12); border: 1px solid rgba(52,199,89,0.2); }
+  .icon-purple { background: rgba(139,126,255,0.12); border: 1px solid rgba(139,126,255,0.2); }
+
+  .header-text {}
+  .header-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .header-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .context-tag {
+    margin-left: auto;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.35);
+    white-space: nowrap;
+  }
+
+  /* ── POSITIVES ── */
+  .pos-body { padding: 28px 36px; }
+
+  .pos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .pos-card {
+    background: rgba(52,199,89,0.05);
+    border: 1px solid rgba(52,199,89,0.15);
+    border-radius: 16px;
+    padding: 20px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pos-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(52,199,89,0.15), transparent 70%);
+    pointer-events: none;
+  }
+  .pos-icon-wrap {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(52,199,89,0.12);
+    border: 1px solid rgba(52,199,89,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .pos-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .pos-card-desc {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.55;
+  }
+  .pos-card-tag {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: rgba(52,199,89,0.12);
+    color: #34c759;
+    letter-spacing: .04em;
+  }
+
+  /* Opportunity meter */
+  .opp-section {}
+  .opp-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 12px;
+  }
+  .opp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .opp-row {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .opp-meter-wrap { flex: 1; }
+  .opp-name { font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 5px; }
+  .opp-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .opp-fill { height: 100%; border-radius: 3px; }
+  .opp-pct { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); min-width: 34px; text-align: right; }
+
+  /* ── QUESTIONS ── */
+  .q-body { padding: 28px 36px; }
+
+  .q-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .q-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .q-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .q-item.cat-seniority::before { background: #8b7eff; }
+  .q-item.cat-remote::before   { background: #30d158; }
+  .q-item.cat-burnout::before  { background: #ff9f0a; }
+  .q-item.cat-finance::before  { background: #64d2ff; }
+  .q-item.cat-culture::before  { background: #ff6b6b; }
+
+  .q-num {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .num-seniority { background: rgba(139,126,255,0.15); color: #8b7eff; }
+  .num-remote    { background: rgba(48,209,88,0.12);   color: #30d158; }
+  .num-burnout   { background: rgba(255,159,10,0.12);  color: #ff9f0a; }
+  .num-finance   { background: rgba(100,210,255,0.12); color: #64d2ff; }
+  .num-culture   { background: rgba(255,107,107,0.12); color: #ff6b6b; }
+
+  .q-content { flex: 1; }
+  .q-category {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 5px;
+  }
+  .cat-seniority .q-category { color: #8b7eff; }
+  .cat-remote    .q-category { color: #30d158; }
+  .cat-burnout   .q-category { color: #ff9f0a; }
+  .cat-finance   .q-category { color: #64d2ff; }
+  .cat-culture   .q-category { color: #ff6b6b; }
+
+  .q-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .q-why {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.45;
+  }
+  .q-why strong { color: rgba(255,255,255,0.55); font-weight: 600; }
+
+  .q-goal {
+    margin-left: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+  }
+  .goal-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: rgba(255,255,255,0.2);
+  }
+  .goal-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .cat-seniority .goal-tag { background: rgba(139,126,255,0.1); color: #8b7eff; }
+  .cat-remote    .goal-tag { background: rgba(48,209,88,0.1);   color: #30d158; }
+  .cat-burnout   .goal-tag { background: rgba(255,159,10,0.1);  color: #ff9f0a; }
+  .cat-finance   .goal-tag { background: rgba(100,210,255,0.1); color: #64d2ff; }
+  .cat-culture   .goal-tag { background: rgba(255,107,107,0.1); color: #ff6b6b; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #13131a;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-left { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.2); }
+  .footer-right { font-size: 11px; color: rgba(255,255,255,0.15); }
+
+  .hint {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.15);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════════════════════
+       CARD 1 — POSITIVE INSIGHTS
+  ══════════════════════════════════ -->
+  <div class="card">
+    <div class="card-header">
+      <div class="header-icon icon-green">🌱</div>
+      <div class="header-text">
+        <div class="header-title">Positive Insights</div>
+        <div class="header-sub">What actually works in this role's favour — despite the red flags</div>
+      </div>
+      <div class="context-tag">Junior Full Stack Developer</div>
+    </div>
+
+    <div class="pos-body">
+
+      <!-- 3 Positive Cards -->
+      <div class="pos-grid">
+
+        <div class="pos-card">
+          <div class="pos-icon-wrap">🎯</div>
+          <div class="pos-card-title">Direct Product Impact</div>
+          <div class="pos-card-desc">At 12 people, there's no bureaucracy. Your code ships fast, your voice is heard, and you'll see the results of your work directly.</div>
+          <span class="pos-card-tag">LOW OVERHEAD</span>
+        </div>
+
+        <div class="pos-card">
+          <div class="pos-icon-wrap">⚡</div>
+          <div class="pos-card-title">Explosive Skill Growth</div>
+          <div class="pos-card-desc">Touching React, cloud infra, Docker and more in one role compresses years of learning — if you can manage the scope and set limits.</div>
+          <span class="pos-card-tag">FAST LEARNING</span>
+        </div>
+
+        <div class="pos-card">
+          <div class="pos-icon-wrap">📈</div>
+          <div class="pos-card-title">Equity Upside Potential</div>
+          <div class="pos-card-desc">Early joiners at successful startups can benefit significantly from equity. If the product has legs, being employee #13 could matter.</div>
+          <span class="pos-card-tag">HIGH UPSIDE</span>
+        </div>
+
+      </div>
+
+      <!-- Opportunity Meters -->
+      <div class="opp-section">
+        <div class="opp-label">Opportunity Score by Dimension</div>
+        <div class="opp-grid">
+          <div class="opp-row">
+            <div class="opp-meter-wrap">
+              <div class="opp-name">Learning Speed</div>
+              <div class="opp-track"><div class="opp-fill" style="width:85%;background:linear-gradient(90deg,#34c759,#30b84e)"></div></div>
+            </div>
+            <div class="opp-pct" style="color:#34c759">85%</div>
+          </div>
+          <div class="opp-row">
+            <div class="opp-meter-wrap">
+              <div class="opp-name">Career Visibility</div>
+              <div class="opp-track"><div class="opp-fill" style="width:72%;background:linear-gradient(90deg,#34c759,#30b84e)"></div></div>
+            </div>
+            <div class="opp-pct" style="color:#34c759">72%</div>
+          </div>
+          <div class="opp-row">
+            <div class="opp-meter-wrap">
+              <div class="opp-name">Equity Potential</div>
+              <div class="opp-track"><div class="opp-fill" style="width:60%;background:linear-gradient(90deg,#ff9f0a,#e08000)"></div></div>
+            </div>
+            <div class="opp-pct" style="color:#ff9f0a">60%</div>
+          </div>
+          <div class="opp-row">
+            <div class="opp-meter-wrap">
+              <div class="opp-name">Job Stability</div>
+              <div class="opp-track"><div class="opp-fill" style="width:20%;background:linear-gradient(90deg,#ff3a1a,#cc2200)"></div></div>
+            </div>
+            <div class="opp-pct" style="color:#ff4a2a">20%</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       CARD 2 — INTERVIEW QUESTIONS
+  ══════════════════════════════════ -->
+  <div class="card">
+    <div class="card-header">
+      <div class="header-icon icon-purple">💡</div>
+      <div class="header-text">
+        <div class="header-title">5 Smart Interview Questions</div>
+        <div class="header-sub">Ask these to expose what the job description is hiding</div>
+      </div>
+      <div class="context-tag">Junior Full Stack Developer</div>
+    </div>
+
+    <div class="q-body">
+      <div class="q-list">
+
+        <div class="q-item cat-seniority">
+          <div class="q-num num-seniority">1</div>
+          <div class="q-content">
+            <div class="q-category">Seniority & Compensation</div>
+            <div class="q-text">"This role is listed as Junior but requires 5+ years of experience and includes responsibilities like architecture design and mentoring. Can you clarify the actual seniority level — and how will compensation reflect those expectations?"</div>
+            <div class="q-why">Why it matters: Forces them to either admit the role is mislabelled or commit to senior-level pay. <strong>Their answer tells you everything about how they value talent.</strong></div>
+          </div>
+          <div class="q-goal">
+            <div class="goal-label">Validates</div>
+            <div class="goal-tag">Pay Fairness</div>
+          </div>
+        </div>
+
+        <div class="q-item cat-remote">
+          <div class="q-num num-remote">2</div>
+          <div class="q-content">
+            <div class="q-category">Remote Authenticity</div>
+            <div class="q-text">"The listing says remote, but mentions that relocation to Bengaluru may be required after probation. What specific conditions trigger that requirement — and is it truly optional or is it a formality?"</div>
+            <div class="q-why">Why it matters: Catches the bait-and-switch early. <strong>If they hesitate, the relocation is non-negotiable</strong> and the "remote" label is misleading.</div>
+          </div>
+          <div class="q-goal">
+            <div class="goal-label">Validates</div>
+            <div class="goal-tag">Location Truth</div>
+          </div>
+        </div>
+
+        <div class="q-item cat-burnout">
+          <div class="q-num num-burnout">3</div>
+          <div class="q-content">
+            <div class="q-category">Burnout & On-Call Risk</div>
+            <div class="q-text">"The JD mentions 24/7 support responsibilities. How is on-call structured — is there a rotation, additional compensation for after-hours work, and what does an average week actually look like for someone in this role?"</div>
+            <div class="q-why">Why it matters: Exposes whether "24/7 support" means a fair rotation or <strong>everyone is always on the hook.</strong> No structured answer = red flag confirmed.</div>
+          </div>
+          <div class="q-goal">
+            <div class="goal-label">Validates</div>
+            <div class="goal-tag">Work-Life Reality</div>
+          </div>
+        </div>
+
+        <div class="q-item cat-finance">
+          <div class="q-num num-finance">4</div>
+          <div class="q-content">
+            <div class="q-category">Financial Stability</div>
+            <div class="q-text">"The company is 8 months old and I couldn't find public funding information. Can you share the current funding stage, approximate runway, and how you're planning to sustain operations and payroll over the next 12–18 months?"</div>
+            <div class="q-why">Why it matters: A legitimate company will answer this confidently. <strong>Vagueness or deflection signals cash flow problems</strong> — your salary may not be safe.</div>
+          </div>
+          <div class="q-goal">
+            <div class="goal-label">Validates</div>
+            <div class="goal-tag">Financial Safety</div>
+          </div>
+        </div>
+
+        <div class="q-item cat-culture">
+          <div class="q-num num-culture">5</div>
+          <div class="q-content">
+            <div class="q-category">Culture & Retention</div>
+            <div class="q-text">"Employee reviews mention long working hours. What's the actual average weekly workload for this role — and what concrete policies does the company have to protect personal time and prevent burnout?"</div>
+            <div class="q-why">Why it matters: "We work hard but we play hard" is not a policy. <strong>Push for specifics.</strong> No concrete answer = the culture is exactly what the reviews describe.</div>
+          </div>
+          <div class="q-goal">
+            <div class="goal-label">Validates</div>
+            <div class="goal-tag">Culture Reality</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">🤖 AI Red Flag Detector · Job Analysis Series</div>
+    <div class="footer-right">#JobSearch #CareerAdvice #InterviewTips #TechJobs #RedFlags</div>
+  </div>
+
+  <div class="hint">📸 Open in Chrome → Ctrl+Shift+P → "Capture full size screenshot" to save as PNG</div>
+
+</div>
+</body>
+</html>
