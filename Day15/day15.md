@@ -20,7 +20,7 @@
 
 ## Generated a report containing all the analysis
 
-
+[Download Report](./Rahul_Singh_Vedic_Astrology_Report.docx)
 
 
 ## Key Learnings from Today task
