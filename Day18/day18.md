@@ -38,6 +38,10 @@ Productivity: Reduce manual organization work significantly.
 
 ## Generated html
 
+[Quarterly growth meeting](./quarterly_growth_strategy_meeting.html)
+
+[Smart Village Resource Sharing Platform](./smart_village_resource_sharing_platform.html)
+
 
 ## Key Learnings
 
