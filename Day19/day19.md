@@ -14,11 +14,11 @@ Today i ve come to know that claude can can analyze sports datasets,analyze repo
 
 ## Generated Outputs
 
-[](./wc2026_prediction_report.html)
-[](./football_iq_quiz.html)
-[](./)
-[](./messi_ronaldo_personality_quiz.html)
-[](./football_intelligence_profile.html)
+[World Cup 2026 Prediction](./wc2026_prediction_report.html)
+[Check your Knowledge](./football_iq_quiz.html)
+[Check your Score](./football_iq_score.html)
+[Personality Quiz](./messi_ronaldo_personality_quiz.html)
+[Football Intelligence Profile](./football_intelligence_profile.html)
 
 
 ## Key Learnings
