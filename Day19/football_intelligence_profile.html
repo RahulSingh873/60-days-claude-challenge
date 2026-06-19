@@ -1,0 +1,165 @@
+
+<style>
+  .fp { padding: 0.5rem 0; }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); letter-spacing: 0.06em; text-transform: uppercase; margin: 1.5rem 0 8px; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .profile-header { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+  .avatar { width: 52px; height: 52px; border-radius: 50%; background: #EEEDFE; border: 2px solid #7F77DD; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .profile-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+  .profile-sub { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+  .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .three-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.85rem 1rem; }
+  .metric-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .metric-val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .legend-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .legend-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); min-width: 70px; }
+  .bar-wrap { flex: 1; }
+  .bar-track { height: 8px; background: var(--color-background-secondary); border-radius: 4px; overflow: hidden; }
+  .bar-messi { height: 100%; border-radius: 4px; background: #1D9E75; }
+  .bar-ronaldo { height: 100%; border-radius: 4px; background: #378ADD; }
+  .pct { font-size: 13px; font-weight: 500; min-width: 38px; text-align: right; }
+  .pct-m { color: #0F6E56; }
+  .pct-r { color: #185FA5; }
+  .winner-badge { font-size: 10px; padding: 2px 8px; border-radius: var(--border-radius-md); background: #E1F5EE; color: #085041; font-weight: 500; margin-left: 6px; }
+  .trait-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 6px; }
+  .trait-pill { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 7px 10px; font-size: 12px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px; }
+  .trait-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .archetype-band { background: #EEEDFE; border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .arch-title { font-size: 16px; font-weight: 500; color: #26215C; margin-bottom: 4px; }
+  .arch-desc { font-size: 13px; color: #3C3489; line-height: 1.6; }
+  .arch-traits { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .arch-trait { font-size: 11px; background: #CECBF6; color: #26215C; padding: 3px 9px; border-radius: var(--border-radius-md); font-weight: 500; }
+  .rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+  .rec-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 0.9rem; }
+  .rec-type { font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); letter-spacing: 0.04em; margin-bottom: 4px; }
+  .rec-val { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .rec-why { font-size: 11px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.4; }
+  .insight-list { list-style: none; padding: 0; margin: 0; }
+  .insight-list li { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: flex-start; gap: 8px; }
+  .insight-list li:last-child { border-bottom: none; }
+  .ins-dot { width: 6px; height: 6px; border-radius: 50%; background: #7F77DD; margin-top: 6px; flex-shrink: 0; }
+  .pred-mini { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .pred-chip { font-size: 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 5px 10px; color: var(--color-text-secondary); }
+  .pred-chip strong { color: var(--color-text-primary); font-weight: 500; }
+  .divider { height: 0.5px; background: var(--color-border-tertiary); margin: 4px 0 12px; }
+</style>
+
+<h2 class="sr-only">Your complete Football Intelligence Profile</h2>
+<div class="fp">
+
+  <div class="card">
+    <div class="profile-header">
+      <div class="avatar">⚽</div>
+      <div>
+        <div class="profile-title">Your Football Intelligence Profile</div>
+        <div class="profile-sub">Casual Viewer · Quiet Leader · Messi-aligned</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="three-col">
+      <div class="metric-card">
+        <div class="metric-label">Football Awareness Score</div>
+        <div class="metric-val">60<span style="font-size:14px; font-weight:400;">/100</span></div>
+        <div class="metric-sub">Casual Viewer</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Personality match</div>
+        <div class="metric-val" style="color:#0F6E56;">Messi</div>
+        <div class="metric-sub">71% compatibility</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Your archetype</div>
+        <div class="metric-val" style="font-size:15px; padding-top:4px;">Quiet Leader</div>
+        <div class="metric-sub">Calm, team-first</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">World Cup 2026 prediction report</div>
+  <div class="card">
+    <div class="pred-mini">
+      <div class="pred-chip"><strong>Winner:</strong> Argentina (72%)</div>
+      <div class="pred-chip"><strong>Runner-up:</strong> France (65%)</div>
+      <div class="pred-chip"><strong>Dark horse:</strong> Germany (48%)</div>
+      <div class="pred-chip"><strong>Watch:</strong> Mbappé · Messi · Haaland</div>
+    </div>
+  </div>
+
+  <div class="section-label">Messi vs Ronaldo compatibility</div>
+  <div class="card">
+    <div class="legend-row">
+      <div class="legend-name">Messi <span class="winner-badge">Your match</span></div>
+      <div class="bar-wrap"><div class="bar-track"><div class="bar-messi" style="width:71%"></div></div></div>
+      <div class="pct pct-m">71%</div>
+    </div>
+    <div class="legend-row" style="margin-bottom:0;">
+      <div class="legend-name">Ronaldo</div>
+      <div class="bar-wrap"><div class="bar-track"><div class="bar-ronaldo" style="width:34%"></div></div></div>
+      <div class="pct pct-r">34%</div>
+    </div>
+    <div style="margin-top:14px; font-size:13px; color:var(--color-text-secondary); line-height:1.7;">
+      Your answers align strongly with Messi's personality blueprint. Like him, you focus on small daily improvements over headline goals, shine brightest when part of a collective, lead by example rather than loudly, rely on studied analysis before acting, and care more about memories and bonds than personal records. Your low competitive drive and risk-aversion are very Messi — he is famously described as someone who "just plays" rather than chasing headlines.
+      <br><br>Ronaldo is defined by extreme personal ambition, rigid discipline, fierce competitiveness, and solo-spotlight hunger — the opposite of your profile on almost every dimension.
+    </div>
+    <div class="trait-grid" style="margin-top:12px;">
+      <div class="trait-pill"><span class="trait-dot" style="background:#1D9E75;"></span>Team-first (5/5)</div>
+      <div class="trait-pill"><span class="trait-dot" style="background:#1D9E75;"></span>Instinct + analysis</div>
+      <div class="trait-pill"><span class="trait-dot" style="background:#1D9E75;"></span>Legacy = bonds</div>
+      <div class="trait-pill"><span class="trait-dot" style="background:#1D9E75;"></span>Calm under pressure</div>
+      <div class="trait-pill"><span class="trait-dot" style="background:#1D9E75;"></span>Learns by watching</div>
+      <div class="trait-pill"><span class="trait-dot" style="background:#1D9E75;"></span>Reflects on setbacks</div>
+    </div>
+  </div>
+
+  <div class="section-label">Your football personality archetype</div>
+  <div class="archetype-band">
+    <div class="arch-title">Quiet Leader</div>
+    <div class="arch-desc">You don't need the spotlight to make an impact. You lead through calm consistency, uplift those around you, and make decisions with patience and intelligence. In a team, you're the glue — the person others trust without quite knowing why. You'd rather everyone wins together than you win alone.</div>
+    <div class="arch-traits">
+      <span class="arch-trait">Team-first</span>
+      <span class="arch-trait">Calm under pressure</span>
+      <span class="arch-trait">Analytical mind</span>
+      <span class="arch-trait">Loyal</span>
+      <span class="arch-trait">Steady improver</span>
+      <span class="arch-trait">Low ego</span>
+    </div>
+  </div>
+
+  <div class="section-label">Your football recommendations</div>
+  <div class="rec-grid">
+    <div class="rec-card">
+      <div class="rec-type">Player to follow</div>
+      <div class="rec-val">Lamine Yamal</div>
+      <div class="rec-why">Spain's 17-year-old prodigy — instinctive, team-oriented, plays with joy not ego</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-type">Club to explore</div>
+      <div class="rec-val">Barcelona</div>
+      <div class="rec-why">Famous for collective, beautiful football built on teamwork and creativity</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-type">National team</div>
+      <div class="rec-val">Spain</div>
+      <div class="rec-why">FIFA Rank #2, defined by passing, patience and collective brilliance — your style</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-type">Rivalry to watch</div>
+      <div class="rec-val">Argentina vs France</div>
+      <div class="rec-why">The 2022 final rematch — the greatest rivalry in modern football history</div>
+    </div>
+  </div>
+
+  <div class="section-label">Key insights summary</div>
+  <div class="card">
+    <ul class="insight-list">
+      <li><span class="ins-dot"></span>You entered as a total beginner and scored 60/100 on the Football IQ quiz — a strong result that shows natural curiosity and situational awareness.</li>
+      <li><span class="ins-dot"></span>Your personality is a 71% match with Messi — driven by teamwork, calm decision-making, bonds over trophies, and learning through observation.</li>
+      <li><span class="ins-dot"></span>As a Quiet Leader archetype, you'd thrive in a role like a deep-lying playmaker or creative midfielder — the engine that makes others look good.</li>
+      <li><span class="ins-dot"></span>The workbook data shows Argentina (Form Score 92, Rank #1) as your predicted 2026 champion — fittingly, the team of your personality twin.</li>
+      <li><span class="ins-dot"></span>Your biggest knowledge gap is World Cup history — exploring Brazil's record 5 titles and Messi's 2022 Golden Ball journey would be a great starting point.</li>
+    </ul>
+  </div>
+
+</div>

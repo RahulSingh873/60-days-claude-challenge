@@ -1,0 +1,121 @@
+
+<style>
+  .pred-section { padding: 1rem 0; }
+  .pred-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .pred-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .pred-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: var(--border-radius-md); }
+  .badge-winner { background: #FAC775; color: #633806; }
+  .badge-runner { background: #B5D4F4; color: #042C53; }
+  .badge-dark { background: #C0DD97; color: #173404; }
+  .badge-watch { background: #F4C0D1; color: #4B1528; }
+  .pred-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .conf-bar-wrap { margin: 8px 0 4px; }
+  .conf-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .conf-bar { height: 6px; border-radius: 3px; background: var(--color-background-secondary); overflow: hidden; }
+  .conf-fill-gold { height: 100%; border-radius: 3px; background: #EF9F27; }
+  .conf-fill-blue { height: 100%; border-radius: 3px; background: #378ADD; }
+  .conf-fill-green { height: 100%; border-radius: 3px; background: #639922; }
+  .conf-fill-pink { height: 100%; border-radius: 3px; background: #D4537E; }
+  .evidence { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 6px; }
+  .risk { font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 8px; }
+  .risk-label { font-weight: 500; color: var(--color-text-secondary); }
+  .stat-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .stat-pill { font-size: 11px; background: var(--color-background-secondary); color: var(--color-text-secondary); padding: 3px 8px; border-radius: var(--border-radius-md); }
+  .live-tag { font-size: 11px; background: #FCEBEB; color: #A32D2D; padding: 2px 8px; border-radius: var(--border-radius-md); font-weight: 500; margin-left: auto; }
+  .section-label { font-size: 12px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; padding-top: 4px; }
+</style>
+
+<h2 class="sr-only">FIFA World Cup 2026 prediction report based on workbook data</h2>
+
+<div class="pred-section">
+  <div class="section-label">Predicted winner</div>
+  <div class="pred-card">
+    <div class="pred-header">
+      <span class="pred-badge badge-winner">Most likely champion</span>
+      <span class="live-tag">Live: Won 3-0 vs Algeria</span>
+    </div>
+    <div class="pred-title">Argentina <span style="font-weight:400; color: var(--color-text-secondary);">— defending champions</span></div>
+    <div class="conf-bar-wrap">
+      <div class="conf-label">Confidence: 72%</div>
+      <div class="conf-bar"><div class="conf-fill-gold" style="width:72%"></div></div>
+    </div>
+    <div class="evidence">Argentina sit at FIFA Rank #1, with a Form Score of 92/100 — highest in the workbook. They've won 8 of their last 10 matches, scored 22 goals and conceded just 6. Historically, their 68% win rate across 50 pre-tournament matches is elite. Add Messi (rated 96/100, 20 goals + 12 assists) and they've already opened 2026 with a dominant 3-0 win.</div>
+    <div class="stat-row">
+      <span class="stat-pill">FIFA Rank: #1</span>
+      <span class="stat-pill">Form Score: 92/100</span>
+      <span class="stat-pill">Historical Win %: 68%</span>
+      <span class="stat-pill">2026 opener: 3-0 ✓</span>
+    </div>
+    <div class="risk"><span class="risk-label">Key risk:</span> Defending champions rarely win back-to-back (only Brazil 1958/62 did it). Messi's age (36) raises durability concerns over a long tournament.</div>
+  </div>
+
+  <div class="section-label">Predicted runner-up</div>
+  <div class="pred-card">
+    <div class="pred-header">
+      <span class="pred-badge badge-runner">Final contender</span>
+      <span class="live-tag">Live: Won 2-0 vs Senegal</span>
+    </div>
+    <div class="pred-title">France <span style="font-weight:400; color: var(--color-text-secondary);">— finalists in 2022</span></div>
+    <div class="conf-bar-wrap">
+      <div class="conf-label">Confidence: 65%</div>
+      <div class="conf-bar"><div class="conf-fill-blue" style="width:65%"></div></div>
+    </div>
+    <div class="evidence">France are ranked #3 globally with a Form Score of 90/100. They've reached the last 2 World Cup finals (2018 winners, 2022 runners-up), showing elite consistency. Mbappé (rated 95/100, 22 goals + 8 assists) is the tournament's most dangerous attacker. Their 2026 opener — a clean 2-0 win — shows they mean business.</div>
+    <div class="stat-row">
+      <span class="stat-pill">FIFA Rank: #3</span>
+      <span class="stat-pill">Form Score: 90/100</span>
+      <span class="stat-pill">2 of last 2 finals</span>
+      <span class="stat-pill">2026 opener: 2-0 ✓</span>
+    </div>
+    <div class="risk"><span class="risk-label">Key risk:</span> France have lost their last two World Cup finals to the eventual winner (2022 vs Argentina). History of squad tensions at major tournaments.</div>
+  </div>
+
+  <div class="section-label">Dark horse</div>
+  <div class="pred-card">
+    <div class="pred-header">
+      <span class="pred-badge badge-dark">Surprise threat</span>
+      <span class="live-tag">Live: 7-1 vs Curaçao</span>
+    </div>
+    <div class="pred-title">Germany <span style="font-weight:400; color: var(--color-text-secondary);">— the sleeping giant</span></div>
+    <div class="conf-bar-wrap">
+      <div class="conf-label">Confidence: 48%</div>
+      <div class="conf-bar"><div class="conf-fill-green" style="width:48%"></div></div>
+    </div>
+    <div class="evidence">Germany are ranked only #9 — lower than expected for a 4-time champion — but their 2026 opener was jaw-dropping: 7-1 vs Curaçao. Their Form Score (87) and historical win rate (56%) trail the top 3, but Germany's tournament record is legendary. When they find momentum, they're nearly unstoppable.</div>
+    <div class="stat-row">
+      <span class="stat-pill">FIFA Rank: #9</span>
+      <span class="stat-pill">4× World Champions</span>
+      <span class="stat-pill">2026 opener: 7-1 ✓</span>
+    </div>
+    <div class="risk"><span class="risk-label">Key risk:</span> Recent tournament exits have been early (2018 group stage exit). Lower FIFA ranking may lead to tough bracket draws in later rounds.</div>
+  </div>
+
+  <div class="section-label">Players to watch</div>
+  <div class="pred-card">
+    <div class="pred-header">
+      <span class="pred-badge badge-watch">Key talents</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 4px;">
+      <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px;">
+        <div style="font-weight: 500; font-size: 13px; color: var(--color-text-primary);">Mbappé</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary);">France · Forward</div>
+        <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 4px;">22 goals · Rating: 95</div>
+      </div>
+      <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px;">
+        <div style="font-weight: 500; font-size: 13px; color: var(--color-text-primary);">Messi</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary);">Argentina · Forward</div>
+        <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 4px;">20g · 12a · Rating: 96</div>
+      </div>
+      <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px;">
+        <div style="font-weight: 500; font-size: 13px; color: var(--color-text-primary);">Haaland</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary);">Norway · Forward</div>
+        <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 4px;">25 goals · Rating: 94</div>
+      </div>
+      <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px;">
+        <div style="font-weight: 500; font-size: 13px; color: var(--color-text-primary);">Bellingham</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary);">England · Midfielder</div>
+        <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 4px;">10g · 9a · Rating: 91</div>
+      </div>
+    </div>
+  </div>
+</div>

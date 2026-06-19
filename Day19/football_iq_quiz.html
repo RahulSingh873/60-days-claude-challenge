@@ -1,0 +1,115 @@
+
+<style>
+  .quiz-wrap { padding: 0.5rem 0; }
+  .q-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 14px; }
+  .q-num { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .q-text { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; line-height: 1.5; }
+  .opt-btn { display: block; width: 100%; text-align: left; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 9px 14px; font-size: 13px; color: var(--color-text-primary); cursor: pointer; margin-bottom: 7px; transition: border-color 0.15s, background 0.15s; }
+  .opt-btn:hover { border-color: var(--color-border-secondary); background: var(--color-background-primary); }
+  .opt-btn.selected { border-color: #378ADD; background: #E6F1FB; color: #042C53; }
+  .opt-btn.correct { border-color: #639922; background: #EAF3DE; color: #173404; }
+  .opt-btn.wrong { border-color: #A32D2D; background: #FCEBEB; color: #501313; }
+  .diff-pill { font-size: 10px; padding: 2px 7px; border-radius: var(--border-radius-md); font-weight: 500; margin-bottom: 8px; display: inline-block; }
+  .diff-easy { background: #EAF3DE; color: #3B6D11; }
+  .diff-med { background: #FAEEDA; color: #854F0B; }
+  .diff-hard { background: #FAECE7; color: #993C1D; }
+  .submit-btn { display: block; width: 100%; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 11px; font-size: 14px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; margin-top: 4px; }
+  .submit-btn:hover { background: var(--color-background-primary); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+<h2 class="sr-only">Football IQ Quiz — 5 multiple choice questions</h2>
+<div class="quiz-wrap" id="quizWrap">
+
+  <div class="q-card">
+    <div class="q-num">Question 1 of 5</div>
+    <div class="diff-pill diff-easy">Beginner</div>
+    <div class="q-text">How many players does each team have on the field at the same time in football?</div>
+    <button class="opt-btn" onclick="pick(this,1,'a')">9 players</button>
+    <button class="opt-btn" onclick="pick(this,1,'b')">10 players</button>
+    <button class="opt-btn" onclick="pick(this,1,'c')">11 players</button>
+    <button class="opt-btn" onclick="pick(this,1,'d')">12 players</button>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">Question 2 of 5</div>
+    <div class="diff-pill diff-easy">Beginner</div>
+    <div class="q-text">Which country has won the most FIFA World Cups in history?</div>
+    <button class="opt-btn" onclick="pick(this,2,'a')">Germany</button>
+    <button class="opt-btn" onclick="pick(this,2,'b')">Argentina</button>
+    <button class="opt-btn" onclick="pick(this,2,'c')">Brazil</button>
+    <button class="opt-btn" onclick="pick(this,2,'d')">Italy</button>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">Question 3 of 5</div>
+    <div class="diff-pill diff-med">Intermediate</div>
+    <div class="q-text">Who won the Golden Ball (best player award) at the 2022 FIFA World Cup in Qatar?</div>
+    <button class="opt-btn" onclick="pick(this,3,'a')">Kylian Mbappé</button>
+    <button class="opt-btn" onclick="pick(this,3,'b')">Cristiano Ronaldo</button>
+    <button class="opt-btn" onclick="pick(this,3,'c')">Lionel Messi</button>
+    <button class="opt-btn" onclick="pick(this,3,'d')">Erling Haaland</button>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">Question 4 of 5</div>
+    <div class="diff-pill diff-med">Intermediate</div>
+    <div class="q-text">The 2026 FIFA World Cup is being co-hosted by three countries. Which group of countries is correct?</div>
+    <button class="opt-btn" onclick="pick(this,4,'a')">USA, Canada, Mexico</button>
+    <button class="opt-btn" onclick="pick(this,4,'b')">USA, Brazil, Argentina</button>
+    <button class="opt-btn" onclick="pick(this,4,'c')">Canada, France, UK</button>
+    <button class="opt-btn" onclick="pick(this,4,'d')">USA, Spain, Portugal</button>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">Question 5 of 5</div>
+    <div class="diff-pill diff-hard">Advanced</div>
+    <div class="q-text">Based on the live 2026 World Cup data, which team scored 7 goals in a single group-stage match?</div>
+    <button class="opt-btn" onclick="pick(this,5,'a')">France</button>
+    <button class="opt-btn" onclick="pick(this,5,'b')">Argentina</button>
+    <button class="opt-btn" onclick="pick(this,5,'c')">Germany</button>
+    <button class="opt-btn" onclick="pick(this,5,'d')">Spain</button>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="submitQuiz()" disabled>Select all answers to submit</button>
+</div>
+
+<script>
+const answers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+const correct = { 1: 'c', 2: 'c', 3: 'c', 4: 'a', 5: 'c' };
+let submitted = false;
+
+function pick(btn, q, opt) {
+  if (submitted) return;
+  const btns = btn.parentElement.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[q] = opt;
+  const allAnswered = Object.values(answers).every(v => v !== null);
+  const sub = document.getElementById('submitBtn');
+  sub.disabled = !allAnswered;
+  if (allAnswered) sub.textContent = 'Submit answers ↗';
+}
+
+function submitQuiz() {
+  if (submitted) return;
+  submitted = true;
+  let score = 0;
+  for (let q = 1; q <= 5; q++) {
+    const card = document.querySelectorAll('.q-card')[q-1];
+    const btns = card.querySelectorAll('.opt-btn');
+    const letters = ['a','b','c','d'];
+    btns.forEach((btn, i) => {
+      const letter = letters[i];
+      if (letter === correct[q]) btn.classList.add('correct');
+      else if (letter === answers[q] && answers[q] !== correct[q]) btn.classList.add('wrong');
+    });
+    if (answers[q] === correct[q]) score++;
+  }
+  const sub = document.getElementById('submitBtn');
+  sub.disabled = true;
+  sub.textContent = 'Answers submitted!';
+
+  const scoreStr = `Quiz done! I got ${score} out of 5 correct. Please calculate my Football Awareness Score and classification now, then move to Stage 3.`;
+  setTimeout(() => sendPrompt(scoreStr), 600);
+}
+</script>

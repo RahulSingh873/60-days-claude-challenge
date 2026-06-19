@@ -1,0 +1,219 @@
+
+<style>
+  .pq-wrap { padding: 0.5rem 0; }
+  .pq-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .pq-num { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 5px; letter-spacing: 0.04em; font-weight: 500; }
+  .pq-text { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; line-height: 1.5; }
+  .trait-tag { font-size: 10px; padding: 2px 7px; border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-secondary); margin-bottom: 10px; display: inline-block; }
+  .opt-btn { display: block; width: 100%; text-align: left; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 9px 14px; font-size: 13px; color: var(--color-text-primary); cursor: pointer; margin-bottom: 7px; }
+  .opt-btn:hover { border-color: var(--color-border-secondary); background: var(--color-background-primary); }
+  .opt-btn.sel { border-color: #7F77DD; background: #EEEDFE; color: #26215C; }
+  .scale-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+  .scale-label { font-size: 12px; color: var(--color-text-secondary); min-width: 80px; }
+  .scale-label.right { text-align: right; }
+  .scale-btns { display: flex; gap: 6px; flex: 1; justify-content: center; }
+  .scale-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); font-size: 13px; color: var(--color-text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .scale-btn:hover { border-color: var(--color-border-secondary); }
+  .scale-btn.sel { background: #EEEDFE; border-color: #7F77DD; color: #26215C; font-weight: 500; }
+  .submit-btn { display: block; width: 100%; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 11px; font-size: 14px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; margin-top: 4px; }
+  .submit-btn:hover { background: var(--color-background-primary); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .progress-bar { height: 4px; background: var(--color-background-secondary); border-radius: 2px; margin-bottom: 16px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; background: #7F77DD; transition: width 0.3s; }
+</style>
+<h2 class="sr-only">Messi vs Ronaldo personality match quiz — 12 questions</h2>
+<div class="pq-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+
+  <!-- Q1: Ambition -->
+  <div class="pq-card">
+    <div class="pq-num">Question 1 of 12 · Ambition</div>
+    <div class="pq-text">When you set a goal, which of these best describes you?</div>
+    <button class="opt-btn" onclick="mcPick(this,1,'a')">I have a clear, burning target and I won't stop until I reach it</button>
+    <button class="opt-btn" onclick="mcPick(this,1,'b')">I set goals, but I'm flexible — the journey matters as much as the destination</button>
+    <button class="opt-btn" onclick="mcPick(this,1,'c')">I prefer to see how things unfold naturally rather than forcing a specific outcome</button>
+    <button class="opt-btn" onclick="mcPick(this,1,'d')">I focus on small daily improvements rather than one big goal</button>
+  </div>
+
+  <!-- Q2: Discipline -->
+  <div class="pq-card">
+    <div class="pq-num">Question 2 of 12 · Discipline</div>
+    <div class="pq-text">How do you approach your daily routine?</div>
+    <button class="opt-btn" onclick="mcPick(this,2,'a')">Highly structured — I follow a strict schedule and rarely deviate</button>
+    <button class="opt-btn" onclick="mcPick(this,2,'b')">Fairly organized, but I adapt when needed</button>
+    <button class="opt-btn" onclick="mcPick(this,2,'c')">I go with the flow — routines feel restrictive to me</button>
+    <button class="opt-btn" onclick="mcPick(this,2,'d')">I'm disciplined in the things I care about, relaxed about everything else</button>
+  </div>
+
+  <!-- Q3: Leadership -->
+  <div class="pq-card">
+    <div class="pq-num">Question 3 of 12 · Leadership</div>
+    <div class="pq-text">When your group or team is struggling, what's your natural response?</div>
+    <button class="opt-btn" onclick="mcPick(this,3,'a')">I step up loudly — motivate everyone, take charge, and lead visibly</button>
+    <button class="opt-btn" onclick="mcPick(this,3,'b')">I lead quietly — I show others what's possible through my own actions</button>
+    <button class="opt-btn" onclick="mcPick(this,3,'c')">I support those around me and help everyone feel confident</button>
+    <button class="opt-btn" onclick="mcPick(this,3,'d')">I prefer someone else to lead — I contribute best from a supporting role</button>
+  </div>
+
+  <!-- Q4: Teamwork vs Individual - Rating Scale -->
+  <div class="pq-card">
+    <div class="pq-num">Question 4 of 12 · Teamwork</div>
+    <div class="pq-text">Rate yourself on this scale:</div>
+    <div class="scale-row">
+      <span class="scale-label">"I shine brightest alone"</span>
+      <div class="scale-btns">
+        <button class="scale-btn" onclick="scalePick(this,4,1)">1</button>
+        <button class="scale-btn" onclick="scalePick(this,4,2)">2</button>
+        <button class="scale-btn" onclick="scalePick(this,4,3)">3</button>
+        <button class="scale-btn" onclick="scalePick(this,4,4)">4</button>
+        <button class="scale-btn" onclick="scalePick(this,4,5)">5</button>
+      </div>
+      <span class="scale-label right">"I'm best as part of a team"</span>
+    </div>
+  </div>
+
+  <!-- Q5: Creativity -->
+  <div class="pq-card">
+    <div class="pq-num">Question 5 of 12 · Creativity</div>
+    <div class="pq-text">When solving a problem, you tend to:</div>
+    <button class="opt-btn" onclick="mcPick(this,5,'a')">Find an original, unexpected approach that surprises people</button>
+    <button class="opt-btn" onclick="mcPick(this,5,'b')">Use a proven method and execute it better than anyone else</button>
+    <button class="opt-btn" onclick="mcPick(this,5,'c')">Adapt based on what's working in the moment</button>
+    <button class="opt-btn" onclick="mcPick(this,5,'d')">Gather all the information first before deciding</button>
+  </div>
+
+  <!-- Q6: Competitiveness - Rating Scale -->
+  <div class="pq-card">
+    <div class="pq-num">Question 6 of 12 · Competitiveness</div>
+    <div class="pq-text">How would you describe your competitive drive?</div>
+    <div class="scale-row">
+      <span class="scale-label">"Winning isn't everything"</span>
+      <div class="scale-btns">
+        <button class="scale-btn" onclick="scalePick(this,6,1)">1</button>
+        <button class="scale-btn" onclick="scalePick(this,6,2)">2</button>
+        <button class="scale-btn" onclick="scalePick(this,6,3)">3</button>
+        <button class="scale-btn" onclick="scalePick(this,6,4)">4</button>
+        <button class="scale-btn" onclick="scalePick(this,6,5)">5</button>
+      </div>
+      <span class="scale-label right">"I hate losing more than I love winning"</span>
+    </div>
+  </div>
+
+  <!-- Q7: Confidence -->
+  <div class="pq-card">
+    <div class="pq-num">Question 7 of 12 · Confidence</div>
+    <div class="pq-text">When all eyes are on you in a high-pressure moment:</div>
+    <button class="opt-btn" onclick="mcPick(this,7,'a')">I thrive — pressure makes me perform better</button>
+    <button class="opt-btn" onclick="mcPick(this,7,'b')">I'm calm and focused — I just do what I always do</button>
+    <button class="opt-btn" onclick="mcPick(this,7,'c')">I feel the nerves but push through them</button>
+    <button class="opt-btn" onclick="mcPick(this,7,'d')">I prefer to avoid the spotlight when possible</button>
+  </div>
+
+  <!-- Q8: Work Ethic -->
+  <div class="pq-card">
+    <div class="pq-num">Question 8 of 12 · Work Ethic</div>
+    <div class="pq-text">After a setback or failure, what's your reaction?</div>
+    <button class="opt-btn" onclick="mcPick(this,8,'a')">I train twice as hard immediately — failure fuels me</button>
+    <button class="opt-btn" onclick="mcPick(this,8,'b')">I reflect, learn what went wrong, then adjust my approach</button>
+    <button class="opt-btn" onclick="mcPick(this,8,'c')">I take a step back, reset emotionally, then return stronger</button>
+    <button class="opt-btn" onclick="mcPick(this,8,'d')">I lean on the people around me to help me bounce back</button>
+  </div>
+
+  <!-- Q9: Decision Making -->
+  <div class="pq-card">
+    <div class="pq-num">Question 9 of 12 · Decision-making</div>
+    <div class="pq-text">In a critical moment, your decisions are mostly driven by:</div>
+    <button class="opt-btn" onclick="mcPick(this,9,'a')">Pure instinct — I act before I think</button>
+    <button class="opt-btn" onclick="mcPick(this,9,'b')">Calculated thinking — I analyze the best option quickly</button>
+    <button class="opt-btn" onclick="mcPick(this,9,'c')">Experience — I rely on patterns I've seen before</button>
+    <button class="opt-btn" onclick="mcPick(this,9,'d')">Others' input — I check with people I trust first</button>
+  </div>
+
+  <!-- Q10: Risk Taking - Rating Scale -->
+  <div class="pq-card">
+    <div class="pq-num">Question 10 of 12 · Risk-taking</div>
+    <div class="pq-text">How comfortable are you with taking bold risks?</div>
+    <div class="scale-row">
+      <span class="scale-label">"I always play it safe"</span>
+      <div class="scale-btns">
+        <button class="scale-btn" onclick="scalePick(this,10,1)">1</button>
+        <button class="scale-btn" onclick="scalePick(this,10,2)">2</button>
+        <button class="scale-btn" onclick="scalePick(this,10,3)">3</button>
+        <button class="scale-btn" onclick="scalePick(this,10,4)">4</button>
+        <button class="scale-btn" onclick="scalePick(this,10,5)">5</button>
+      </div>
+      <span class="scale-label right">"I back myself in any situation"</span>
+    </div>
+  </div>
+
+  <!-- Q11: Learning Style -->
+  <div class="pq-card">
+    <div class="pq-num">Question 11 of 12 · Learning style</div>
+    <div class="pq-text">How do you prefer to grow and improve?</div>
+    <button class="opt-btn" onclick="mcPick(this,11,'a')">Through intense, repetitive practice until it becomes second nature</button>
+    <button class="opt-btn" onclick="mcPick(this,11,'b')">By experimenting freely and discovering things on my own</button>
+    <button class="opt-btn" onclick="mcPick(this,11,'c')">By watching and learning from the best, then applying it</button>
+    <button class="opt-btn" onclick="mcPick(this,11,'d')">Through feedback from others and collaboration</button>
+  </div>
+
+  <!-- Q12: Legacy -->
+  <div class="pq-card">
+    <div class="pq-num">Question 12 of 12 · Legacy & ambition</div>
+    <div class="pq-text">What matters most to you about how people remember you?</div>
+    <button class="opt-btn" onclick="mcPick(this,12,'a')">Being the greatest — the numbers, the records, the trophies</button>
+    <button class="opt-btn" onclick="mcPick(this,12,'b')">The joy and magic I brought to people who watched me</button>
+    <button class="opt-btn" onclick="mcPick(this,12,'c')">The effort and dedication I showed every single day</button>
+    <button class="opt-btn" onclick="mcPick(this,12,'d')">The friendships, bonds, and team moments along the way</button>
+  </div>
+
+  <button class="submit-btn" id="pqSubmit" disabled onclick="submitPersonality()">Answer all questions to continue</button>
+</div>
+
+<script>
+const picks = {};
+const total = 12;
+
+function updateProgress() {
+  const done = Object.keys(picks).length;
+  document.getElementById('progFill').style.width = Math.round((done/total)*100) + '%';
+  const btn = document.getElementById('pqSubmit');
+  btn.disabled = done < total;
+  if (done >= total) btn.textContent = 'Reveal my personality match ↗';
+}
+
+function mcPick(btn, q, opt) {
+  const btns = btn.parentElement.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  picks[q] = opt;
+  updateProgress();
+}
+
+function scalePick(btn, q, val) {
+  const btns = btn.parentElement.querySelectorAll('.scale-btn');
+  btns.forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  picks[q] = val;
+  updateProgress();
+}
+
+function submitPersonality() {
+  const p = picks;
+  const msg = `My personality quiz answers:
+Q1 Ambition: ${p[1]}
+Q2 Discipline: ${p[2]}
+Q3 Leadership: ${p[3]}
+Q4 Teamwork scale (1=alone, 5=team): ${p[4]}
+Q5 Creativity: ${p[5]}
+Q6 Competitiveness scale (1=low, 5=high): ${p[6]}
+Q7 Confidence: ${p[7]}
+Q8 Work ethic: ${p[8]}
+Q9 Decision-making: ${p[9]}
+Q10 Risk-taking scale (1=safe, 5=bold): ${p[10]}
+Q11 Learning style: ${p[11]}
+Q12 Legacy: ${p[12]}
+
+Please calculate my Messi and Ronaldo compatibility percentages, explain my personality match, assign my football archetype, and give my full Football Intelligence Profile.`;
+  sendPrompt(msg);
+}
+</script>
