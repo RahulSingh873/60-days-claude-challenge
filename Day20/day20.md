@@ -12,6 +12,8 @@ our task of today is to create an ai puzzle game using claude by the provided pr
 
 ## Generated HTML
 
+[Face Puzzle Game](./face-puzzle-game_1.html)
+
 ## The additional Functionality i ve added
 
 i ve added sound while moving and fixing thev pieces of puzzle.
