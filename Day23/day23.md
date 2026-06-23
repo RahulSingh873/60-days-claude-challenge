@@ -75,14 +75,22 @@ WhatsApp is the preferred communication channel.
 
 ## Screenshots
 
-### Customer & MVP Blueprint
+![Ideal Customer Profile](./idealCustomerProfile.png)
+![Buyer Persona](./buyerpersona.png)
+![Top 10 Customer Pain Points](./customerPainPoints.png)
+![Customer Journey Map](./customerjourney.png)
+![Objection and Buying Triggers](./buyingtriggers.png)
+![MVP Recommendation](./mvprecommendation.png)
+![Moscow Prioritization](./moscowprioritization.png)
+![Pricing Hypothesis](./pricinghypothesis.png)
+![Top 5 Risks](./risks.png)
+![Founder Action Sheet](./founderactionsheet.png)
 
+---
 
-### Customer Persona
+## Generated Customer MVP & Blueprint
 
-
-### MVP Recommendation
-
+[DigiLocal Customer MVP Blueprint](./DigiLocal_Customer_MVP_Blueprint_1.pdf)
 
 ---
 
