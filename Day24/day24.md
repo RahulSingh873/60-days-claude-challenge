@@ -31,6 +31,7 @@ Convert the Customer & MVP Blueprint from Day 23 into a complete Business Strate
 
 ## Generated Dashboard
 
+[DigiLocal Dashboard](./digilocal_dashboard_glass_1.html)
 
 
 ## Key Learnings
