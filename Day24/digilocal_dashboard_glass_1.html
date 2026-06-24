@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigiLocal — Business Strategy Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-from: #0a0f1e;
+    --bg-to: #0d1b2a;
+    --accent-emerald: #10d9a0;
+    --accent-blue: #3b82f6;
+    --accent-violet: #a78bfa;
+    --accent-amber: #fbbf24;
+    --accent-red: #f87171;
+    --glass-bg: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.10);
+    --glass-bg-hover: rgba(255,255,255,0.08);
+    --glass-strong: rgba(255,255,255,0.08);
+    --text-primary: rgba(255,255,255,0.92);
+    --text-secondary: rgba(255,255,255,0.55);
+    --text-muted: rgba(255,255,255,0.35);
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --font-display: 'Sora', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-to) 100%);
+    min-height: 100vh;
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+
+  /* Ambient blobs */
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(16,217,160,0.12), transparent 70%);
+    top: -200px; left: -200px;
+  }
+  body::after {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(59,130,246,0.10), transparent 70%);
+    bottom: -150px; right: -150px;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left .brand {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent-emerald), var(--accent-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .header-left .tagline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+    border: 1px solid;
+  }
+  .badge-pill.green {
+    background: rgba(16,217,160,0.12);
+    border-color: rgba(16,217,160,0.3);
+    color: var(--accent-emerald);
+  }
+  .badge-pill.blue {
+    background: rgba(59,130,246,0.12);
+    border-color: rgba(59,130,246,0.3);
+    color: var(--accent-blue);
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--glass-border);
+  }
+
+  /* ── Glass card ── */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+  }
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .glass-inner { padding: 18px 20px; }
+  .glass-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  /* ── KPI scorecard ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .kpi-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 16px 12px;
+    text-align: center;
+    backdrop-filter: blur(14px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+  .kpi-card.em::after { background: var(--accent-emerald); }
+  .kpi-card.bl::after { background: var(--accent-blue); }
+  .kpi-card.tl::after { background: #2dd4bf; }
+  .kpi-card.am::after { background: var(--accent-amber); }
+
+  .kpi-label { font-size: 10px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.3; }
+  .kpi-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .kpi-sub { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+  .c-em  { color: var(--accent-emerald); }
+  .c-bl  { color: var(--accent-blue); }
+  .c-tl  { color: #2dd4bf; }
+  .c-am  { color: var(--accent-amber); }
+  .c-rd  { color: var(--accent-red); }
+  .c-vl  { color: var(--accent-violet); }
+
+  /* ── Two + three col layouts ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  /* ── Bar chart ── */
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .bar-label { font-size: 11px; color: var(--text-secondary); width: 136px; flex-shrink: 0; }
+  .bar-track {
+    flex: 1; height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 99px;
+    position: relative;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  }
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 8px;
+    background: rgba(255,255,255,0.5);
+    filter: blur(3px);
+  }
+  .bar-val { font-size: 12px; font-weight: 600; width: 28px; text-align: right; flex-shrink: 0; }
+
+  /* ── Revenue streams table ── */
+  .rev-row {
+    display: grid;
+    grid-template-columns: 82px 1fr 64px 56px;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 11.5px;
+  }
+  .rev-row:last-child { border-bottom: none; font-weight: 600; }
+  .rev-head {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .rev-muted { color: var(--text-secondary); }
+
+  /* ── GTM Flow ── */
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    margin-bottom: 14px;
+  }
+  .flow-step {
+    text-align: center;
+    padding: 14px 6px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    position: relative;
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-num {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 800;
+    line-height: 1;
+  }
+  .flow-label { font-size: 10px; font-weight: 700; margin-top: 4px; }
+  .flow-desc { font-size: 9px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
+
+  /* ── Risks ── */
+  .risk-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-badge {
+    font-size: 9px; font-weight: 700;
+    padding: 3px 9px; border-radius: 99px;
+    flex-shrink: 0; margin-top: 1px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .badge-crit { background: rgba(248,113,113,0.15); color: #fca5a5; border: 1px solid rgba(248,113,113,0.25); }
+  .badge-high { background: rgba(251,191,36,0.12); color: #fde68a; border: 1px solid rgba(251,191,36,0.25); }
+  .badge-med  { background: rgba(167,139,250,0.12); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.25); }
+  .badge-low  { background: rgba(16,217,160,0.10); color: var(--accent-emerald); border: 1px solid rgba(16,217,160,0.2); }
+  .risk-text { font-size: 11.5px; color: var(--text-primary); line-height: 1.4; }
+  .risk-fix  { font-size: 10.5px; color: var(--text-secondary); margin-top: 3px; line-height: 1.45; }
+
+  /* ── First 100 users grid ── */
+  .users-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .users-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-sm);
+    padding: 10px 6px; text-align: center;
+    backdrop-filter: blur(8px);
+  }
+  .users-num {
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 700;
+  }
+  .users-label { font-size: 9px; color: var(--text-secondary); margin-top: 4px; line-height: 1.3; }
+
+  /* ── Competitive moat ── */
+  .moat-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; margin-bottom: 6px;
+    border-radius: var(--radius-sm);
+    font-size: 11.5px;
+    border: 1px solid;
+  }
+  .moat-label { font-weight: 600; }
+  .moat-strength {
+    font-size: 10px; font-weight: 600;
+    padding: 3px 9px; border-radius: 99px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Unit economics ── */
+  .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .unit-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-sm);
+    padding: 10px; text-align: center;
+    backdrop-filter: blur(8px);
+  }
+  .unit-label { font-size: 10px; color: var(--text-secondary); }
+  .unit-val {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700;
+    margin: 3px 0; line-height: 1;
+  }
+  .unit-sub { font-size: 9px; color: var(--text-muted); }
+
+  /* ── Business model snapshot ── */
+  .biz-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; }
+  .biz-col-title {
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .pill {
+    display: inline-block;
+    font-size: 9px; font-weight: 600;
+    padding: 3px 9px; border-radius: 99px;
+    margin-right: 4px; margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .pill-blue   { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.2); }
+  .pill-green  { background: rgba(16,217,160,0.12); color: var(--accent-emerald); border: 1px solid rgba(16,217,160,0.2); }
+  .pill-teal   { background: rgba(45,212,191,0.12); color: #5eead4; border: 1px solid rgba(45,212,191,0.2); }
+  .pill-amber  { background: rgba(251,191,36,0.12); color: #fde68a; border: 1px solid rgba(251,191,36,0.2); }
+  .pill-purple { background: rgba(167,139,250,0.14); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.2); }
+
+  /* ── Chart ── */
+  .chart-wrap { position: relative; width: 100%; height: 180px; }
+
+  /* ── Verdict ── */
+  .verdict-box {
+    position: relative; overflow: hidden;
+    border-radius: var(--radius-xl);
+    padding: 32px 28px;
+    text-align: center;
+    margin-top: 14px;
+    background: linear-gradient(135deg, rgba(16,217,160,0.10) 0%, rgba(59,130,246,0.08) 100%);
+    border: 1px solid rgba(16,217,160,0.25);
+    backdrop-filter: blur(20px);
+  }
+  .verdict-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(16,217,160,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .verdict-glow {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16,217,160,0.15), transparent 70%);
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+  .verdict-icon { font-size: 36px; margin-bottom: 8px; }
+  .verdict-title {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 800;
+    color: var(--accent-emerald);
+    letter-spacing: -0.02em;
+  }
+  .verdict-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 10px;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .verdict-cta {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 99px;
+    background: rgba(16,217,160,0.18);
+    border: 1px solid rgba(16,217,160,0.35);
+    color: var(--accent-emerald);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Divider ── */
+  hr.divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .biz-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+  }
+
+  @media (max-width: 720px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    .kpi-grid .kpi-card:nth-child(4),
+    .kpi-grid .kpi-card:nth-child(5) { grid-column: span 1; }
+    /* Make last 2 KPIs span to center them nicely */
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .two-col { grid-template-columns: 1fr; }
+    .three-col { grid-template-columns: 1fr; }
+
+    .flow-grid { grid-template-columns: repeat(3, 1fr); }
+    .flow-step { border-right: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .flow-step:nth-child(3) { border-right: none; }
+    .flow-step:nth-child(4) { border-right: 1px solid rgba(255,255,255,0.06); }
+    .flow-step:nth-child(6) { border-right: none; border-bottom: none; }
+    .flow-step:nth-child(5) { border-bottom: none; }
+    .flow-step:nth-child(4) { border-bottom: none; }
+
+    .users-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .rev-row { grid-template-columns: 74px 1fr 54px 46px; font-size: 11px; gap: 6px; }
+
+    .biz-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .page-wrap { padding: 18px 14px 50px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .kpi-value { font-size: 24px; }
+    .biz-grid { grid-template-columns: 1fr; }
+    .users-grid { grid-template-columns: repeat(3, 1fr); }
+    .rev-row { grid-template-columns: 70px 1fr 50px; }
+    .rev-row > span:nth-child(3) { display: none; }
+    .rev-head > span:nth-child(3) { display: none; }
+    .flow-grid { grid-template-columns: repeat(2, 1fr); }
+    .flow-step:nth-child(2n) { border-right: none; }
+    .flow-step:nth-child(5),
+    .flow-step:nth-child(6) { border-bottom: none; }
+    .header { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="brand">DigiLocal</div>
+      <div class="tagline">Business Strategy Dashboard · MSME Digitization Platform</div>
+    </div>
+    <div class="header-right">
+      <div class="badge-pill green"><div class="dot"></div>Investable</div>
+      <div class="badge-pill blue">Score 76 / 100</div>
+    </div>
+  </div>
+
+  <!-- Investment Scorecard -->
+  <div class="section-label">Investment Scorecard</div>
+  <div class="kpi-grid">
+    <div class="kpi-card em">
+      <div class="kpi-label">Business Viability</div>
+      <div class="kpi-value c-em">81</div>
+      <div class="kpi-sub">/ 100 · Strong</div>
+    </div>
+    <div class="kpi-card em">
+      <div class="kpi-label">Revenue Potential</div>
+      <div class="kpi-value c-em">86</div>
+      <div class="kpi-sub">/ 100 · High</div>
+    </div>
+    <div class="kpi-card tl">
+      <div class="kpi-label">GTM Strength</div>
+      <div class="kpi-value c-tl">78</div>
+      <div class="kpi-sub">/ 100 · Solid</div>
+    </div>
+    <div class="kpi-card tl">
+      <div class="kpi-label">Competitive Moat</div>
+      <div class="kpi-value c-tl">72</div>
+      <div class="kpi-sub">/ 100 · Defensible</div>
+    </div>
+    <div class="kpi-card am">
+      <div class="kpi-label">Investor Readiness</div>
+      <div class="kpi-value c-am">62</div>
+      <div class="kpi-sub">/ 100 · Near-Ready</div>
+    </div>
+  </div>
+
+  <!-- Scores + Revenue Streams -->
+  <div class="two-col">
+    <div class="glass">
+      <div class="glass-inner">
+        <div class="glass-title">Score Visualization</div>
+        <div class="bar-row">
+          <span class="bar-label">Business Viability</span>
+          <div class="bar-track"><div class="bar-fill" style="width:81%;background:linear-gradient(90deg,#10d9a0,#34d399)"></div></div>
+          <span class="bar-val c-em">81</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Revenue Potential</span>
+          <div class="bar-track"><div class="bar-fill" style="width:86%;background:linear-gradient(90deg,#10d9a0,#34d399)"></div></div>
+          <span class="bar-val c-em">86</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">GTM Strength</span>
+          <div class="bar-track"><div class="bar-fill" style="width:78%;background:linear-gradient(90deg,#2dd4bf,#10d9a0)"></div></div>
+          <span class="bar-val c-tl">78</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Competitive Moat</span>
+          <div class="bar-track"><div class="bar-fill" style="width:72%;background:linear-gradient(90deg,#2dd4bf,#10d9a0)"></div></div>
+          <span class="bar-val c-tl">72</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Investor Readiness</span>
+          <div class="bar-track"><div class="bar-fill" style="width:62%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></div></div>
+          <span class="bar-val c-am">62</span>
+        </div>
+        <hr class="divider" style="margin:10px 0">
+        <div class="bar-row">
+          <span class="bar-label" style="font-weight:600">Composite Score</span>
+          <div class="bar-track"><div class="bar-fill" style="width:76%;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div></div>
+          <span class="bar-val c-bl">76</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass">
+      <div class="glass-inner">
+        <div class="glass-title">Revenue Streams</div>
+        <div class="rev-row rev-head">
+          <span>Stream</span><span>Description</span><span>Timing</span><span>Yr 2 Mix</span>
+        </div>
+        <div class="rev-row">
+          <span style="font-weight:600">Setup fee</span>
+          <span class="rev-muted">₹999 – ₹4,999 one-time</span>
+          <span class="rev-muted">Day 1</span>
+          <span class="c-bl">~25%</span>
+        </div>
+        <div class="rev-row">
+          <span style="font-weight:600">Retainer</span>
+          <span class="rev-muted">₹499–₹1,499/mo recurring</span>
+          <span class="rev-muted">Month 1+</span>
+          <span class="c-em">~55%</span>
+        </div>
+        <div class="rev-row">
+          <span style="font-weight:600">Ads mgmt</span>
+          <span class="rev-muted">15–20% of ad spend</span>
+          <span class="rev-muted">Month 4+</span>
+          <span class="c-tl">~10%</span>
+        </div>
+        <div class="rev-row">
+          <span style="font-weight:600">ONDC</span>
+          <span class="rev-muted">Per seller onboarded</span>
+          <span class="rev-muted">Month 5+</span>
+          <span class="c-am">~5%</span>
+        </div>
+        <div class="rev-row">
+          <span style="font-weight:600">Annual deal</span>
+          <span class="rev-muted">Pay 10 mo, get 12 free</span>
+          <span class="rev-muted">Month 2+</span>
+          <span class="c-am">~5%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GTM Flow -->
+  <div class="section-label">GTM Flow — Prospect to Advocate</div>
+  <div class="flow-grid">
+    <div class="flow-step" style="background:rgba(59,130,246,0.10)">
+      <div class="flow-num c-bl">1</div>
+      <div class="flow-label c-bl">Prospect</div>
+      <div class="flow-desc">Field agent walks in · Shows blank Google search</div>
+    </div>
+    <div class="flow-step" style="background:rgba(45,212,191,0.08)">
+      <div class="flow-num c-tl">2</div>
+      <div class="flow-label c-tl">Demo</div>
+      <div class="flow-desc">Live GBP + website + ordering on phone</div>
+    </div>
+    <div class="flow-step" style="background:rgba(251,191,36,0.08)">
+      <div class="flow-num c-am">3</div>
+      <div class="flow-label c-am">Close</div>
+      <div class="flow-desc">₹999 pilot · UPI pay · Start today</div>
+    </div>
+    <div class="flow-step" style="background:rgba(251,146,60,0.08)">
+      <div class="flow-num" style="color:#fb923c">4</div>
+      <div class="flow-label" style="color:#fb923c">Deliver</div>
+      <div class="flow-desc">GBP live 48hr · Website 5 days</div>
+    </div>
+    <div class="flow-step" style="background:rgba(167,139,250,0.10)">
+      <div class="flow-num c-vl">5</div>
+      <div class="flow-label c-vl">Retain</div>
+      <div class="flow-desc">Day-14 impressions report · Monthly retainer</div>
+    </div>
+    <div class="flow-step" style="background:rgba(16,217,160,0.10)">
+      <div class="flow-num c-em">6</div>
+      <div class="flow-label c-em">Advocate</div>
+      <div class="flow-desc">1 free month per paying referral</div>
+    </div>
+  </div>
+
+  <!-- First 100 Users / Competitive Moat / Unit Economics -->
+  <div class="three-col">
+    <!-- First 100 Users -->
+    <div class="glass">
+      <div class="glass-inner">
+        <div class="glass-title">First 100 Users Plan</div>
+        <div class="users-grid">
+          <div class="users-card">
+            <div class="users-num c-bl">1–5</div>
+            <div class="users-label">Founder direct · Week 1–2</div>
+          </div>
+          <div class="users-card">
+            <div class="users-num c-tl">6–15</div>
+            <div class="users-label">Referrals from first 5 · Week 3–4</div>
+          </div>
+          <div class="users-card">
+            <div class="users-num c-am">16–30</div>
+            <div class="users-label">1st field agent · Month 2</div>
+          </div>
+          <div class="users-card">
+            <div class="users-num c-em">31–60</div>
+            <div class="users-label">2 agents + WhatsApp · M3–4</div>
+          </div>
+          <div class="users-card">
+            <div class="users-num c-vl">61–100</div>
+            <div class="users-label">Network + LinkedIn · M5–6</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:10px;color:var(--text-secondary);line-height:1.6">
+          Target CAC: <strong style="color:var(--text-primary)">₹600</strong> via referral · <strong style="color:var(--text-primary)">₹1,200</strong> via agent<br>
+          Month-2 retention target: <strong class="c-em">70%+</strong> = PMF confirmed
+        </div>
+      </div>
+    </div>
+
+    <!-- Competitive Moat -->
+    <div class="glass">
+      <div class="glass-inner">
+        <div class="glass-title">Competitive Moat</div>
+        <div class="moat-item" style="background:rgba(59,130,246,0.10);border-color:rgba(59,130,246,0.18)">
+          <span class="moat-label c-bl">Trust moat</span>
+          <span class="moat-strength" style="background:rgba(59,130,246,0.15);color:#93c5fd">Very High</span>
+        </div>
+        <div class="moat-item" style="background:rgba(45,212,191,0.08);border-color:rgba(45,212,191,0.18)">
+          <span class="moat-label c-tl">Bundle moat</span>
+          <span class="moat-strength" style="background:rgba(45,212,191,0.12);color:#5eead4">High</span>
+        </div>
+        <div class="moat-item" style="background:rgba(167,139,250,0.10);border-color:rgba(167,139,250,0.18)">
+          <span class="moat-label c-vl">Language moat</span>
+          <span class="moat-strength" style="background:rgba(167,139,250,0.14);color:#c4b5fd">High</span>
+        </div>
+        <div class="moat-item" style="background:rgba(16,217,160,0.08);border-color:rgba(16,217,160,0.18)">
+          <span class="moat-label c-em">Network moat</span>
+          <span class="moat-strength" style="background:rgba(16,217,160,0.12);color:var(--accent-emerald)">Med-High</span>
+        </div>
+        <div class="moat-item" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.18)">
+          <span class="moat-label c-am">Data moat</span>
+          <span class="moat-strength" style="background:rgba(251,191,36,0.12);color:#fde68a">Medium</span>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--text-secondary);line-height:1.5">
+          No competitor owns affordable done-for-you MSME digitization at this price point.
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit Economics -->
+    <div class="glass">
+      <div class="glass-inner">
+        <div class="glass-title">Unit Economics</div>
+        <div class="unit-grid">
+          <div class="unit-card">
+            <div class="unit-label">LTV:CAC</div>
+            <div class="unit-val c-em">18:1</div>
+            <div class="unit-sub">Excellent (&gt;3:1 target)</div>
+          </div>
+          <div class="unit-card">
+            <div class="unit-label">Payback</div>
+            <div class="unit-val c-tl">4 mo</div>
+            <div class="unit-sub">Fast = bootstrap-able</div>
+          </div>
+          <div class="unit-card">
+            <div class="unit-label">Gross Margin</div>
+            <div class="unit-val c-bl">62%</div>
+            <div class="unit-sub">At template scale</div>
+          </div>
+          <div class="unit-card">
+            <div class="unit-label">Blended LTV</div>
+            <div class="unit-val c-em">₹20K</div>
+            <div class="unit-sub">Per client, 36 months</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:10px;color:var(--text-secondary);line-height:1.6">
+          Revenue milestone to raise: <strong style="color:var(--text-primary)">₹25K MRR + 25 clients + 70% retention</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Projection Chart -->
+  <div class="section-label">Revenue Projection — Base Case</div>
+  <div class="glass" style="margin-bottom:12px">
+    <div class="glass-inner">
+      <div class="chart-wrap">
+        <canvas id="revChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Risks -->
+  <div class="section-label">Key Risks & Mitigations</div>
+  <div class="glass" style="margin-bottom:12px">
+    <div class="glass-inner">
+      <div class="risk-item">
+        <span class="risk-badge badge-crit">Critical</span>
+        <div>
+          <div class="risk-text">Month-2 retainer churn — client pays once, doesn't renew</div>
+          <div class="risk-fix">Fix: WOW moment in 48hrs + Day-14 impressions report. This single action cuts churn 40%.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge badge-high">High</span>
+        <div>
+          <div class="risk-text">Founder bandwidth — solo operator bottleneck beyond 15 clients</div>
+          <div class="risk-fix">Fix: Commission-based field agent by client #10. Document SOP before client #5.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge badge-high">High</span>
+        <div>
+          <div class="risk-text">Low WTP in Tier-3 cities — ₹499/month feels expensive</div>
+          <div class="risk-fix">Fix: ₹999 one-time pilot first. Prove ROI, then convert to monthly retainer.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge badge-med">Medium</span>
+        <div>
+          <div class="risk-text">Commoditisation of GBP setup by AI tools or aggregators</div>
+          <div class="risk-fix">Fix: Charge for management, not setup. Annual contracts lock in relationship moat.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge badge-low">Low</span>
+        <div>
+          <div class="risk-text">Google GBP policy changes impacting core delivery</div>
+          <div class="risk-fix">Fix: Diversify to Apple Maps, Bing Places, and ONDC from Month 2.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Model Snapshot -->
+  <div class="section-label">Business Model Snapshot</div>
+  <div class="glass" style="margin-bottom:14px">
+    <div class="glass-inner">
+      <div class="biz-grid">
+        <div>
+          <div class="biz-col-title">Who</div>
+          <span class="pill pill-blue">Restaurants</span><span class="pill pill-blue">Kiranas</span>
+          <span class="pill pill-teal">Salons</span><span class="pill pill-teal">Parlours</span>
+          <span class="pill pill-purple">Coaching</span>
+          <div style="font-size:10px;color:var(--text-secondary);margin-top:7px">Tier-2/3 India, owner-operated</div>
+        </div>
+        <div>
+          <div class="biz-col-title">What</div>
+          <span class="pill pill-green">GBP Setup</span><span class="pill pill-green">Website</span>
+          <span class="pill pill-green">Ordering link</span><span class="pill pill-teal">Monthly report</span>
+          <span class="pill pill-amber">WhatsApp biz</span>
+          <div style="font-size:10px;color:var(--text-secondary);margin-top:7px">Done-for-you in 48 hours</div>
+        </div>
+        <div>
+          <div class="biz-col-title">How</div>
+          <span class="pill pill-amber">Field agents</span><span class="pill pill-amber">WhatsApp</span>
+          <span class="pill pill-blue">Referrals</span><span class="pill pill-purple">Local groups</span>
+          <div style="font-size:10px;color:var(--text-secondary);margin-top:7px">Human trust → recurring fee</div>
+        </div>
+        <div>
+          <div class="biz-col-title">Why they pay</div>
+          <div style="font-size:11.5px;color:var(--text-primary);line-height:1.6">
+            Fear of losing customers to digitized competitors.<br><br>
+            <strong style="color:var(--accent-emerald)">ROI logic:</strong> 2 new customers = full month's fee recovered.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict-box">
+    <div class="verdict-glow"></div>
+    <div class="verdict-icon">🟢</div>
+    <div class="verdict-title">Investable — Strong Demand Signal</div>
+    <div class="verdict-sub">
+      Problem is real. Market is massive (₹85,600 Cr TAM). Unit economics are exceptional (LTV:CAC 18:1).<br>
+      Build for 90 days · Get 25 paying clients with 70%+ Month-2 retention · Then raise pre-seed.
+    </div>
+    <div class="verdict-cta">
+      Single most important action: <strong>5 paying pilots in 14 days.</strong> Revenue validates everything.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const ctx = document.getElementById('revChart').getContext('2d');
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, 180);
+  grad.addColorStop(0, 'rgba(16,217,160,0.7)');
+  grad.addColorStop(1, 'rgba(59,130,246,0.4)');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Mo 1','Mo 3','Mo 6','Mo 12','Year 2','Year 3'],
+      datasets: [{
+        label: 'MRR (₹)',
+        data: [2500, 21250, 63750, 170000, 680000, 2125000],
+        backgroundColor: [
+          'rgba(59,130,246,0.45)',
+          'rgba(45,212,191,0.5)',
+          'rgba(16,217,160,0.55)',
+          'rgba(16,217,160,0.65)',
+          'rgba(16,217,160,0.80)',
+          'rgba(16,217,160,0.95)',
+        ],
+        borderColor: [
+          'rgba(59,130,246,0.7)',
+          'rgba(45,212,191,0.7)',
+          'rgba(16,217,160,0.8)',
+          'rgba(16,217,160,0.9)',
+          'rgba(16,217,160,1)',
+          'rgba(16,217,160,1)',
+        ],
+        borderWidth: 1,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(15,23,42,0.9)',
+          borderColor: 'rgba(255,255,255,0.12)',
+          borderWidth: 1,
+          titleColor: 'rgba(255,255,255,0.7)',
+          bodyColor: '#10d9a0',
+          padding: 10,
+          callbacks: {
+            label: ctx => '  ₹' + ctx.raw.toLocaleString('en-IN')
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { font: { size: 11, family: 'Inter' }, color: 'rgba(255,255,255,0.4)' },
+          grid: { display: false },
+          border: { color: 'rgba(255,255,255,0.08)' }
+        },
+        y: {
+          ticks: {
+            font: { size: 10, family: 'Inter' },
+            color: 'rgba(255,255,255,0.35)',
+            callback: v => v >= 100000 ? '₹' + (v/100000).toFixed(1) + 'L' : '₹' + (v/1000).toFixed(0) + 'K'
+          },
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          border: { color: 'rgba(255,255,255,0.08)', dash: [3,3] }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
