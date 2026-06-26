@@ -124,6 +124,10 @@ An AI-powered career platform that assesses skills, recommends personalized lear
 
 `shark-tank-simulator01.html`
 
+## 💻 Generated HTML Application
+
+[Open Shark Tank AI Simulator](https://rahulsingh873.github.io/60-days-claude-challenge/Day25/shark-tank-simulator01.html)
+
 # Key Learnings
 
 - A successful startup needs a clear and defensible competitive advantage.
