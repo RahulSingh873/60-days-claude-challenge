@@ -66,6 +66,64 @@ An AI-powered career platform that assesses skills, recommends personalized lear
 
 ---
 
+# 📸 Project Screenshots
+
+![Entering Project Idea](./Screenshot%202026-06-26%20122330.png)
+
+---
+
+![Pitching](./Screenshot%202026-06-26%20122417.png)
+
+---
+
+![Pitching](./Screenshot%202026-06-26%20122445.png)
+
+---
+
+![Q&A Generating](./Screenshot%202026-06-26%20122506.png)
+
+---
+
+![Question Answers](./Screenshot%202026-06-26%20123443.png)
+
+---
+
+![Question Answers](./Screenshot%202026-06-26%20123515.png)
+
+---
+
+![Question Answers](./Screenshot%202026-06-26%20123542.png)
+
+---
+
+![Question Answers](./Screenshot%202026-06-26%20123606.png)
+
+---
+
+![Question Answers](./Screenshot%202026-06-26%20123632.png)
+
+---
+
+![Pitch SCore](./Screenshot%202026-06-26%20123720.png)
+
+---
+
+![Pitch Score](./Screenshot%202026-06-26%20123752.png)
+
+---
+
+![Final Verdicts](./Screenshot%202026-06-26%20123822.png)
+
+---
+
+![Final Verdicts](./Screenshot%202026-06-26%20123847.png)
+
+---
+
+# 💻 Generated HTML Application
+
+`shark-tank-simulator01.html`
+
 # Key Learnings
 
 - A successful startup needs a clear and defensible competitive advantage.
