@@ -18,6 +18,34 @@ The simulator allows users to experience the complete authorization lifecycle, i
 
 ---
 
+## Generated HTML
+
+[Open Simulator](https://rahulsingh873.github.io/60-days-claude-challenge/Day26/prior-auth-simulator.html)
+
+---
+
+# 📸 Simulator Screenshots
+
+![Details Of Patient 1](Screenshot%202026-06-26%20171714.png)
+
+![Details Of Patient 1](Screenshot%202026-06-26%20171735.png)
+
+![Details Of Patient 1](Screenshot%202026-06-26%20171801.png)
+
+![Details Of Patient 1](Screenshot%202026-06-26%20171822.png)
+
+![Details Of Patient 1](Screenshot%202026-06-26%20171840.png)
+
+![Details Of Patient 1](Screenshot%202026-06-26%20171902.png)
+
+![Details Of Patient 2](Screenshot%202026-06-26%20171940.png)
+
+![Details Of Patient 2](Screenshot%202026-06-26%20172003.png)
+
+![Details Of Patient 2](Screenshot%202026-06-26%20172023.png)
+
+![Details Of Patient 2](Screenshot%202026-06-26%20172042.png)
+
 # Technologies Used
 
 - HTML5
