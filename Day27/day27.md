@@ -5,10 +5,37 @@ Claude can generate complete educational applications that combine storytelling,
 ---
 ## Screenshots
 
+![Image 1](Screenshot%202026-06-27%20215247.png)
+
+
+
+![Image 2](Screenshot%202026-06-27%20215515.png)
+
+
+
+![Image 3](Screenshot%202026-06-27%20215656.png)
+
+
+
+![Image 4](Screenshot%202026-06-27%20215821.png)
+
+
+
+![Image 5](Screenshot%202026-06-27%20215929.png)
+
+
+
+![Image 6](Screenshot%202026-06-27%20220338.png)
+
+
+
+![Image 7](Screenshot%202026-06-27%20220448.png)
 
 ---
 
-## Generated HTML file
+## Generated HTML
+
+[Open Dashboard](https://rahulsingh873.github.io/60-days-claude-challenge/Day27/prior-auth-story.html)
 
 ---
 ## Learnings
