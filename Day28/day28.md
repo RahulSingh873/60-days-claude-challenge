@@ -8,6 +8,10 @@ This project is an interactive **Hospital Admission Readiness Simulator** design
 
 ## Generated HTML File
 
+![HTML Generated](./hospital-admission-simulator.html)
+
+---
+
 [Open Dashboard](https://rahulsingh873.github.io/60-days-claude-challenge/Day28/hospital-admission-simulator.html)
 
 ---
@@ -27,6 +31,32 @@ The simulator includes:
 ---
 
 ## Screenshots
+
+![Admission Details](screenshots/Screenshot%202026-06-28%20115901.png)
+
+---
+
+![Workflow Actions](screenshots/Screenshot%202026-06-28%20120119.png)
+
+---
+
+![Readiness Score](screenshots/Screenshot%202026-06-28%20120224.png)
+
+---
+
+![Admission Details](screenshots/Screenshot%202026-06-28%20120452.png)
+
+---
+
+![Readiness Score before Setting Workflow Actions](screenshots/Screenshot%202026-06-28%20120519.png)
+
+---
+
+![Workflow Actions](screenshots/Screenshot%202026-06-28%20120552.png)
+
+---
+
+![Final Readiness Score and Advice](screenshots/Screenshot%202026-06-28%20120701.png)
 
 
 ---
