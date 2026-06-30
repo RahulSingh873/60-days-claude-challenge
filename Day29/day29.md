@@ -14,3 +14,61 @@ Build and explore an AI-powered supply chain crisis management simulator using C
 * Executive dashboards help visualize key performance metrics and measure the impact of strategic decisions.
 * Running multiple simulation scenarios demonstrates how different leadership approaches produce different business outcomes.
 * AI-powered simulations provide a practical environment for developing real-world decision-making and crisis management skills.
+
+## Screenshots
+
+---
+
+![Supplier Negotiation](./Screenshot%202026-06-30%20204007.png)
+
+---
+
+![Supplier negotitation](./Screenshot%202026-06-30%20204514.png)
+
+---
+
+![Supplier negotitation](./Screenshot%202026-06-30%20215322.png)
+
+---
+
+![Supplier negotitation](./Screenshot%202026-06-30%20215403.png)
+
+---
+
+![Supplier negotitation](./Screenshot%202026-06-30%20215507.png)
+
+---
+
+![Supplier negotitation](./Screenshot%202026-06-30%20215601.png)
+
+---
+
+![ceo boardroom ques1](./Screenshot%202026-06-30%20215706.png)
+
+---
+
+![ceo boardroom ques2](./Screenshot%202026-06-30%20215806.png)
+
+---
+ 
+![ceo boardroom ques3](./Screenshot%202026-06-30%20215910.png)
+
+---
+
+![ceo boardroom ques4](./Screenshot%202026-06-30%20220005.png)
+
+---
+
+![ceo boardroom ques5](./Screenshot%202026-06-30%20220056.png)
+
+---
+
+![AI business strategy](./Screenshot%202026-06-30%20225424.png)
+
+---
+
+![Expected Impact over 12 months](./Screenshot%202026-06-30%20225610.png)
+
+---
+
+![Final Report](./Screenshot%202026-06-30%20225704.png)
