@@ -15,7 +15,31 @@ Build and explore an AI-powered supply chain crisis management simulator using C
 * Running multiple simulation scenarios demonstrates how different leadership approaches produce different business outcomes.
 * AI-powered simulations provide a practical environment for developing real-world decision-making and crisis management skills.
 
+##  Generated HTML
+
+[View HTML File](./operation-lifeline.html)
+
+---
+
+View Live Link
+
+[Operation Lifeline Dashboard](https://rahulsingh873.github.io/60-days-claude-challenge/Day29/operation-lifeline.html)
+
+---
+
 ## Screenshots
+
+---
+
+![Dashboard](./Screenshot%202026-06-30%20181027.png)
+
+---
+
+![Dashboard](./Screenshot%202026-06-30%20181307.png)
+
+---
+
+![Crisis](./Screenshot%202026-06-30%20181844.png)
 
 ---
 
