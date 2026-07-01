@@ -5,6 +5,58 @@ Built an interactive Supply Chain Builder simulator using Claude to understand h
 
 ---
 
+## Screenshots
+
+![Beginning Page](./Screenshot%202026-07-01%20103623.png)
+
+---
+
+![Company details](./Screenshot%202026-07-01%20103723.png)
+
+---
+
+![supplier strategy-1](./Screenshot%202026-07-01%20103750.png)
+
+---
+
+![supplier strategy-2](./Screenshot%202026-07-01%20103921.png)
+
+---
+
+![supplier strategy-3](./Screenshot%202026-07-01%20104036.png)
+
+---
+
+![supplier strategy-4](./Screenshot%202026-07-01%20104129.png)
+
+---
+
+![supplier strategy-5](./Screenshot%202026-07-01%20104227.png)
+
+---
+
+![overall score](./Screenshot%202026-07-01%20104601.png)
+
+---
+
+![strength and weakness](./Screenshot%202026-07-01%20104628.png)
+
+---
+
+![Decisions recap](./Screenshot%202026-07-01%20104653.png)
+
+---
+
+## HTML File
+
+- [Supply chain Builder](./Supply%20Chain%20Builder.html)
+
+---
+
+## Link to Access
+
+[Supply Chain Builder Dashboard](https://rahulsingh873.github.io/60-days-claude-challenge/Day30/Supply%20Chain%20Builder.html)
+
 ## What I Built
 A React-based Supply Chain Builder simulator that allows users to:
 - Generate a random company profile.
