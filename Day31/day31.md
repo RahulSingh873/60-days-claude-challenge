@@ -3,6 +3,27 @@
 ## Objective
 Built and tested an AI-powered Supply Chain Control Tower simulation using HTML. The goal was to manage real-time operational alerts, make quick decisions under time pressure, and maintain key business KPIs such as service level, inventory, transport, customer satisfaction, operational cost, and revenue.
 
+## Svreenshots
+
+![Beginning page of dashboard](Screenshot%202026-07-01%20115200.png)
+
+---
+
+![Score of first simulation](Screenshot%202026-07-01%20115546.png)
+
+---
+
+![Score of second simulation](Screenshot%202026-07-01%20115919.png)
+
+---
+
+## Generated HTML file
+
+- [AI Suppl Chain tower html file](./ai-supply-chain-control-tower.html)
+
+## Live View Link
+
+- [AI Supply Chain Tower Simulation](https://rahulsingh873.github.io/60-days-claude-challenge/Day31/ai-supply-chain-control-tower.html)
 
 ## Key Learnings
 - Learned how AI can assist in real-time supply chain decision-making.
