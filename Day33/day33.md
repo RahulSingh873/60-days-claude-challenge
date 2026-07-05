@@ -1,5 +1,39 @@
 # Day 33 – Media Integrity Analyzer
 
+## Screenshots
+
+![Why Media Integrity Matters](./Screenshot%202026-07-05%20181818.png)
+
+---
+
+![Headline Detective](./Screenshot%202026-07-05%20182157.png)
+
+---
+
+![Misleading Headline](./Screenshot%202026-07-05%20182955.png)
+
+---
+
+![Emotion Detector](./Screenshot%202026-07-05%20183102.png)
+
+---
+
+![Emotionally Engineered](./Screenshot%202026-07-05%20183714.png)
+
+---
+
+![Overall Integrity Score](./Screenshot%202026-07-05%20183908.png)
+
+---
+
+## Generated HTML File
+
+![Media Integrity Analyzer](./media-integrity-analyzer.html)
+
+## Deployed Page Link
+
+[Media Integrity Analyzer Dashboard](https://rahulsingh873.github.io/60-days-claude-challenge/Day33/media-integrity-analyzer.html)
+
 ## 🎯 Key Learnings
 
 - Sensational headlines often exaggerate reality to attract attention, even when the underlying story is routine.
