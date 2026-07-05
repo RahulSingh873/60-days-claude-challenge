@@ -1,5 +1,37 @@
 # Day 34 – Marketing Detective
 
+## Screenshots
+
+![Marketing Detective Dashboard](./Screenshot%202026-07-05%20195732.png)
+
+---
+
+![Choose Detective Aesthetic](./Screenshot%202026-07-05%20195833.png)
+
+---
+
+![Case File Detail](./Screenshot%202026-07-05%20195953.png)
+
+---
+
+![Investgation Board](./Screenshot%202026-07-05%20200647.png)
+
+---
+
+![Solve the Case/ Opt the choices](./Screenshot%202026-07-05%20200940.png)
+
+---
+
+![Investigation Score](./Screenshot%202026-07-05%20201022.png)
+
+---
+
+![Summary](./Screenshot%202026-07-05%20201114.png)
+
+## Deployed Page Link
+
+[Marketing Detective Dashboard](https://rahulsingh873.github.io/60-days-claude-challenge/Day34/marketing-detective.html)
+
 ## Generated HTML File
 
 [marketing-detective.html](./marketing-detective.html)
