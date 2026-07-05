@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Integrity Analyzer</title>
+<style>
+  :root {
+    --bg-0: #0b0709;
+    --bg-1: #14090c;
+    --bg-2: #1c0f12;
+    --card: #1a1013;
+    --card-hover: #221417;
+    --border: #35191d;
+    --border-soft: #2a1417;
+    --crimson: #e0293f;
+    --crimson-bright: #ff3b52;
+    --crimson-dim: #8c1f2c;
+    --gold: #d9a441;
+    --text-0: #f5e9ea;
+    --text-1: #cfb3b7;
+    --text-2: #93777b;
+    --good: #3fbf7f;
+    --warn: #d9a441;
+    --bad: #ff3b52;
+    --shadow: 0 20px 50px rgba(0,0,0,0.5);
+    --radius: 18px;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(ellipse at top, var(--bg-2), var(--bg-0) 60%);
+    color: var(--text-0);
+    font-family: var(--sans);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(224,41,63,0.08), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(217,164,65,0.05), transparent 45%);
+    background-attachment: fixed;
+  }
+
+  ::selection { background: var(--crimson-dim); color: #fff; }
+
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-0); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--crimson-dim); }
+
+  .app {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 24px 100px;
+  }
+
+  /* Header */
+  header.top {
+    text-align: center;
+    margin-bottom: 36px;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(224,41,63,0.08), transparent);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    margin-bottom: 22px;
+  }
+  .brand .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--crimson-bright);
+    box-shadow: 0 0 10px var(--crimson-bright);
+  }
+
+  h1.title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 50px);
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+    background: linear-gradient(180deg, #fff, var(--text-1));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  p.subtitle {
+    color: var(--text-2);
+    font-size: 16px;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Progress rail */
+  .progress-rail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 34px 0 6px;
+  }
+  .rail-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rail-node {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-2);
+    background: var(--bg-1);
+    transition: all 0.4s ease;
+  }
+  .rail-node.active {
+    border-color: var(--crimson-bright);
+    color: #fff;
+    background: linear-gradient(145deg, var(--crimson), var(--crimson-dim));
+    box-shadow: 0 0 0 4px rgba(224,41,63,0.15), 0 6px 16px rgba(224,41,63,0.35);
+  }
+  .rail-node.done {
+    border-color: var(--good);
+    color: var(--good);
+    background: rgba(63,191,127,0.08);
+  }
+  .rail-line {
+    width: 40px; height: 2px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .rail-line .fill {
+    position: absolute; inset: 0;
+    background: var(--crimson-bright);
+    width: 0%;
+    transition: width 0.6s ease;
+  }
+  .rail-label {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 30px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Metrics dashboard bar (live) */
+  .metrics-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 34px;
+  }
+  .metric-chip {
+    background: var(--card);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  .metric-chip:hover {
+    transform: translateY(-3px);
+    border-color: var(--crimson-dim);
+  }
+  .metric-chip .m-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+  .metric-chip .m-value {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .metric-chip .m-bar {
+    height: 4px;
+    background: var(--border-soft);
+    border-radius: 4px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .metric-chip .m-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--crimson-dim), var(--crimson-bright));
+    transition: width 0.9s cubic-bezier(.2,.8,.2,1);
+    border-radius: 4px;
+  }
+
+  /* Cards */
+  .card {
+    background: linear-gradient(180deg, var(--card), var(--bg-1));
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    animation: fadeUp 0.55s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--crimson-bright), transparent);
+    opacity: 0.6;
+  }
+
+  .lesson-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    background: rgba(217,164,65,0.08);
+    border: 1px solid rgba(217,164,65,0.25);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+
+  h2.card-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    margin: 0 0 12px;
+  }
+
+  h3.section-h {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-2);
+    margin: 22px 0 10px;
+  }
+
+  p.lesson-text {
+    color: var(--text-1);
+    line-height: 1.7;
+    font-size: 15.5px;
+  }
+
+  .why-box {
+    border-left: 3px solid var(--crimson-bright);
+    background: rgba(224,41,63,0.06);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin: 16px 0 4px;
+    font-size: 14.5px;
+    color: var(--text-1);
+  }
+
+  /* Article / post display */
+  .exhibit {
+    background: var(--bg-0);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin: 22px 0;
+    position: relative;
+  }
+  .exhibit-label {
+    position: absolute;
+    top: -11px; left: 20px;
+    background: var(--bg-0);
+    padding: 0 10px;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--crimson-bright);
+  }
+  .headline {
+    font-family: var(--serif);
+    font-size: 24px;
+    line-height: 1.35;
+    margin: 6px 0 14px;
+    color: #fff;
+  }
+  .byline {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 14px;
+    letter-spacing: 0.03em;
+  }
+  .article-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-1);
+  }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(145deg, var(--crimson), var(--crimson-dim));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: #fff;
+  }
+  .handle { font-weight: 600; font-size: 14px; }
+  .handle-sub { font-size: 11.5px; color: var(--text-2); }
+
+  mark.hl {
+    background: rgba(224,41,63,0.28);
+    color: #ffd7db;
+    padding: 1px 4px;
+    border-radius: 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  button {
+    font-family: var(--sans);
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+  .btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-0);
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+  }
+  .btn:hover {
+    border-color: var(--crimson-bright);
+    background: var(--card-hover);
+    transform: translateY(-2px);
+  }
+  .btn.primary {
+    background: linear-gradient(145deg, var(--crimson), var(--crimson-dim));
+    border: 1px solid var(--crimson-bright);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(224,41,63,0.3);
+  }
+  .btn.primary:hover {
+    box-shadow: 0 10px 26px rgba(224,41,63,0.45);
+  }
+  .btn.selected {
+    border-color: var(--crimson-bright);
+    background: linear-gradient(145deg, var(--crimson-dim), var(--card));
+    box-shadow: 0 0 0 3px rgba(224,41,63,0.18);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn.ghost {
+    background: transparent;
+  }
+
+  /* Word chips for identifying misleading parts */
+  .chip-field {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .word-chip {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-1);
+    font-size: 14px;
+    color: var(--text-1);
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .word-chip:hover {
+    border-color: var(--gold);
+    color: var(--text-0);
+  }
+  .word-chip.picked {
+    background: rgba(224,41,63,0.15);
+    border-color: var(--crimson-bright);
+    color: #fff;
+  }
+
+  textarea.notes {
+    width: 100%;
+    min-height: 70px;
+    background: var(--bg-0);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    color: var(--text-0);
+    font-family: var(--sans);
+    font-size: 14px;
+    margin-top: 14px;
+    resize: vertical;
+  }
+  textarea.notes:focus { border-color: var(--crimson-bright); }
+
+  /* Reveal panel */
+  .reveal {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px dashed var(--border);
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin: 10px 0 20px;
+    flex-wrap: wrap;
+  }
+  .score-dial {
+    width: 108px; height: 108px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    position: relative;
+    background: conic-gradient(var(--crimson-bright) calc(var(--pct,0)*1%), var(--border-soft) 0);
+    flex-shrink: 0;
+  }
+  .score-dial::after {
+    content: '';
+    position: absolute; inset: 8px;
+    border-radius: 50%;
+    background: var(--bg-1);
+  }
+  .score-dial .num {
+    position: relative; z-index: 1;
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .score-dial .lbl {
+    position: relative; z-index: 1;
+    font-size: 9.5px;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .badge.good { background: rgba(63,191,127,0.15); color: var(--good); }
+  .badge.warn { background: rgba(217,164,65,0.15); color: var(--warn); }
+  .badge.bad { background: rgba(255,59,82,0.15); color: var(--bad); }
+
+  .rewrite-box {
+    background: rgba(63,191,127,0.06);
+    border: 1px solid rgba(63,191,127,0.3);
+    border-left: 3px solid var(--good);
+    padding: 16px 18px;
+    border-radius: 0 10px 10px 0;
+    margin-top: 12px;
+    font-family: var(--serif);
+    font-size: 17px;
+    color: #d5f5e3;
+  }
+
+  .takeaway-box {
+    background: rgba(217,164,65,0.08);
+    border: 1px solid rgba(217,164,65,0.3);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 16px;
+    font-size: 14.5px;
+    color: var(--text-1);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .takeaway-box .icon { font-size: 20px; flex-shrink: 0; }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .detail-item {
+    background: var(--bg-0);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .detail-item .d-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-2);
+    margin-bottom: 6px;
+  }
+  .detail-item .d-value {
+    font-size: 14.5px;
+    color: var(--text-0);
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Dashboard */
+  .final-score-wrap {
+    text-align: center;
+    padding: 20px 0 10px;
+  }
+  .final-dial {
+    width: 190px; height: 190px;
+    border-radius: 50%;
+    margin: 0 auto 18px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    background: conic-gradient(var(--crimson-bright) calc(var(--pct,0)*1%), var(--border-soft) 0);
+    position: relative;
+    animation: popIn 0.8s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .final-dial::after {
+    content: '';
+    position: absolute; inset: 14px;
+    border-radius: 50%;
+    background: var(--bg-1);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
+  }
+  .final-dial .num {
+    position: relative; z-index: 1;
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 700;
+  }
+  .final-dial .lbl {
+    position: relative; z-index: 1;
+    font-size: 11px;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .habit-list {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .habit-list li {
+    background: var(--bg-0);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 14.5px;
+    color: var(--text-1);
+    transition: border-color 0.25s ease;
+  }
+  .habit-list li:hover { border-color: var(--crimson-dim); }
+  .habit-list .num-circle {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--crimson), var(--crimson-dim));
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .redflag-box {
+    background: rgba(255,59,82,0.08);
+    border: 1px solid rgba(255,59,82,0.3);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 18px;
+    font-size: 14.5px;
+    color: #ffc9d0;
+  }
+
+  footer.note {
+    text-align: center;
+    color: var(--text-2);
+    font-size: 12.5px;
+    margin-top: 40px;
+    letter-spacing: 0.02em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(224,41,63,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(224,41,63,0); }
+  }
+  .pulse { animation: pulse 1.8s infinite; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="top">
+    <div class="brand"><span class="dot"></span> Media Literacy Lab</div>
+    <h1 class="title">Media Integrity Analyzer</h1>
+    <p class="subtitle">A guided lesson in spotting spin, hype, and manipulation — one headline and one post at a time. Observe first. Think. Then reveal.</p>
+  </header>
+
+  <div class="progress-rail" id="progressRail"></div>
+  <div class="rail-label" id="railLabel">Step 1 of 3 — Introduction</div>
+
+  <div class="metrics-bar">
+    <div class="metric-chip">
+      <div class="m-label">Headline Accuracy</div>
+      <div class="m-value" id="mv-headline">—</div>
+      <div class="m-bar"><div class="m-fill" id="mf-headline"></div></div>
+    </div>
+    <div class="metric-chip">
+      <div class="m-label">Source Reliability</div>
+      <div class="m-value" id="mv-source">—</div>
+      <div class="m-bar"><div class="m-fill" id="mf-source"></div></div>
+    </div>
+    <div class="metric-chip">
+      <div class="m-label">Emotional Manipulation</div>
+      <div class="m-value" id="mv-emotion">—</div>
+      <div class="m-bar"><div class="m-fill" id="mf-emotion"></div></div>
+    </div>
+    <div class="metric-chip">
+      <div class="m-label">Audience Targeting</div>
+      <div class="m-value" id="mv-audience">—</div>
+      <div class="m-bar"><div class="m-fill" id="mf-audience"></div></div>
+    </div>
+  </div>
+
+  <div id="stage"></div>
+
+  <footer class="note">Media Integrity Analyzer · All scenarios are fictional and generated for practice purposes.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Data banks ----------
+  var headlineBank = [
+    {
+      headline: "Local Water Supply 'On the Verge of Collapse,' Officials Warn",
+      byline: "City Desk · 2 hours ago · 4.2k shares",
+      body: "A routine maintenance check at the Eastside Water Treatment Plant found mineral buildup in one of twelve filtration units. The unit was taken offline for cleaning, a process expected to take 48 hours. Officials say the other eleven units are operating normally and there is no impact to water pressure or safety. The plant's spokesperson noted this type of maintenance happens 'several times a year' and called it 'routine, not an emergency.'",
+      exaggeratedParts: ["on the verge of collapse", "officials warn"],
+      accuracy: 28,
+      explanation: "The headline implies an imminent citywide crisis, but the article describes routine maintenance on one of twelve units with zero impact on residents. 'Collapse' and 'warn' are crisis words applied to a non-crisis event — a classic technique to inflate urgency and drive clicks.",
+      fairHeadline: "One of Twelve Water Filtration Units Taken Offline for Routine Cleaning",
+      takeaway: "Big, alarming verbs (\"collapse,\" \"warn,\" \"crisis\") next to a small, ordinary fact are a signal to slow down and read the body text before reacting."
+    },
+    {
+      headline: "Scientists Stunned as New Study 'Changes Everything' About Coffee",
+      byline: "Health Wire · 6 hours ago · 9.8k shares",
+      body: "A university nutrition lab tracked 62 adults over eight weeks and found that participants who drank 2-3 cups of black coffee daily had slightly lower average blood pressure readings than those who drank none. The lead researcher cautioned the sample size was small, the effect was modest, and 'this is one early study, not a reason to change your diet.' She called for larger, longer-term research before drawing conclusions.",
+      exaggeratedParts: ["stunned", "changes everything"],
+      accuracy: 22,
+      explanation: "The researcher explicitly described this as a small, preliminary study with a modest effect — the opposite of 'changes everything.' Words like 'stunned' manufacture drama around a cautious, incremental finding, which is how most real science actually works.",
+      fairHeadline: "Small Study Finds Modest Link Between Coffee and Blood Pressure",
+      takeaway: "When a headline claims a study 'changes everything,' check whether the scientists themselves are making that claim — usually they aren't."
+    },
+    {
+      headline: "Popular App Accused of 'Spying' on Millions of Users",
+      byline: "Tech Today · 1 day ago · 15k shares",
+      body: "A security researcher found that the app requests access to the device microphone, which it uses for its built-in voice-search feature. The permission is listed in the app's public privacy policy and can be disabled in settings. The researcher noted no evidence that audio is recorded or transmitted without a user actively pressing the voice-search button.",
+      exaggeratedParts: ["accused of 'spying'", "millions of users"],
+      accuracy: 30,
+      explanation: "The article describes a disclosed, optional, user-initiated microphone permission — not covert surveillance. 'Spying' implies secret, unauthorized monitoring, which the researcher's own findings contradict.",
+      fairHeadline: "Security Researcher Reviews App's Optional Voice-Search Microphone Permission",
+      takeaway: "Loaded words like 'spying' or 'secretly' should prompt a simple question: does the evidence in the article actually describe something secret?"
+    }
+  ];
+
+  var postBank = [
+    {
+      platform: "Reel Caption",
+      handle: "@dailyglowhacks",
+      sub: "Wellness · 480K followers",
+      text: "The ONE morning habit doctors don't want you to know about 😱 I tried it for 3 days and I literally could not believe what happened to my skin. Comment 'GLOW' before this gets taken down 👇",
+      feelingPrompt: "How does this caption make you feel, and which words caused that feeling?",
+      influentialWords: ["don't want you to know", "could not believe", "before this gets taken down"],
+      targetAudience: "Adults (especially younger women) interested in skincare and quick self-improvement fixes, browsing short-form video during idle moments.",
+      intendedResponse: "Urgency, fear of missing out (FOMO), and curiosity strong enough to stop scrolling and engage immediately.",
+      technique: "Manufactured secrecy + artificial scarcity — implying hidden information and a closing window creates pressure to act before thinking.",
+      neutralRewrite: "I tried a new morning skincare habit for three days and want to share what I noticed. Here's what happened.",
+      takeaway: "Phrases implying secret knowledge or a countdown ('before this is deleted') are pressure tactics, not evidence of value — real information doesn't need a ticking clock."
+    },
+    {
+      platform: "Social Post",
+      handle: "@marketmoves_alert",
+      sub: "Finance · 210K followers",
+      text: "🚨 BREAKING: Insiders are quietly moving their money out of savings accounts RIGHT NOW. If you don't act this week, you could miss the biggest shift in a decade. Link in bio before it's gone.",
+      feelingPrompt: "What emotion does this post trigger, and which specific words trigger it?",
+      influentialWords: ["insiders", "quietly moving", "act this week", "before it's gone"],
+      targetAudience: "Everyday savers and casual investors anxious about missing financial opportunities, especially people newer to investing.",
+      intendedResponse: "Fear of being left behind (FOMO) combined with distrust of 'the system,' pushing rapid action without research.",
+      technique: "False urgency + insider framing — suggesting a secret group has special knowledge and a closing deadline, encouraging impulsive decisions.",
+      neutralRewrite: "Some financial commentators suggest reviewing where you keep your savings. As always, research any change carefully before acting.",
+      takeaway: "Financial content with countdowns and 'insider' language is designed to bypass careful thinking — real financial decisions rarely need to be made in a week."
+    },
+    {
+      platform: "Article Excerpt",
+      handle: "The Daily Pulse",
+      sub: "Opinion/Lifestyle Section",
+      text: "Parents everywhere are terrified after a disturbing new trend was spotted at schools nationwide. Experts say if your child does even one of these things, it could already be too late.",
+      feelingPrompt: "What feeling arises as you read this excerpt, and which words create it?",
+      influentialWords: ["terrified", "disturbing", "nationwide", "already be too late"],
+      targetAudience: "Parents of school-age children, especially those active in parenting groups and forums.",
+      intendedResponse: "Fear and protective anxiety strong enough to share the article widely without verifying the underlying claim.",
+      technique: "Fear escalation + vague authority ('experts say') — no expert is named, no data is cited, and the threat is described as both widespread and irreversible.",
+      neutralRewrite: "Some parents have raised questions about a new trend at schools. Here's what's known so far, and what isn't.",
+      takeaway: "When 'experts say' isn't followed by a name, credential, or study, treat the claim as unverified — vague authority is often no authority at all."
+    }
+  ];
+
+  function pick(bank){ return bank[Math.floor(Math.random()*bank.length)]; }
+
+  // ---------- State ----------
+  var state = {
+    step: 1, // 1 intro, 2 challenge1, 3 challenge2, 4 dashboard
+    metrics: { headline: null, source: null, emotion: null, audience: null },
+    c1: null, c1Answer: null, c1Picked: [], c1Revealed: false,
+    c2: null, c2Picked: [], c2Notes: "", c2Revealed: false
+  };
+
+  var stage = document.getElementById('stage');
+
+  function renderRail(){
+    var steps = ["Introduction","Headline Detective","Emotion Detector","Dashboard"];
+    var rail = document.getElementById('progressRail');
+    rail.innerHTML = "";
+    steps.forEach(function(label, i){
+      var idx = i+1;
+      var node = document.createElement('div');
+      node.className = 'rail-node' + (idx===state.step ? ' active' : (idx<state.step ? ' done':''));
+      node.textContent = idx<state.step ? '✓' : idx;
+      rail.appendChild(node);
+      if(idx < steps.length){
+        var line = document.createElement('div');
+        line.className = 'rail-line';
+        var fill = document.createElement('div');
+        fill.className = 'fill';
+        fill.style.width = idx < state.step ? '100%' : '0%';
+        line.appendChild(fill);
+        rail.appendChild(line);
+      }
+    });
+    document.getElementById('railLabel').textContent = "Step " + state.step + " of 4 — " + steps[state.step-1];
+  }
+
+  function updateMetricUI(key, value){
+    var mv = document.getElementById('mv-'+key);
+    var mf = document.getElementById('mf-'+key);
+    if(value===null || value===undefined){
+      mv.textContent = "—";
+      mf.style.width = "0%";
+    } else {
+      mv.textContent = value + "%";
+      mf.style.width = value + "%";
+    }
+  }
+
+  function refreshMetrics(){
+    ["headline","source","emotion","audience"].forEach(function(k){
+      updateMetricUI(k, state.metrics[k]);
+    });
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function highlightText(text, phrases, cls){
+    var html = escapeHtml(text);
+    phrases.forEach(function(p){
+      var esc = escapeHtml(p);
+      var re = new RegExp(esc.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'ig');
+      html = html.replace(re, function(m){ return '<mark class="'+cls+'">'+m+'</mark>'; });
+    });
+    return html;
+  }
+
+  // ---------- Step 1: Introduction ----------
+  function renderIntro(){
+    stage.innerHTML =
+      '<div class="card">' +
+        '<span class="lesson-tag">Welcome</span>' +
+        '<h2 class="card-title">Why Media Integrity Matters</h2>' +
+        '<p class="lesson-text">Every day, headlines, posts, and reels compete for your attention. Some are honest. Some stretch the truth. Some are built entirely to trigger an emotional reaction before you\'ve had time to think. This isn\'t about memorizing rules — it\'s about training your eye to notice the small signals that separate fair reporting from manipulation.</p>' +
+        '<div class="why-box">You\'ll go through two short, guided challenges. In each one, you\'ll observe a real-feeling example, make your own judgment call, and then reveal an expert breakdown — including a fairer, rewritten version. No prior knowledge required. This is a lesson, not a quiz.</div>' +
+        '<div class="btn-row">' +
+          '<button class="btn primary pulse" id="startBtn">Begin: Headline Detective →</button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('startBtn').addEventListener('click', function(){
+      state.step = 2;
+      state.c1 = pick(headlineBank);
+      goto();
+    });
+  }
+
+  // ---------- Step 2: Challenge 1 — Headline Detective ----------
+  function renderChallenge1(){
+    var c = state.c1;
+    var html = '<div class="card">';
+    html += '<span class="lesson-tag">Challenge 1 · Headline Detective</span>';
+    html += '<h2 class="card-title">Would You Click This?</h2>';
+    html += '<p class="lesson-text">Headlines are written to earn a click, sometimes at the expense of accuracy. Publishers know that alarming or extreme language performs better than plain facts — even when the underlying story is ordinary. Learning to spot the gap between a headline and its article is one of the fastest ways to resist misleading news.</p>';
+    html += '<div class="why-box">Read the headline and article below exactly as a reader would encounter it. Then decide honestly: would you have clicked?</div>';
+
+    html += '<div class="exhibit"><span class="exhibit-label">Article Preview</span>';
+    html += '<div class="headline">' + escapeHtml(c.headline) + '</div>';
+    html += '<div class="byline">' + escapeHtml(c.byline) + '</div>';
+    html += '<div class="article-body">' + escapeHtml(c.body) + '</div>';
+    html += '</div>';
+
+    html += '<h3 class="section-h">Would you click this?</h3>';
+    html += '<div class="btn-row" id="clickChoices">';
+    ["Yes","Maybe","No"].forEach(function(opt){
+      html += '<button class="btn choice-btn" data-choice="'+opt+'">'+opt+'</button>';
+    });
+    html += '</div>';
+
+    html += '<h3 class="section-h">Which parts feel exaggerated or misleading? (tap all that apply)</h3>';
+    html += '<div class="chip-field" id="wordChips">';
+    // build word options: correct exaggerated parts + a few plausible neutral phrases from body
+    var options = c.exaggeratedParts.slice();
+    var neutralPool = ["routine maintenance","officials say","no impact to residents","eight weeks","small sample size","black coffee","voice-search feature","privacy policy"];
+    var extra = neutralPool.filter(function(p){ return c.body.toLowerCase().indexOf(p.toLowerCase()) !== -1; }).slice(0,2);
+    options = options.concat(extra);
+    // shuffle
+    options.sort(function(){ return Math.random()-0.5; });
+    options.forEach(function(opt){
+      html += '<div class="word-chip" data-word="'+escapeHtml(opt)+'">'+escapeHtml(opt)+'</div>';
+    });
+    html += '</div>';
+
+    html += '<div class="btn-row">';
+    html += '<button class="btn primary" id="revealC1" disabled>Reveal Accuracy Score →</button>';
+    html += '</div>';
+
+    html += '<div id="c1Reveal"></div>';
+    html += '</div>';
+
+    stage.innerHTML = html;
+
+    var clickChosen = null;
+    var pickedWords = [];
+
+    function maybeEnable(){
+      document.getElementById('revealC1').disabled = !(clickChosen && pickedWords.length>0);
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('.choice-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        Array.prototype.forEach.call(document.querySelectorAll('.choice-btn'), function(b){ b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        clickChosen = btn.getAttribute('data-choice');
+        maybeEnable();
+      });
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('.word-chip'), function(chip){
+      chip.addEventListener('click', function(){
+        var w = chip.getAttribute('data-word');
+        chip.classList.toggle('picked');
+        if(chip.classList.contains('picked')){
+          pickedWords.push(w);
+        } else {
+          pickedWords = pickedWords.filter(function(x){ return x!==w; });
+        }
+        maybeEnable();
+      });
+    });
+
+    document.getElementById('revealC1').addEventListener('click', function(){
+      state.c1Answer = clickChosen;
+      state.c1Picked = pickedWords;
+      revealC1(c, pickedWords);
+    });
+  }
+
+  function revealC1(c, pickedWords){
+    var correctSet = c.exaggeratedParts.map(function(s){return s.toLowerCase();});
+    var correctPicked = pickedWords.filter(function(w){ return correctSet.indexOf(w.toLowerCase())!==-1; }).length;
+
+    // metrics derived from content + interaction
+    var headlineAccuracy = c.accuracy;
+    var sourceReliability = Math.min(95, c.accuracy + 35 + (correctPicked*5));
+    state.metrics.headline = headlineAccuracy;
+    state.metrics.source = sourceReliability;
+    refreshMetrics();
+
+    var badgeClass = c.accuracy < 40 ? 'bad' : (c.accuracy < 70 ? 'warn':'good');
+    var badgeText = c.accuracy < 40 ? 'Misleading' : (c.accuracy < 70 ? 'Partially Accurate':'Accurate');
+
+    var highlighted = highlightText(c.headline, c.exaggeratedParts, 'hl');
+
+    var html = '<div class="reveal">';
+    html += '<div class="score-row">';
+    html += '<div class="score-dial" style="--pct:'+c.accuracy+'"><div class="num">'+c.accuracy+'%</div><div class="lbl">Accuracy</div></div>';
+    html += '<div>';
+    html += '<span class="badge '+badgeClass+'">'+badgeText+'</span>';
+    html += '<div class="headline" style="font-size:19px;">' + highlighted + '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '<h3 class="section-h">Why this headline misleads</h3>';
+    html += '<p class="lesson-text">' + escapeHtml(c.explanation) + '</p>';
+
+    html += '<h3 class="section-h">A Fairer Headline</h3>';
+    html += '<div class="rewrite-box">' + escapeHtml(c.fairHeadline) + '</div>';
+
+    html += '<div class="takeaway-box"><span class="icon">💡</span><div><strong>Key takeaway:</strong> ' + escapeHtml(c.takeaway) + '</div></div>';
+
+    html += '<div class="btn-row"><button class="btn primary" id="toC2">Continue: Emotion Detector →</button></div>';
+    html += '</div>';
+
+    document.getElementById('c1Reveal').innerHTML = html;
+    document.getElementById('revealC1').disabled = true;
+
+    document.getElementById('toC2').addEventListener('click', function(){
+      state.step = 3;
+      state.c2 = pick(postBank);
+      goto();
+    });
+  }
+
+  // ---------- Step 3: Challenge 2 — Emotion Detector ----------
+  function renderChallenge2(){
+    var c = state.c2;
+    var html = '<div class="card">';
+    html += '<span class="lesson-tag">Challenge 2 · Emotion Detector</span>';
+    html += '<h2 class="card-title">What Is This Post Making You Feel?</h2>';
+    html += '<p class="lesson-text">Some content isn\'t trying to inform you at all — it\'s trying to trigger a feeling strong enough that you share, comment, or buy before you think it through. Fear, urgency, and curiosity are the three most common levers. Recognizing the emotional pull in the moment is the first step to resisting it.</p>';
+    html += '<div class="why-box">Read the post below the way you\'d scroll past it in a feed. Notice your gut reaction before analyzing anything.</div>';
+
+    html += '<div class="exhibit"><span class="exhibit-label">' + escapeHtml(c.platform) + '</span>';
+    html += '<div class="post-meta"><div class="avatar">' + escapeHtml(c.handle.charAt(1).toUpperCase()) + '</div><div><div class="handle">'+escapeHtml(c.handle)+'</div><div class="handle-sub">'+escapeHtml(c.sub)+'</div></div></div>';
+    html += '<div class="article-body" style="font-size:16px;">' + escapeHtml(c.text) + '</div>';
+    html += '</div>';
+
+    html += '<h3 class="section-h">' + escapeHtml(c.feelingPrompt) + '</h3>';
+    html += '<div class="btn-row" id="feelingChoices">';
+    ["Excited","Anxious","Curious","Skeptical","Annoyed"].forEach(function(opt){
+      html += '<button class="btn choice-btn" data-choice="'+opt+'">'+opt+'</button>';
+    });
+    html += '</div>';
+
+    html += '<h3 class="section-h">Which words influenced that feeling? (tap all that apply)</h3>';
+    html += '<div class="chip-field" id="wordChips2">';
+    var options = c.influentialWords.slice();
+    var neutralPool = ["morning","doctors","skin","savings account","school","comment","link in bio"];
+    var lower = c.text.toLowerCase();
+    var extra = neutralPool.filter(function(p){ return lower.indexOf(p.toLowerCase())!==-1; }).slice(0,2);
+    options = options.concat(extra);
+    options.sort(function(){ return Math.random()-0.5; });
+    options.forEach(function(opt){
+      html += '<div class="word-chip" data-word="'+escapeHtml(opt)+'">'+escapeHtml(opt)+'</div>';
+    });
+    html += '</div>';
+
+    html += '<textarea class="notes" id="notesArea" placeholder="Optional: describe in your own words why this hit you emotionally..."></textarea>';
+
+    html += '<div class="btn-row"><button class="btn primary" id="revealC2" disabled>Reveal Manipulation Breakdown →</button></div>';
+    html += '<div id="c2Reveal"></div>';
+    html += '</div>';
+
+    stage.innerHTML = html;
+
+    var feelingChosen = null;
+    var pickedWords = [];
+
+    function maybeEnable(){
+      document.getElementById('revealC2').disabled = !(feelingChosen && pickedWords.length>0);
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('#feelingChoices .choice-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        Array.prototype.forEach.call(document.querySelectorAll('#feelingChoices .choice-btn'), function(b){ b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        feelingChosen = btn.getAttribute('data-choice');
+        maybeEnable();
+      });
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('#wordChips2 .word-chip'), function(chip){
+      chip.addEventListener('click', function(){
+        var w = chip.getAttribute('data-word');
+        chip.classList.toggle('picked');
+        if(chip.classList.contains('picked')){
+          pickedWords.push(w);
+        } else {
+          pickedWords = pickedWords.filter(function(x){ return x!==w; });
+        }
+        maybeEnable();
+      });
+    });
+
+    document.getElementById('revealC2').addEventListener('click', function(){
+      state.c2Picked = pickedWords;
+      state.c2Notes = document.getElementById('notesArea').value;
+      revealC2(c, pickedWords);
+    });
+  }
+
+  function revealC2(c, pickedWords){
+    var correctSet = c.influentialWords.map(function(s){return s.toLowerCase();});
+    var correctPicked = pickedWords.filter(function(w){ return correctSet.indexOf(w.toLowerCase())!==-1; }).length;
+
+    var emotionalManipulation = Math.min(96, 55 + correctPicked*12);
+    var audienceTargeting = Math.min(94, 60 + correctPicked*10);
+    state.metrics.emotion = emotionalManipulation;
+    state.metrics.audience = audienceTargeting;
+    refreshMetrics();
+
+    var highlighted = highlightText(c.text, c.influentialWords, 'hl');
+
+    var html = '<div class="reveal">';
+    html += '<div class="score-row">';
+    html += '<div class="score-dial" style="--pct:'+emotionalManipulation+'"><div class="num">'+emotionalManipulation+'%</div><div class="lbl">Manipulation</div></div>';
+    html += '<div><span class="badge bad">Emotionally Engineered</span>';
+    html += '<div class="article-body" style="font-size:15px; max-width:520px;">' + highlighted + '</div>';
+    html += '</div></div>';
+
+    html += '<div class="detail-grid">';
+    html += '<div class="detail-item"><div class="d-label">Target Audience</div><div class="d-value">' + escapeHtml(c.targetAudience) + '</div></div>';
+    html += '<div class="detail-item"><div class="d-label">Intended Emotional Response</div><div class="d-value">' + escapeHtml(c.intendedResponse) + '</div></div>';
+    html += '</div>';
+
+    html += '<h3 class="section-h">Manipulation Technique</h3>';
+    html += '<p class="lesson-text">' + escapeHtml(c.technique) + '</p>';
+
+    html += '<h3 class="section-h">A Neutral Rewrite</h3>';
+    html += '<div class="rewrite-box">' + escapeHtml(c.neutralRewrite) + '</div>';
+
+    html += '<div class="takeaway-box"><span class="icon">💡</span><div><strong>Key takeaway:</strong> ' + escapeHtml(c.takeaway) + '</div></div>';
+
+    html += '<div class="btn-row"><button class="btn primary" id="toDash">See My Media Integrity Dashboard →</button></div>';
+    html += '</div>';
+
+    document.getElementById('c2Reveal').innerHTML = html;
+    document.getElementById('revealC2').disabled = true;
+
+    document.getElementById('toDash').addEventListener('click', function(){
+      state.step = 4;
+      goto();
+    });
+  }
+
+  // ---------- Step 4: Dashboard ----------
+  function renderDashboard(){
+    var m = state.metrics;
+    var overall = Math.round((
+      (m.headline!==null?m.headline:50) +
+      (m.source!==null?m.source:50) +
+      (100 - (m.emotion!==null?m.emotion:50)) +
+      (100 - (m.audience!==null?m.audience:50))
+    ) / 4);
+
+    var biggestRedFlag;
+    if(m.emotion !== null && m.emotion >= (m.headline!==null ? (100-m.headline) : 0) && m.emotion >= 50){
+      biggestRedFlag = "Emotional manipulation — content in this session leaned on urgency and fear-based language (\"" + (state.c2 ? state.c2.influentialWords[0] : "secret") + "\") more than on facts.";
+    } else {
+      biggestRedFlag = "Headline exaggeration — the headline in this session used dramatic language (\"" + (state.c1 ? state.c1.exaggeratedParts[0] : "shocking") + "\") that overstated a fairly ordinary story.";
+    }
+
+    var html = '<div class="card">';
+    html += '<span class="lesson-tag">Session Complete</span>';
+    html += '<h2 class="card-title">Media Integrity Dashboard</h2>';
+
+    html += '<div class="final-score-wrap">';
+    html += '<div class="final-dial" style="--pct:'+overall+'"><div class="num">'+overall+'</div><div class="lbl">Overall Integrity Score</div></div>';
+    html += '</div>';
+
+    html += '<h3 class="section-h">What You Learned</h3>';
+    html += '<p class="lesson-text">You practiced spotting the gap between a headline\'s tone and its actual facts, and you identified the specific language techniques — urgency, secrecy, vague authority, and manufactured drama — that content creators use to bypass careful thinking. You also saw how those techniques target specific audiences on purpose, not by accident.</p>';
+
+    html += '<h3 class="section-h">Biggest Red Flag This Session</h3>';
+    html += '<div class="redflag-box">🚩 ' + escapeHtml(biggestRedFlag) + '</div>';
+
+    html += '<h3 class="section-h">Three Practical Media Literacy Habits</h3>';
+    html += '<ul class="habit-list">';
+    html += '<li><div class="num-circle">1</div><div>Read past the headline. Before reacting or sharing, skim the first two paragraphs of the actual article to check whether the facts match the tone.</div></li>';
+    html += '<li><div class="num-circle">2</div><div>Name the emotion. If a post makes you feel afraid, urgent, or desperate to act "before it\'s too late," pause — that reaction is often the intended product, not a side effect.</div></li>';
+    html += '<li><div class="num-circle">3</div><div>Ask who benefits. Consider who is targeted by this content and what they gain — clicks, sales, shares — if you react immediately instead of verifying first.</div></li>';
+    html += '</ul>';
+
+    html += '<div class="btn-row"><button class="btn primary" id="replayBtn">🔄 Replay With New Scenarios</button></div>';
+    html += '</div>';
+
+    stage.innerHTML = html;
+
+    document.getElementById('replayBtn').addEventListener('click', function(){
+      state.step = 1;
+      state.metrics = { headline: null, source: null, emotion: null, audience: null };
+      state.c1 = null; state.c1Answer = null; state.c1Picked = [];
+      state.c2 = null; state.c2Picked = []; state.c2Notes = "";
+      refreshMetrics();
+      goto();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  }
+
+  function goto(){
+    renderRail();
+    if(state.step===1) renderIntro();
+    else if(state.step===2) renderChallenge1();
+    else if(state.step===3) renderChallenge2();
+    else if(state.step===4) renderDashboard();
+    window.scrollTo({top: document.getElementById('progressRail').offsetTop - 20, behavior:'smooth'});
+  }
+
+  refreshMetrics();
+  goto();
+})();
+</script>
+</body>
+</html>
