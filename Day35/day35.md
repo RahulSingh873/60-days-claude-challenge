@@ -2,23 +2,23 @@
 
 # Screenshots
 
-![Choose domain and difficulty](./Screenshot 2026-07-05 215437.png)
+![Choose domain and difficulty](./Screenshot%2026-07-05%215437.png)
 
 ---
 
-![Refactor a messy problem](./Screenshot 2026-07-05 215639.png)
+![Refactor a messy problem](./Screenshot%2026-07-05%215639.png)
 
 ---
 
-![API Error Handling Design](./Screenshot 2026-07-05 215727.png)
+![API Error Handling Design](./Screenshot%2026-07-05%215727.png)
 
 ---
 
-![Code Review Feedback](./Screenshot 2026-07-05 215809.png)
+![Code Review Feedback](./Screenshot%2026-07-05%215809.png)
 
 ---
 
-![Prompt Score](./Screenshot 2026-07-05 215837.png)
+![Prompt Score](./Screenshot%2026-07-05%215837.png)
 
 # HTML Generated
 
