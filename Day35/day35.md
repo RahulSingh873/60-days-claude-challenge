@@ -1,5 +1,32 @@
 # Day 35-- prompt Puzzle
 
+# Screenshots
+
+![Choose domain and difficulty](./Screenshot 2026-07-05 215437.png)
+
+---
+
+![Refactor a messy problem](./Screenshot 2026-07-05 215639.png)
+
+---
+
+![API Error Handling Design](./Screenshot 2026-07-05 215727.png)
+
+---
+
+![Code Review Feedback](./Screenshot 2026-07-05 215809.png)
+
+---
+
+![Prompt Score](./Screenshot 2026-07-05 215837.png)
+
+# HTML Generated
+
+- [View Generated HTML](./prompt_puzzle.html)
+
+# View Deployed Link
+
+- [Prompt Puzzle Dashboard](https://rahulsingh873.github.io/60-days-claude-challenge/Day35/prompt_puzzle.html)
 
 # Key Learnings
 
