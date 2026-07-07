@@ -4,6 +4,23 @@
 
 Built an interactive Task Compass application using Claude to simulate workplace decision-making and team collaboration. The application guides users through ownership identification, task routing, and collaboration scenarios before generating a personalized Organizational Thinking Dashboard.
 
+## Screenshots
+![](./Screenshot%202026-07-07%20220937.png)
+
+![](./Screenshot%202026-07-07%20221120.png)
+
+![](./Screenshot%202026-07-07%20222004.png)
+
+![](./Screenshot%202026-07-07%20222622.png)
+
+![](./Screenshot%202026-07-07%20221811.png)
+
+![](./Screenshot%202026-07-07%20222713.png)
+
+## Html Generated
+
+- [task_compass.html](./task_compass.html)
+
 ## Features
 
 - Multiple workplace environment selection
