@@ -6,6 +6,35 @@ Built an interactive Cognitive Pattern Explorer using Claude that guides users t
 
 ## Screenshots
 
+---
+
+![choose you pace](./Screenshot%202026-07-07%20205422.png)
+
+---
+
+![Discover your thinking - Ques 1 & 2](./Screenshot%202026-07-07%20205554.png)
+
+---
+
+![Discover your thinking - Ques 3 & 4](./Screenshot%202026-07-07%20205716.png)
+
+---
+
+![Choose your priorities](./Screenshot%202026-07-07%20205944.png)
+
+---
+
+![Map your thinking](./Screenshot%202026-07-07%20210044.png)
+
+---
+
+![your reflection journal](./Screenshot%202026-07-07%20210113.png)
+
+---
+
+## HTML Generated
+
+- [cognitive-pattern-explorer.html](./cognitive-pattern-explorer.html)
 
 ## Features
 
