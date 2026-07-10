@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillQuest — Your Learning Roadmap</title>
+<style>
+  :root{
+    --bg-0:#0b0f1a;
+    --bg-1:#121829;
+    --panel:#161d33;
+    --panel-hi:#1d2540;
+    --line:#2a3358;
+    --text:#eef1fb;
+    --text-dim:#9aa4c7;
+    --lime:#c6ff5e;
+    --lime-dim:#8fbf3a;
+    --gold:#ffcf5c;
+    --coral:#ff6b81;
+    --violet:#9b8cff;
+    --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  }
+  @font-face{font-family:'Space Grotesk';src:local('Space Grotesk');}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 0%, #1a2340 0%, transparent 45%),
+      radial-gradient(circle at 90% 15%, #22183a 0%, transparent 40%),
+      var(--bg-0);
+    color:var(--text);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    padding:32px 20px 80px;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  /* Header */
+  .hero{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:20px;flex-wrap:wrap;margin-bottom:28px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand-badge{
+    width:46px;height:46px;border-radius:14px;
+    background:linear-gradient(135deg, var(--lime), var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;color:#0b0f1a;font-size:20px;
+    box-shadow:0 0 24px rgba(198,255,94,0.35);
+    transform:rotate(-6deg);
+  }
+  .brand h1{
+    font-family:var(--font-display);font-size:22px;margin:0;letter-spacing:0.5px;
+  }
+  .brand p{margin:2px 0 0;color:var(--text-dim);font-size:13px;}
+  .xp-chip{
+    display:flex;align-items:center;gap:10px;
+    background:var(--panel);border:1px solid var(--line);
+    padding:10px 16px;border-radius:999px;font-size:13px;color:var(--text-dim);
+  }
+  .xp-chip b{color:var(--gold);font-family:var(--font-mono);}
+
+  /* Layout */
+  .layout{display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start;}
+  @media (max-width:940px){.layout{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:24px;
+  }
+  .card h2{
+    font-family:var(--font-display);font-size:17px;margin:0 0 4px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card .sub{color:var(--text-dim);font-size:13px;margin:0 0 20px;}
+
+  /* Form */
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;
+    color:var(--text-dim);margin-bottom:6px;font-weight:600;
+  }
+  .field input, .field select{
+    width:100%;background:var(--bg-1);border:1px solid var(--line);
+    color:var(--text);padding:12px 14px;border-radius:10px;font-size:14px;
+    font-family:var(--font-body);outline:none;transition:border-color .15s, box-shadow .15s;
+  }
+  .field input:focus, .field select:focus{
+    border-color:var(--lime); box-shadow:0 0 0 3px rgba(198,255,94,0.15);
+  }
+  .field input::placeholder{color:#5b6488;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .level-picker{display:flex;gap:8px;}
+  .level-btn{
+    flex:1;padding:10px 6px;border-radius:10px;border:1px solid var(--line);
+    background:var(--bg-1);color:var(--text-dim);font-size:12px;cursor:pointer;
+    text-align:center;transition:all .15s;font-weight:600;
+  }
+  .level-btn.active{
+    background:linear-gradient(135deg, var(--lime), var(--lime-dim));
+    color:#0b0f1a;border-color:transparent;
+  }
+
+  .quest-btn{
+    width:100%;margin-top:6px;
+    background:linear-gradient(135deg, var(--lime), var(--gold));
+    color:#0b0f1a;border:none;border-radius:12px;
+    padding:15px;font-family:var(--font-display);font-weight:700;font-size:15px;
+    cursor:pointer;letter-spacing:0.3px;
+    box-shadow:0 6px 24px rgba(198,255,94,0.25);
+    transition:transform .12s, box-shadow .12s;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .quest-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(198,255,94,0.35);}
+  .quest-btn:active{transform:translateY(0);}
+  .quest-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+
+  /* Right panel states */
+  .empty-state{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:80px 20px;color:var(--text-dim);
+    background:var(--panel);border:1px dashed var(--line);border-radius:20px;
+    min-height:400px;
+  }
+  .empty-state .glyph{font-size:44px;margin-bottom:14px;filter:grayscale(0.2);}
+  .empty-state h3{font-family:var(--font-display);color:var(--text);margin:0 0 8px;font-size:19px;}
+  .empty-state p{max-width:340px;font-size:13px;line-height:1.6;margin:0;}
+
+  .loading-state{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:90px 20px;background:var(--panel);border-radius:20px;border:1px solid var(--line);
+    min-height:400px;
+  }
+  .spinner{
+    width:56px;height:56px;border-radius:50%;
+    border:4px solid var(--line);border-top-color:var(--lime);
+    animation:spin 0.9s linear infinite;margin-bottom:20px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-line{font-family:var(--font-mono);font-size:13px;color:var(--text-dim);
+    height:20px; overflow:hidden;}
+
+  .error-state{
+    background:linear-gradient(135deg, rgba(255,107,129,0.12), rgba(255,107,129,0.04));
+    border:1px solid rgba(255,107,129,0.4);border-radius:20px;padding:32px;text-align:center;
+  }
+  .error-state .glyph{font-size:36px;margin-bottom:10px;}
+  .error-state h3{font-family:var(--font-display);margin:0 0 8px;color:var(--coral);}
+  .error-state p{color:var(--text-dim);font-size:13px;margin:0 0 18px;}
+  .retry-btn{
+    background:var(--coral);color:#1a0a0d;border:none;padding:10px 20px;
+    border-radius:10px;font-weight:700;cursor:pointer;font-family:var(--font-display);
+  }
+
+  /* Dashboard */
+  .dash-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
+  .dash-title h2{font-family:var(--font-display);font-size:24px;margin:0 0 6px;}
+  .dash-title p{color:var(--text-dim);font-size:13.5px;max-width:560px;line-height:1.55;margin:0;}
+
+  .level-badge{
+    background:var(--bg-1);border:1px solid var(--line);border-radius:14px;
+    padding:12px 18px;text-align:center;min-width:110px;
+  }
+  .level-badge .num{font-family:var(--font-display);font-size:26px;color:var(--gold);}
+  .level-badge .lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);}
+
+  .progress-wrap{margin:20px 0 28px;}
+  .progress-top{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);margin-bottom:8px;}
+  .progress-top b{color:var(--lime);font-family:var(--font-mono);}
+  .progress-track{
+    height:14px;border-radius:999px;background:var(--bg-1);border:1px solid var(--line);
+    overflow:hidden;position:relative;
+  }
+  .progress-fill{
+    height:100%;border-radius:999px;
+    background:linear-gradient(90deg, var(--lime-dim), var(--lime), var(--gold));
+    transition:width .6s cubic-bezier(.3,1,.4,1);
+    position:relative;
+  }
+  .progress-fill::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    animation:shine 2.4s linear infinite;
+  }
+  @keyframes shine{from{transform:translateX(-100%);}to{transform:translateX(300%);}}
+
+  /* Timeline */
+  .timeline{position:relative;padding-left:6px;margin-bottom:8px;}
+  .phase{
+    position:relative;padding:20px 20px 20px 44px;margin-bottom:14px;
+    background:var(--bg-1);border:1px solid var(--line);border-radius:16px;
+    transition:border-color .2s;
+  }
+  .phase:hover{border-color:var(--violet);}
+  .phase::before{
+    content:'';position:absolute;left:16px;top:0;bottom:-14px;width:2px;
+    background:var(--line);
+  }
+  .phase:last-child::before{display:none;}
+  .phase-dot{
+    position:absolute;left:8px;top:24px;width:18px;height:18px;border-radius:50%;
+    background:var(--bg-0);border:2px solid var(--violet);
+    display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--violet);
+  }
+  .phase.done .phase-dot{background:var(--lime);border-color:var(--lime);color:#0b0f1a;}
+  .phase-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .phase-name{font-family:var(--font-display);font-size:15.5px;}
+  .phase-meta{font-size:11px;color:var(--text-dim);font-family:var(--font-mono);
+    background:var(--panel-hi);padding:3px 9px;border-radius:999px;border:1px solid var(--line);}
+  .phase-goal{font-size:13px;color:var(--text-dim);margin:0 0 12px;line-height:1.5;}
+  .task-list{display:flex;flex-direction:column;gap:8px;}
+  .task{
+    display:flex;align-items:flex-start;gap:10px;font-size:13px;cursor:pointer;
+    padding:6px 8px;border-radius:8px;transition:background .15s;
+  }
+  .task:hover{background:var(--panel-hi);}
+  .task input{margin-top:3px;accent-color:var(--lime);width:15px;height:15px;cursor:pointer;flex-shrink:0;}
+  .task span{line-height:1.5;}
+  .task.checked span{color:var(--text-dim);text-decoration:line-through;}
+
+  .milestone-tag{
+    display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:11.5px;
+    color:var(--gold);background:rgba(255,207,92,0.1);border:1px solid rgba(255,207,92,0.3);
+    padding:5px 11px;border-radius:999px;font-weight:600;
+  }
+
+  /* Resources */
+  .res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+  .res-card{
+    background:var(--bg-1);border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+  }
+  .res-card .kind{font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--violet);font-weight:700;margin-bottom:6px;}
+  .res-card .name{font-size:13.5px;font-weight:600;margin-bottom:4px;line-height:1.4;}
+  .res-card .why{font-size:12px;color:var(--text-dim);line-height:1.5;}
+
+  .section-label{
+    font-family:var(--font-display);font-size:14px;margin:28px 0 14px;
+    display:flex;align-items:center;gap:8px;color:var(--text);
+  }
+  .section-label::before{content:'';width:4px;height:16px;background:var(--lime);border-radius:2px;}
+
+  /* Docs panel */
+  .docs{margin-top:28px;}
+  .docs summary{
+    cursor:pointer;font-family:var(--font-display);font-size:14px;padding:16px 20px;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    display:flex;align-items:center;gap:8px;list-style:none;user-select:none;
+  }
+  .docs summary::-webkit-details-marker{display:none;}
+  .docs summary::after{content:'▾';margin-left:auto;color:var(--text-dim);transition:transform .2s;}
+  .docs[open] summary::after{transform:rotate(180deg);}
+  .docs-body{
+    background:var(--panel);border:1px solid var(--line);border-top:none;
+    border-radius:0 0 14px 14px;padding:22px 24px;margin-top:-4px;font-size:13.5px;
+    line-height:1.7;color:var(--text-dim);
+  }
+  .docs-body h4{color:var(--text);font-family:var(--font-display);font-size:14px;margin:18px 0 8px;}
+  .docs-body h4:first-child{margin-top:0;}
+  .docs-body code{
+    background:var(--bg-1);border:1px solid var(--line);padding:1px 6px;border-radius:5px;
+    font-family:var(--font-mono);font-size:12px;color:var(--lime);
+  }
+  .docs-body ul{padding-left:20px;margin:8px 0;}
+
+  ::selection{background:var(--lime);color:#0b0f1a;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="brand">
+      <div class="brand-badge">SQ</div>
+      <div>
+        <h1>SkillQuest</h1>
+        <p>Turn any skill into a milestone roadmap — level up as you go.</p>
+      </div>
+    </div>
+    <div class="xp-chip">🔥 Streak-ready plans · <b>0</b> quests completed today</div>
+  </div>
+
+  <div class="layout">
+    <!-- FORM -->
+    <div class="card">
+      <h2>🎯 Start your quest</h2>
+      <p class="sub">Fill this in and we'll draft your roadmap.</p>
+
+      <div class="field">
+        <label for="skill">Skill or subject</label>
+        <input id="skill" type="text" placeholder="e.g. React.js, Spanish, Guitar, DSA">
+      </div>
+
+      <div class="field">
+        <label>Current level</label>
+        <div class="level-picker" id="levelPicker">
+          <div class="level-btn active" data-val="Absolute beginner">Beginner</div>
+          <div class="level-btn" data-val="Some basics">Basics</div>
+          <div class="level-btn" data-val="Intermediate">Intermed.</div>
+          <div class="level-btn" data-val="Advanced, sharpening">Advanced</div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="hours">Hours / week</label>
+          <input id="hours" type="number" min="1" max="80" placeholder="e.g. 6">
+        </div>
+        <div class="field">
+          <label for="deadline">Deadline</label>
+          <input id="deadline" type="text" placeholder="e.g. 3 months, none">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="goal">End goal</label>
+        <input id="goal" type="text" placeholder="e.g. build a portfolio project, pass an interview">
+      </div>
+
+      <button class="quest-btn" id="genBtn">⚡ Generate my roadmap</button>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div id="rightPanel">
+      <div class="empty-state" id="emptyState">
+        <div class="glyph">🗺️</div>
+        <h3>Your roadmap awaits</h3>
+        <p>Fill in the quest form on the left — skill, level, hours per week, and your goal — then hit Generate to see your personalized milestone dashboard here.</p>
+      </div>
+    </div>
+  </div>
+
+  <details class="docs">
+    <summary>📘 How this was built</summary>
+    <div class="docs-body">
+      <h4>System prompt design</h4>
+      <p>The underlying Claude call is scoped narrowly to one job: convert a learner's inputs (skill, level, hours/week, deadline, goal) into a structured JSON roadmap — nothing else. The prompt instructs Claude to:</p>
+      <ul>
+        <li>Return <code>ONLY</code> raw JSON matching a fixed schema (no prose, no markdown fences) so the frontend can render it directly into the dashboard.</li>
+        <li>Break the plan into 3–6 sequential phases, each with a name, duration, goal, milestone label, and 3–6 checkable tasks.</li>
+        <li>Include a short resources array (course/book/tool suggestions with a one-line "why").</li>
+        <li>Handle edge cases explicitly: if the skill field is empty, nonsensical, or clearly abusive/unsafe, Claude returns a JSON error object instead of inventing a plan, which the UI renders as the error state.</li>
+        <li>Keep tone playful and encouraging in the phase goals and milestone labels (matching the gamified UI) without becoming childish or padding real content with filler.</li>
+      </ul>
+
+      <h4>Why the UI fits this use case</h4>
+      <p>A roadmap builder isn't a chat — it's a plan you want to glance at and act on. So instead of a chat bubble, the output renders as a dashboard: a top-level XP progress bar (percentage of tasks checked), a vertical phase timeline with connecting line and dot markers (borrowed from quest/level-up game UIs, since the brief asked for playful/gamified), and a resources grid. Checkboxes are real, persistent-in-session state — checking tasks visibly fills the progress bar and flips phase dots from violet (in progress) to lime (done), giving the "leveling up" feedback loop the tone called for.</p>
+
+      <h4>Extending this assistant</h4>
+      <ul>
+        <li><b>Tools:</b> connect a calendar MCP so generated phases can be pushed as real calendar blocks based on hours/week.</li>
+        <li><b>Memory:</b> persist the generated plan and checkbox state (e.g. via <code>window.storage</code>) so a returning learner sees their in-progress roadmap instead of a blank form.</li>
+        <li><b>Multi-step flow:</b> add a follow-up call that regenerates remaining phases when a user reports falling behind or finishing early, keeping the plan adaptive rather than static.</li>
+        <li><b>Verification:</b> add a lightweight quiz-generation call per phase to test the learner before marking a milestone complete, rather than trusting self-reported checkboxes.</li>
+      </ul>
+    </div>
+  </details>
+
+</div>
+
+<script>
+let selectedLevel = "Absolute beginner";
+document.querySelectorAll('.level-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedLevel = btn.dataset.val;
+  });
+});
+
+const SYSTEM_PROMPT = `You are the roadmap-generation engine behind SkillQuest, a study-plan builder for self-learners.
+
+Your ONLY job: given a learner's skill, current level, hours/week, deadline, and end goal, produce a structured milestone roadmap as JSON. You do not chat, explain yourself, or add commentary outside the JSON.
+
+OUTPUT FORMAT — return ONLY raw JSON (no markdown fences, no preamble, no trailing text), matching exactly this schema:
+
+{
+  "skill": string,
+  "headline": string (short punchy one-liner about the plan),
+  "summary": string (2-3 sentences, playful/encouraging tone, describing the overall approach),
+  "total_duration": string (e.g. "10 weeks"),
+  "phases": [
+    {
+      "name": string (short phase title, e.g. "Foundations"),
+      "duration": string (e.g. "Weeks 1-2"),
+      "goal": string (1-2 sentences on what this phase achieves),
+      "milestone": string (short badge-style label for completing this phase, e.g. "🏗️ Foundation Builder"),
+      "tasks": [string, string, ...]  (3-6 concrete, specific tasks)
+    }
+  ],
+  "resources": [
+    { "kind": string (e.g. "Course", "Book", "Tool", "Community"), "name": string, "why": string (one line) }
+  ]
+}
+
+RULES:
+- 3 to 6 phases, sequential and realistic given the stated hours/week and deadline. If no deadline given, pace phases generously and say so in the summary.
+- Tasks must be concrete and actionable, not vague ("practice more"). Reference the actual skill by name throughout.
+- Tone: playful, energetic, gamified — use light gaming language (quests, milestones, leveling up) in headline/summary/milestone fields ONLY. Task and goal text should stay clear and practical, not childish or padded with filler.
+- 3 to 6 resources total, real and plausible (well-known books/courses/tools/communities for that skill), each with a genuine one-line reason it helps at this stage.
+- Never invent fake statistics, fake course names that don't exist, or overpromise ("guaranteed job" etc).
+
+EDGE CASES:
+- If the "skill" field is empty, gibberish, or not an actual learnable skill/subject, return ONLY this JSON instead: {"error": "invalid_input", "message": "<short, friendly explanation of what's missing or unclear>"}
+- If the request is abusive, asks for something harmful/illegal (e.g. "how to learn to hack into someone's bank account", weapon-making, etc.), return ONLY: {"error": "unsafe_request", "message": "<brief, non-preachy redirect>"}
+- If hours/week is unrealistic (e.g. 0 or absurdly high like 200), gently note this in the summary field but still produce a sensible plan using a reasonable assumed number.
+- If deadline is missing or "none", omit false urgency — build a steady, sustainable plan and say so in total_duration/summary.
+- Always produce valid, parseable JSON. Do not wrap it in backticks.`;
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.innerText = str;
+  return d.innerHTML;
+}
+
+async function generateRoadmap(){
+  const skill = document.getElementById('skill').value.trim();
+  const hours = document.getElementById('hours').value.trim();
+  const deadline = document.getElementById('deadline').value.trim();
+  const goal = document.getElementById('goal').value.trim();
+  const genBtn = document.getElementById('genBtn');
+  const panel = document.getElementById('rightPanel');
+
+  genBtn.disabled = true;
+  genBtn.textContent = '⏳ Drafting...';
+
+  const loadingLines = [
+    "Scouting the terrain...",
+    "Mapping out phases...",
+    "Recruiting resources...",
+    "Balancing the difficulty curve...",
+    "Sealing your quest log..."
+  ];
+  panel.innerHTML = `
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-line" id="loadingLine">${loadingLines[0]}</div>
+    </div>`;
+  let li = 0;
+  const loadingInterval = setInterval(()=>{
+    li = (li+1) % loadingLines.length;
+    const el = document.getElementById('loadingLine');
+    if(el) el.textContent = loadingLines[li];
+  }, 1100);
+
+  const userMessage = `Skill: ${skill || "(not provided)"}
+Current level: ${selectedLevel}
+Hours per week: ${hours || "(not provided)"}
+Deadline: ${deadline || "none"}
+End goal: ${goal || "(not specified)"}`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: userMessage }]
+      })
+    });
+
+    if(!response.ok){
+      throw new Error("API request failed with status " + response.status);
+    }
+
+    const data = await response.json();
+    const textBlock = (data.content || []).find(b => b.type === "text");
+    if(!textBlock) throw new Error("No text content returned");
+
+    let clean = textBlock.text.trim().replace(/^```json/,'').replace(/^```/,'').replace(/```$/,'').trim();
+    let parsed;
+    try{
+      parsed = JSON.parse(clean);
+    }catch(e){
+      throw new Error("Could not parse roadmap response");
+    }
+
+    clearInterval(loadingInterval);
+
+    if(parsed.error){
+      renderError(parsed.message || "Something about that request didn't work — try adjusting your inputs.");
+      return;
+    }
+
+    renderDashboard(parsed);
+
+  }catch(err){
+    clearInterval(loadingInterval);
+    renderError("We couldn't reach the quest engine. Check your connection and try again.");
+    console.error(err);
+  }finally{
+    genBtn.disabled = false;
+    genBtn.textContent = '⚡ Generate my roadmap';
+  }
+}
+
+function renderError(message){
+  const panel = document.getElementById('rightPanel');
+  panel.innerHTML = `
+    <div class="error-state">
+      <div class="glyph">⚠️</div>
+      <h3>Quest failed to load</h3>
+      <p>${escapeHtml(message)}</p>
+      <button class="retry-btn" onclick="generateRoadmap()">Try again</button>
+    </div>`;
+}
+
+function renderDashboard(plan){
+  const panel = document.getElementById('rightPanel');
+
+  const totalTasks = plan.phases.reduce((sum,p)=>sum + p.tasks.length, 0);
+
+  const phasesHtml = plan.phases.map((phase, pi)=>{
+    const tasksHtml = phase.tasks.map((task, ti)=>`
+      <label class="task" data-phase="${pi}">
+        <input type="checkbox" onchange="onTaskToggle(this)">
+        <span>${escapeHtml(task)}</span>
+      </label>
+    `).join('');
+    return `
+      <div class="phase" id="phase-${pi}" data-phase="${pi}" data-total="${phase.tasks.length}">
+        <div class="phase-dot">${pi+1}</div>
+        <div class="phase-top">
+          <div class="phase-name">${escapeHtml(phase.name)}</div>
+          <div class="phase-meta">${escapeHtml(phase.duration)}</div>
+        </div>
+        <p class="phase-goal">${escapeHtml(phase.goal)}</p>
+        <div class="task-list">${tasksHtml}</div>
+        <div class="milestone-tag">${escapeHtml(phase.milestone)}</div>
+      </div>
+    `;
+  }).join('');
+
+  const resourcesHtml = (plan.resources || []).map(r=>`
+    <div class="res-card">
+      <div class="kind">${escapeHtml(r.kind)}</div>
+      <div class="name">${escapeHtml(r.name)}</div>
+      <div class="why">${escapeHtml(r.why)}</div>
+    </div>
+  `).join('');
+
+  panel.innerHTML = `
+    <div class="card">
+      <div class="dash-header">
+        <div class="dash-title">
+          <h2>${escapeHtml(plan.headline || plan.skill)}</h2>
+          <p>${escapeHtml(plan.summary || '')}</p>
+        </div>
+        <div class="level-badge">
+          <div class="num">Lv.1</div>
+          <div class="lbl">${escapeHtml(plan.total_duration || '')}</div>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-top"><span>Quest progress</span><span><b id="progressPct">0%</b> · <span id="progressCount">0/${totalTasks}</span> tasks</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+
+      <div class="section-label">🧭 Milestone timeline</div>
+      <div class="timeline">${phasesHtml}</div>
+
+      <div class="section-label">📚 Resources</div>
+      <div class="res-grid">${resourcesHtml}</div>
+    </div>
+  `;
+
+  window.__totalTasks = totalTasks;
+  window.__checkedTasks = 0;
+}
+
+function onTaskToggle(checkbox){
+  const label = checkbox.closest('.task');
+  label.classList.toggle('checked', checkbox.checked);
+  window.__checkedTasks += checkbox.checked ? 1 : -1;
+
+  const pct = window.__totalTasks ? Math.round((window.__checkedTasks / window.__totalTasks) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressCount').textContent = window.__checkedTasks + '/' + window.__totalTasks;
+
+  const phaseIdx = label.dataset.phase;
+  const phaseEl = document.getElementById('phase-' + phaseIdx);
+  const total = parseInt(phaseEl.dataset.total, 10);
+  const checkedInPhase = phaseEl.querySelectorAll('.task input:checked').length;
+  phaseEl.classList.toggle('done', checkedInPhase === total);
+}
+
+document.getElementById('genBtn').addEventListener('click', generateRoadmap);
+document.getElementById('skill').addEventListener('keydown', (e)=>{ if(e.key==='Enter') generateRoadmap(); });
+</script>
+</body>
+</html>
