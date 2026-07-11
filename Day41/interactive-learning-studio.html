@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Learning Studio — Object-Oriented JavaScript</title>
+<style>
+:root{
+  --bg:#0B0E14;
+  --surface:#121826;
+  --surface-2:#1A2233;
+  --line: rgba(232,163,61,0.18);
+  --ink:#E6E9EF;
+  --muted:#8891A7;
+  --amber:#E8A33D;
+  --amber-dim: rgba(232,163,61,0.14);
+  --teal:#4FD1C5;
+  --teal-dim: rgba(79,209,197,0.14);
+  --red:#E36868;
+  --green:#6FCF97;
+  --radius: 14px;
+  --mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  --sans: -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(232,163,61,0.06), transparent 60%),
+    radial-gradient(1000px 500px at 90% 10%, rgba(79,209,197,0.05), transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.6;
+  min-height:100vh;
+}
+@media(prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;} }
+
+/* ---------- Layout shells ---------- */
+.wrap{ max-width:980px; margin:0 auto; padding:0 24px; }
+header.topbar{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:blur(10px);
+  background:rgba(11,14,20,0.85);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{ max-width:980px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.brand{ display:flex; align-items:center; gap:10px; font-family:var(--mono); letter-spacing:0.02em; }
+.brand .chain{ width:22px; height:22px; }
+.brand-text{ font-size:14px; color:var(--muted); }
+.brand-text b{ color:var(--ink); font-weight:600; }
+.xp-pill{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:12.5px;
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:999px; padding:6px 14px; color:var(--amber);
+}
+.xp-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+progress-track{ display:block; }
+.progress-rail{ height:3px; background:var(--surface-2); position:relative; overflow:hidden;}
+.progress-fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--amber),var(--teal)); transition:width .5s ease; }
+
+/* ---------- Hero ---------- */
+.hero{ padding:72px 0 40px; }
+.eyebrow{
+  font-family:var(--mono); font-size:12.5px; color:var(--teal);
+  letter-spacing:0.12em; text-transform:uppercase; display:flex; align-items:center; gap:10px; margin-bottom:18px;
+}
+.eyebrow::before{ content:""; width:26px; height:1px; background:var(--teal); display:inline-block; }
+h1.title{
+  font-size:clamp(34px,5vw,54px); line-height:1.06; margin:0 0 18px; letter-spacing:-0.02em; font-weight:700;
+}
+h1.title em{ font-style:normal; color:var(--amber); }
+.lede{ font-size:17px; color:var(--muted); max-width:640px; margin:0 0 34px; }
+
+.chain-hero{
+  border:1px solid var(--line); background:var(--surface); border-radius:var(--radius);
+  padding:26px; margin-bottom:36px; overflow:hidden; position:relative;
+}
+.chain-hero svg{ width:100%; height:auto; display:block; }
+.chain-caption{ font-family:var(--mono); font-size:12px; color:var(--muted); margin-top:14px; text-align:center; }
+
+.meta-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:28px; }
+.meta-card{ background:var(--surface); padding:18px 16px; }
+.meta-card .k{ font-family:var(--mono); font-size:10.5px; color:var(--teal); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+.meta-card .v{ font-size:14.5px; font-weight:600; }
+@media(max-width:720px){ .meta-grid{ grid-template-columns:repeat(2,1fr); } }
+
+.obj-list{ list-style:none; margin:0 0 28px; padding:0; display:grid; gap:10px; }
+.obj-list li{ display:flex; gap:12px; align-items:flex-start; font-size:14.5px; color:var(--ink); }
+.obj-list li::before{ content:"→"; color:var(--amber); font-family:var(--mono); flex:none; }
+
+.btn{
+  font-family:var(--sans); font-weight:600; font-size:14.5px; border:none; cursor:pointer;
+  padding:13px 26px; border-radius:10px; background:var(--amber); color:#1A1200;
+  transition:transform .15s ease, box-shadow .15s ease; box-shadow:0 0 0 rgba(232,163,61,0);
+}
+.btn:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(232,163,61,0.25); }
+.btn.secondary{ background:transparent; color:var(--ink); border:1px solid var(--line); }
+.btn.secondary:hover{ box-shadow:0 6px 18px rgba(255,255,255,0.05); }
+.btn:disabled{ opacity:0.35; cursor:not-allowed; transform:none; box-shadow:none; }
+.btn-row{ display:flex; gap:12px; flex-wrap:wrap; }
+
+/* ---------- Modules ---------- */
+section.module{
+  padding:60px 0 20px; border-top:1px solid var(--line); scroll-margin-top:90px;
+}
+.locked-panel{
+  border:1px dashed var(--line); border-radius:var(--radius); padding:60px 24px; text-align:center; color:var(--muted); font-family:var(--mono); font-size:13.5px;
+}
+.module-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:6px; flex-wrap:wrap; }
+.module-num{ font-family:var(--mono); font-size:13px; color:var(--teal); }
+.module-head h2{ font-size:clamp(24px,3.4vw,32px); margin:0; letter-spacing:-0.01em; }
+.module-sub{ color:var(--muted); font-size:14.5px; margin:0 0 34px; }
+
+.block{ margin-bottom:34px; }
+.block h3{ font-size:16px; text-transform:uppercase; letter-spacing:0.06em; color:var(--amber); font-family:var(--mono); margin:0 0 14px; }
+.block p{ margin:0 0 14px; color:#CBD1E0; font-size:15px;}
+.block p:last-child{ margin-bottom:0; }
+
+pre.code{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:16px 18px; overflow-x:auto; font-family:var(--mono); font-size:13px; line-height:1.65; color:#DCE3F0;
+  margin:0 0 14px;
+}
+pre.code .c{ color:var(--muted); } /* comment */
+pre.code .k{ color:var(--teal); } /* keyword */
+pre.code .s{ color:var(--green); } /* string */
+pre.code .n{ color:var(--amber); } /* number/highlight */
+
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+@media(max-width:720px){ .two-col{ grid-template-columns:1fr; } }
+
+.card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 20px; }
+.card h4{ margin:0 0 8px; font-size:14px; color:var(--ink); }
+.card p{ margin:0; font-size:13.5px; color:var(--muted); }
+
+.analogy{
+  border-left:3px solid var(--teal); background:var(--teal-dim); border-radius:0 10px 10px 0;
+  padding:16px 20px; font-size:14.5px; color:#D3E9E6; margin-bottom:14px;
+}
+.analogy b{ color:var(--teal); }
+
+.misconception{
+  border-left:3px solid var(--red); background:rgba(227,104,104,0.08); border-radius:0 10px 10px 0;
+  padding:14px 20px; font-size:14px; color:#E9C9C9; margin-bottom:10px;
+}
+.misconception b{ color:var(--red); display:block; margin-bottom:4px; font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.05em; }
+
+.takeaways{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+.takeaways li{ font-size:14.5px; padding-left:20px; position:relative; color:#CBD1E0; }
+.takeaways li::before{ content:"✓"; position:absolute; left:0; color:var(--green); font-family:var(--mono); }
+
+.exercise{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px; margin-top:6px;
+}
+.exercise h4{ margin:0 0 10px; font-size:14px; font-family:var(--mono); color:var(--amber); text-transform:uppercase; letter-spacing:0.05em; }
+.exercise textarea{
+  width:100%; min-height:120px; background:var(--bg); color:var(--ink); border:1px solid var(--line);
+  border-radius:8px; padding:14px; font-family:var(--mono); font-size:13px; resize:vertical;
+}
+.exercise .run-row{ display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+.exercise .output{
+  margin-top:12px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:12px 14px;
+  font-family:var(--mono); font-size:13px; min-height:24px; white-space:pre-wrap; color:var(--teal); display:none;
+}
+.exercise .output.show{ display:block; }
+.exercise .hint-toggle{ background:none; border:none; color:var(--muted); font-family:var(--mono); font-size:12px; cursor:pointer; text-decoration:underline; padding:0; margin-top:10px; }
+.exercise .hint-text{ display:none; margin-top:8px; font-size:13px; color:var(--muted); }
+.exercise .hint-text.show{ display:block; }
+
+/* interactive prototype playground */
+.playground{ border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); padding:20px; margin-top:6px; }
+.pg-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.pg-btn{ font-family:var(--mono); font-size:12.5px; background:var(--surface-2); border:1px solid var(--line); color:var(--ink); padding:8px 14px; border-radius:8px; cursor:pointer; }
+.pg-btn:hover{ border-color:var(--amber); color:var(--amber); }
+.pg-btn.active{ background:var(--amber-dim); border-color:var(--amber); color:var(--amber); }
+#chainCanvas{ width:100%; height:auto; display:block; }
+
+/* ---------- Quiz ---------- */
+.quiz{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px; margin-top:20px;
+}
+.quiz-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+.quiz-head h3{ margin:0; font-size:16px; font-family:var(--mono); color:var(--amber); text-transform:uppercase; letter-spacing:0.05em; }
+.quiz-progress{ font-family:var(--mono); font-size:12px; color:var(--muted); }
+.qitem{ margin-bottom:26px; padding-bottom:26px; border-bottom:1px solid var(--line); }
+.qitem:last-of-type{ border-bottom:none; margin-bottom:8px; padding-bottom:0; }
+.qitem .qtext{ font-size:15px; margin-bottom:14px; font-weight:600; }
+.qopts{ display:grid; gap:10px; }
+.qopt{
+  display:flex; gap:12px; align-items:flex-start; padding:12px 16px; border:1px solid var(--line); border-radius:10px;
+  cursor:pointer; font-size:14px; color:#CBD1E0; transition:border-color .15s ease, background .15s ease;
+}
+.qopt:hover{ border-color:var(--teal); }
+.qopt.selected{ border-color:var(--teal); background:var(--teal-dim); }
+.qopt.correct{ border-color:var(--green); background:rgba(111,207,151,0.1); color:#D6F0DF; }
+.qopt.incorrect{ border-color:var(--red); background:rgba(227,104,104,0.1); color:#F0D6D6; }
+.qopt .letter{ font-family:var(--mono); color:var(--muted); flex:none; }
+.qexplain{ display:none; margin-top:10px; font-size:13.5px; color:var(--muted); background:var(--bg); border-radius:8px; padding:12px 14px; border:1px solid var(--line); }
+.qexplain.show{ display:block; }
+.quiz-result{ display:none; text-align:center; padding:22px 0 6px; }
+.quiz-result.show{ display:block; }
+.score-ring{ width:96px; height:96px; margin:0 auto 14px; }
+.quiz-result h4{ margin:0 0 6px; font-size:20px; }
+.quiz-result p{ color:var(--muted); margin:0 0 18px; font-size:14px; }
+
+/* ---------- Final / Resources ---------- */
+.cheat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:720px){ .cheat-grid{ grid-template-columns:1fr; } }
+.cheat-card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+.cheat-card h4{ margin:0 0 10px; font-size:13px; font-family:var(--mono); color:var(--teal); text-transform:uppercase; letter-spacing:0.05em; }
+.cheat-card pre{ margin:0; font-family:var(--mono); font-size:12.5px; color:#CBD1E0; white-space:pre-wrap; line-height:1.6;}
+
+.res-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+@media(max-width:820px){ .res-grid{ grid-template-columns:1fr 1fr; } }
+@media(max-width:560px){ .res-grid{ grid-template-columns:1fr; } }
+.res-card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+.res-card h4{ margin:0 0 10px; font-size:12px; font-family:var(--mono); color:var(--amber); text-transform:uppercase; letter-spacing:0.06em; }
+.res-card ul{ margin:0; padding:0; list-style:none; display:grid; gap:8px; }
+.res-card li{ font-size:13.5px; color:#CBD1E0; padding-left:14px; position:relative; }
+.res-card li::before{ content:"·"; position:absolute; left:0; color:var(--muted); }
+
+.keywords{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+.kw{ font-family:var(--mono); font-size:12px; background:var(--surface-2); border:1px solid var(--line); padding:6px 12px; border-radius:999px; color:var(--muted); }
+
+footer{ padding:60px 0 80px; text-align:center; color:var(--muted); font-family:var(--mono); font-size:12.5px; border-top:1px solid var(--line); margin-top:40px; }
+
+.print-btn{ position:fixed; bottom:24px; right:24px; z-index:40; }
+@media print{
+  header.topbar, .print-btn, .btn-row, .exercise .run-row, .locked-panel{ display:none !important; }
+  body{ background:#fff; color:#000; }
+  .card,.quiz,.cheat-card,.res-card,pre.code{ border-color:#ccc; background:#fafafa; color:#000; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <svg class="chain" viewBox="0 0 24 24" fill="none"><circle cx="7" cy="7" r="4.5" stroke="#E8A33D" stroke-width="1.6"/><circle cx="17" cy="17" r="4.5" stroke="#4FD1C5" stroke-width="1.6"/><line x1="9.8" y1="9.8" x2="14.2" y2="14.2" stroke="#E8A33D" stroke-width="1.6"/></svg>
+      <span class="brand-text">Interactive Learning Studio — <b>OOP in JavaScript</b></span>
+    </div>
+    <div class="xp-pill"><span class="dot"></span><span id="xpDisplay">0 XP</span> · <span id="badgeCount">0/8 badges</span></div>
+  </div>
+  <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ HERO / INTRO ============ -->
+<section class="hero" id="intro">
+  <div class="eyebrow">Module 00 · Orientation</div>
+  <h1 class="title">Object-Oriented JavaScript:<br><em>Prototypes, Classes & Inheritance</em></h1>
+  <p class="lede">JavaScript's object system isn't Java wearing a trenchcoat. Underneath every <code>class</code> keyword is a prototype chain — a live lookup path between objects. This studio takes you from that raw mechanism up to production inheritance patterns, one working example at a time.</p>
+
+  <div class="chain-hero">
+    <svg viewBox="0 0 860 200" id="heroChain">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#E8A33D"/></marker>
+      </defs>
+      <!-- instance -->
+      <g id="heroNode1">
+        <rect x="20" y="70" width="150" height="60" rx="10" fill="#1A2233" stroke="#4FD1C5" stroke-width="1.6"/>
+        <text x="95" y="94" text-anchor="middle" fill="#4FD1C5" font-family="ui-monospace,monospace" font-size="12">rex</text>
+        <text x="95" y="112" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">name: "Rex"</text>
+      </g>
+      <line x1="170" y1="100" x2="248" y2="100" stroke="#E8A33D" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+      <text x="209" y="90" text-anchor="middle" fill="#E8A33D" font-family="ui-monospace,monospace" font-size="9">[[Prototype]]</text>
+      <!-- Dog.prototype -->
+      <g id="heroNode2">
+        <rect x="250" y="70" width="180" height="60" rx="10" fill="#1A2233" stroke="#E8A33D" stroke-width="1.6"/>
+        <text x="340" y="94" text-anchor="middle" fill="#E8A33D" font-family="ui-monospace,monospace" font-size="12">Dog.prototype</text>
+        <text x="340" y="112" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">bark()</text>
+      </g>
+      <line x1="430" y1="100" x2="508" y2="100" stroke="#E8A33D" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+      <!-- Animal.prototype -->
+      <g id="heroNode3">
+        <rect x="510" y="70" width="190" height="60" rx="10" fill="#1A2233" stroke="#E8A33D" stroke-width="1.6"/>
+        <text x="605" y="94" text-anchor="middle" fill="#E8A33D" font-family="ui-monospace,monospace" font-size="12">Animal.prototype</text>
+        <text x="605" y="112" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">eat(), sleep()</text>
+      </g>
+      <line x1="700" y1="100" x2="778" y2="100" stroke="#8891A7" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+      <!-- null -->
+      <g>
+        <rect x="780" y="70" width="60" height="60" rx="10" fill="none" stroke="#8891A7" stroke-width="1.4"/>
+        <text x="810" y="105" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="12">null</text>
+      </g>
+      <text x="430" y="165" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="11">rex.eat() walks this chain left→right until a method is found.</text>
+    </svg>
+    <div class="chain-caption">The prototype chain: every lookup that misses on an object keeps walking right, until it hits <code>null</code>.</div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card"><div class="k">Estimated Time</div><div class="v">70–90 minutes</div></div>
+    <div class="meta-card"><div class="k">Difficulty</div><div class="v">Beginner → Advanced</div></div>
+    <div class="meta-card"><div class="k">Prerequisites</div><div class="v">Core JS: variables, functions</div></div>
+    <div class="meta-card"><div class="k">Format</div><div class="v">4 modules + quizzes</div></div>
+  </div>
+
+  <div class="block">
+    <h3>Learning Objectives</h3>
+    <ul class="obj-list">
+      <li>Explain how JavaScript objects link to one another through the prototype chain, and trace a property lookup by hand.</li>
+      <li>Build objects with constructor functions, understand <code>this</code>, <code>new</code>, and shared methods on <code>.prototype</code>.</li>
+      <li>Write ES6 <code>class</code> hierarchies using <code>extends</code> and <code>super</code>, and know exactly what sugar they hide.</li>
+      <li>Apply advanced patterns — private fields, mixins, polymorphism, and composition — to real, non-toy design problems.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>Reward System</h3>
+    <div class="two-col">
+      <div class="card"><h4>XP &amp; Badges</h4><p>Earn 25 XP per correct quiz answer and a module badge for a passing score (≥75%). Finish all four for the Prototype Master badge.</p></div>
+      <div class="card"><h4>Unlock Gate</h4><p>Each module unlocks the next only after you complete its quiz — score doesn't need to be perfect, just attempted and submitted.</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Expected Outcomes</h3>
+    <p>By the end, you'll be able to read unfamiliar JS class hierarchies with confidence, debug "why is <code>this</code> undefined" errors, and choose between inheritance and composition deliberately rather than by habit.</p>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="scrollToId('module1')">Start Module 1 →</button>
+  </div>
+</div>
+</section>
+
+<!-- ============ MODULE 1 ============ -->
+<section class="module" id="module1">
+  <div class="module-head"><span class="module-num">Module 01 / 04</span><h2>Foundations — Objects, <code>this</code> &amp; the Prototype Chain</h2></div>
+  <p class="module-sub">The mechanism underneath every JS object, before any syntax sugar is added.</p>
+
+  <div class="block">
+    <h3>Explanation</h3>
+    <p>Every JavaScript object carries a hidden internal link — commonly called <code>[[Prototype]]</code> and accessible via <code>Object.getPrototypeOf(obj)</code> or the legacy <code>__proto__</code> — pointing to another object. When you read a property that doesn't exist directly on an object, JS doesn't fail immediately. It follows that link to the linked object, checks there, and keeps following the chain until it either finds the property or reaches an object whose prototype is <code>null</code>.</p>
+    <p>This is fundamentally different from classical inheritance in Java or C++, where a class is a static blueprint that gets copied at compile time. In JavaScript, the chain is live: objects are linked, not copied, and the lookup happens at runtime, every single time.</p>
+  </div>
+
+  <div class="block">
+    <h3>Analogy</h3>
+    <div class="analogy"><b>The office memo chain —</b> imagine you ask a junior employee (your object) a question. If they don't know the answer, they don't guess: they forward it to their manager (the prototype). If the manager doesn't know either, it goes up to the department head, then the VP, and so on — until someone answers or you reach the CEO's empty inbox (<code>null</code>), and get <code>undefined</code> back.</div>
+  </div>
+
+  <div class="block">
+    <h3>Example</h3>
+    <pre class="code"><span class="k">const</span> animal = { eats: <span class="k">true</span> };
+<span class="k">const</span> rabbit = { jumps: <span class="k">true</span> };
+
+<span class="c">// link rabbit's prototype to animal</span>
+Object.setPrototypeOf(rabbit, animal);
+
+console.log(rabbit.jumps); <span class="c">// true — own property</span>
+console.log(rabbit.eats);  <span class="c">// true — found via prototype chain</span>
+console.log(rabbit.flies); <span class="c">// undefined — chain exhausted at null</span></pre>
+    <p>Nothing was copied. <code>rabbit</code> still only owns <code>jumps</code>; <code>eats</code> is resolved live through the link every time you ask for it.</p>
+  </div>
+
+  <div class="block">
+    <h3>Diagram — Property Lookup</h3>
+    <div class="playground">
+      <div class="pg-row">
+        <button class="pg-btn active" data-lookup="jumps">rabbit.jumps</button>
+        <button class="pg-btn" data-lookup="eats">rabbit.eats</button>
+        <button class="pg-btn" data-lookup="flies">rabbit.flies</button>
+      </div>
+      <svg id="chainCanvas" viewBox="0 0 700 160">
+        <defs><marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#8891A7"/></marker></defs>
+        <rect id="n1" x="20" y="50" width="170" height="60" rx="10" fill="#1A2233" stroke="#4FD1C5" stroke-width="1.6"/>
+        <text x="105" y="76" text-anchor="middle" fill="#4FD1C5" font-family="ui-monospace,monospace" font-size="12">rabbit</text>
+        <text x="105" y="94" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">jumps: true</text>
+        <line x1="190" y1="80" x2="278" y2="80" stroke="#8891A7" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow2)"/>
+        <rect id="n2" x="280" y="50" width="170" height="60" rx="10" fill="#1A2233" stroke="#E8A33D" stroke-width="1.6"/>
+        <text x="365" y="76" text-anchor="middle" fill="#E8A33D" font-family="ui-monospace,monospace" font-size="12">animal</text>
+        <text x="365" y="94" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">eats: true</text>
+        <line x1="450" y1="80" x2="538" y2="80" stroke="#8891A7" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrow2)"/>
+        <rect x="540" y="50" width="60" height="60" rx="10" fill="none" stroke="#8891A7" stroke-width="1.4"/>
+        <text x="570" y="86" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="12">null</text>
+        <text id="lookupResult" x="350" y="145" text-anchor="middle" fill="#6FCF97" font-family="ui-monospace,monospace" font-size="13">rabbit.jumps → true (found on rabbit)</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Comparison</h3>
+    <div class="two-col">
+      <div class="card"><h4>Classical (Java/C++)</h4><p>Classes are fixed blueprints. Inheritance is resolved at compile time and can't change once an object exists.</p></div>
+      <div class="card"><h4>Prototypal (JavaScript)</h4><p>Objects link directly to other objects. The chain can be reshaped at runtime with <code>Object.setPrototypeOf</code>.</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Common Misconceptions</h3>
+    <div class="misconception"><b>Myth</b>"<code>__proto__</code> and <code>.prototype</code> are the same thing." They're not — <code>.prototype</code> is a property that exists only on functions, used as the template for objects it constructs. <code>__proto__</code> is the actual link every object has to its prototype.</div>
+    <div class="misconception"><b>Myth</b>"Prototype chain lookups copy properties down." They don't copy anything; they read live, so a change to <code>animal.eats</code> is instantly visible to every object below it in the chain.</div>
+  </div>
+
+  <div class="block">
+    <h3>Exercise</h3>
+    <div class="exercise">
+      <h4>Try it — predict the output</h4>
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:10px;">Edit the object below, then click Run to see what JavaScript actually returns for each lookup.</p>
+      <textarea id="ex1code">const base = { greet() { return "hi from base"; } };
+const child = Object.create(base);
+child.name = "child";
+
+console.log(child.name);
+console.log(child.greet());
+console.log(child.hasOwnProperty("greet"));</textarea>
+      <div class="run-row">
+        <button class="btn secondary" onclick="runExercise('ex1code','ex1out')">Run code</button>
+      </div>
+      <div class="output" id="ex1out"></div>
+      <button class="hint-toggle" onclick="toggleHint('ex1hint')">Show hint</button>
+      <div class="hint-text" id="ex1hint">hasOwnProperty only checks the object itself, not the chain — that's why it returns false for an inherited method.</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Key Takeaways</h3>
+    <ul class="takeaways">
+      <li>Every object has an internal link to a prototype object, forming a chain.</li>
+      <li>Property lookups walk the chain until found or until <code>null</code> is reached.</li>
+      <li>The chain links objects live — nothing is copied.</li>
+      <li><code>hasOwnProperty()</code> distinguishes an object's own properties from inherited ones.</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz1" data-module="1">
+    <div class="quiz-head"><h3>Module 1 Quiz</h3><span class="quiz-progress" id="qp1">0 / 4 answered</span></div>
+    <div id="qbody1"></div>
+    <div class="btn-row"><button class="btn" id="submit1" onclick="submitQuiz(1)">Submit answers</button></div>
+    <div class="quiz-result" id="qresult1">
+      <svg class="score-ring" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#1A2233" stroke-width="3"/><path id="ring1" d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#6FCF97" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/></svg>
+      <h4 id="scoreText1"></h4>
+      <p id="scoreSub1"></p>
+      <button class="btn" onclick="unlockModule(2)">Unlock Module 2 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 2 ============ -->
+<section class="module" id="module2">
+  <div class="module-head"><span class="module-num">Module 02 / 04</span><h2>Constructor Functions &amp; <code>.prototype</code></h2></div>
+  <p class="module-sub" id="lockedMsg2">Complete Module 1's quiz to unlock this module.</p>
+  <div class="locked-panel" id="lockPanel2">🔒 Locked — finish the Module 1 quiz above.</div>
+
+  <div id="content2" style="display:none;">
+  <div class="block">
+    <h3>Explanation</h3>
+    <p>Before <code>class</code> existed, JS developers built reusable object "types" with ordinary functions, called with <code>new</code>. When a function is invoked with <code>new</code>, JavaScript creates a brand-new object, sets its prototype to the function's <code>.prototype</code> property, binds <code>this</code> to that new object inside the function, and returns it automatically.</p>
+    <p>Methods defined on <code>Function.prototype</code> are shared by every instance through the chain, rather than duplicated into each object — this is the real reason prototypes exist: memory-efficient shared behavior.</p>
+  </div>
+
+  <div class="block">
+    <h3>Analogy</h3>
+    <div class="analogy"><b>A cookie cutter —</b> the constructor function is the cutter, <code>new</code> presses it into dough to create a new cookie (instance) with its own filling (own properties), but every cookie made from the same cutter shares one recipe card pinned to the wall (<code>.prototype</code>) for its shared behavior.</div>
+  </div>
+
+  <div class="block">
+    <h3>Example</h3>
+    <pre class="code"><span class="k">function</span> Dog(name) {
+  <span class="k">this</span>.name = name; <span class="c">// own property, per instance</span>
+}
+
+Dog.prototype.bark = <span class="k">function</span>() {
+  <span class="k">return</span> <span class="s">`${this.name} says woof!`</span>;
+}; <span class="c">// shared method, lives once on Dog.prototype</span>
+
+<span class="k">const</span> rex = <span class="k">new</span> Dog(<span class="s">"Rex"</span>);
+<span class="k">const</span> fido = <span class="k">new</span> Dog(<span class="s">"Fido"</span>);
+
+console.log(rex.bark());  <span class="c">// "Rex says woof!"</span>
+console.log(rex.bark === fido.bark); <span class="c">// true — same function in memory</span></pre>
+  </div>
+
+  <div class="block">
+    <h3>Diagram — What <code>new</code> Actually Does</h3>
+    <div class="two-col">
+      <div class="card"><h4>Step by step</h4><p>1. Create empty object.<br>2. Link its prototype to <code>Dog.prototype</code>.<br>3. Call <code>Dog</code> with <code>this</code> bound to that object.<br>4. Return the object (unless the function explicitly returns another object).</p></div>
+      <div class="card"><h4>Why it matters</h4><p>Forgetting <code>new</code> makes <code>this</code> point to the global object (or <code>undefined</code> in strict mode) — a classic silent bug.</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Comparison</h3>
+    <div class="two-col">
+      <div class="card"><h4>Own property</h4><p>Set with <code>this.x = ...</code> inside the constructor. Exists separately on every instance.</p></div>
+      <div class="card"><h4>Prototype method</h4><p>Set on <code>Fn.prototype</code>. Exists once, shared by every instance via the chain.</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Common Misconceptions</h3>
+    <div class="misconception"><b>Myth</b>"Methods should be defined inside the constructor for speed." Doing that creates a new function per instance, wasting memory. Defining on <code>.prototype</code> shares one function across all instances.</div>
+    <div class="misconception"><b>Myth</b>"Calling a constructor without <code>new</code> just gives a warning." It silently produces wrong behavior instead of throwing — <code>this</code> won't be the new object at all.</div>
+  </div>
+
+  <div class="block">
+    <h3>Exercise</h3>
+    <div class="exercise">
+      <h4>Try it — build a constructor</h4>
+      <textarea id="ex2code">function Car(model) {
+  this.model = model;
+}
+Car.prototype.describe = function() {
+  return `This car is a ${this.model}`;
+};
+
+const c1 = new Car("Tesla");
+console.log(c1.describe());
+console.log(Object.getPrototypeOf(c1) === Car.prototype);</textarea>
+      <div class="run-row"><button class="btn secondary" onclick="runExercise('ex2code','ex2out')">Run code</button></div>
+      <div class="output" id="ex2out"></div>
+      <button class="hint-toggle" onclick="toggleHint('ex2hint')">Show hint</button>
+      <div class="hint-text" id="ex2hint">Every instance created by `new Car(...)` has its prototype set to Car.prototype — that's the link the chain relies on.</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Key Takeaways</h3>
+    <ul class="takeaways">
+      <li><code>new</code> creates an object, links its prototype, binds <code>this</code>, and returns it.</li>
+      <li>Own properties live per instance; prototype methods live once, shared.</li>
+      <li>Forgetting <code>new</code> silently breaks <code>this</code> binding.</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz2" data-module="2">
+    <div class="quiz-head"><h3>Module 2 Quiz</h3><span class="quiz-progress" id="qp2">0 / 4 answered</span></div>
+    <div id="qbody2"></div>
+    <div class="btn-row"><button class="btn" id="submit2" onclick="submitQuiz(2)">Submit answers</button></div>
+    <div class="quiz-result" id="qresult2">
+      <svg class="score-ring" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#1A2233" stroke-width="3"/><path id="ring2" d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#6FCF97" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/></svg>
+      <h4 id="scoreText2"></h4>
+      <p id="scoreSub2"></p>
+      <button class="btn" onclick="unlockModule(3)">Unlock Module 3 →</button>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 3 ============ -->
+<section class="module" id="module3">
+  <div class="module-head"><span class="module-num">Module 03 / 04</span><h2>ES6 Classes, <code>extends</code> &amp; <code>super</code></h2></div>
+  <p class="module-sub" id="lockedMsg3">Complete Module 2's quiz to unlock this module.</p>
+  <div class="locked-panel" id="lockPanel3">🔒 Locked — finish the Module 2 quiz above.</div>
+
+  <div id="content3" style="display:none;">
+  <div class="block">
+    <h3>Explanation</h3>
+    <p><code>class</code> syntax, introduced in ES6, is largely sugar over the constructor-function-plus-prototype pattern from Module 2. Under the hood, a class body still produces a function whose <code>.prototype</code> holds the methods. What class syntax adds cleanly is <code>extends</code>, which wires up the prototype chain between a subclass and its parent automatically, and <code>super</code>, which lets a subclass call the parent's constructor or methods explicitly.</p>
+    <p>Crucially, in a derived class, <code>this</code> does not exist until <code>super(...)</code> is called — the parent constructor is responsible for creating it.</p>
+  </div>
+
+  <div class="block">
+    <h3>Analogy</h3>
+    <div class="analogy"><b>Franchise onboarding —</b> a new franchise (subclass) doesn't reinvent the whole business; it calls headquarters (<code>super()</code>) to get set up with the standard operations first, then layers on its own local specialties on top.</div>
+  </div>
+
+  <div class="block">
+    <h3>Example</h3>
+    <pre class="code"><span class="k">class</span> Animal {
+  constructor(name) { <span class="k">this</span>.name = name; }
+  speak() { <span class="k">return</span> <span class="s">`${this.name} makes a sound.`</span>; }
+}
+
+<span class="k">class</span> Dog <span class="k">extends</span> Animal {
+  constructor(name, breed) {
+    <span class="k">super</span>(name);       <span class="c">// must run before using `this`</span>
+    <span class="k">this</span>.breed = breed;
+  }
+  speak() {
+    <span class="k">return</span> <span class="k">super</span>.speak() + <span class="s">` Specifically, a woof.`</span>;
+  }
+}
+
+<span class="k">const</span> rex = <span class="k">new</span> Dog(<span class="s">"Rex"</span>, <span class="s">"Labrador"</span>);
+console.log(rex.speak());
+<span class="c">// "Rex makes a sound. Specifically, a woof."</span></pre>
+  </div>
+
+  <div class="block">
+    <h3>Diagram — Class Chain</h3>
+    <svg viewBox="0 0 640 150" style="width:100%;height:auto;">
+      <rect x="20" y="45" width="150" height="60" rx="10" fill="#1A2233" stroke="#4FD1C5" stroke-width="1.6"/>
+      <text x="95" y="70" text-anchor="middle" fill="#4FD1C5" font-family="ui-monospace,monospace" font-size="12">rex</text>
+      <text x="95" y="88" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">instance</text>
+      <line x1="170" y1="75" x2="248" y2="75" stroke="#8891A7" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <rect x="250" y="45" width="160" height="60" rx="10" fill="#1A2233" stroke="#E8A33D" stroke-width="1.6"/>
+      <text x="330" y="70" text-anchor="middle" fill="#E8A33D" font-family="ui-monospace,monospace" font-size="12">Dog.prototype</text>
+      <text x="330" y="88" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">speak()</text>
+      <line x1="410" y1="75" x2="488" y2="75" stroke="#8891A7" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <rect x="490" y="45" width="150" height="60" rx="10" fill="#1A2233" stroke="#E8A33D" stroke-width="1.6"/>
+      <text x="565" y="70" text-anchor="middle" fill="#E8A33D" font-family="ui-monospace,monospace" font-size="12">Animal.prototype</text>
+      <text x="565" y="88" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="10">speak()</text>
+      <text x="330" y="130" text-anchor="middle" fill="#8891A7" font-family="ui-monospace,monospace" font-size="11">extends builds this exact chain — class syntax, prototype mechanism.</text>
+    </svg>
+  </div>
+
+  <div class="block">
+    <h3>Comparison</h3>
+    <div class="two-col">
+      <div class="card"><h4>Constructor function (Module 2)</h4><p>You manually set <code>Dog.prototype = Object.create(Animal.prototype)</code> and call <code>Animal.call(this, name)</code>.</p></div>
+      <div class="card"><h4>ES6 class</h4><p><code>extends</code> and <code>super()</code> do the same two things for you, with clearer syntax and enforced call order.</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Common Misconceptions</h3>
+    <div class="misconception"><b>Myth</b>"Classes in JS work exactly like classes in Java." They're still prototype-based under the hood — no real compile-time blueprint, and objects can still be reshaped at runtime.</div>
+    <div class="misconception"><b>Myth</b>"You can use <code>this</code> before calling <code>super()</code> in a subclass." Doing so throws a <code>ReferenceError</code> — <code>this</code> isn't initialized until the parent constructor runs.</div>
+  </div>
+
+  <div class="block">
+    <h3>Exercise</h3>
+    <div class="exercise">
+      <h4>Try it — extend a class</h4>
+      <textarea id="ex3code">class Shape {
+  constructor(name) { this.name = name; }
+  area() { return 0; }
+}
+class Square extends Shape {
+  constructor(side) {
+    super("Square");
+    this.side = side;
+  }
+  area() { return this.side * this.side; }
+}
+const sq = new Square(4);
+console.log(sq.name, sq.area());
+console.log(sq instanceof Shape);</textarea>
+      <div class="run-row"><button class="btn secondary" onclick="runExercise('ex3code','ex3out')">Run code</button></div>
+      <div class="output" id="ex3out"></div>
+      <button class="hint-toggle" onclick="toggleHint('ex3hint')">Show hint</button>
+      <div class="hint-text" id="ex3hint">`instanceof` walks the prototype chain, so a Square is also an instance of Shape.</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Key Takeaways</h3>
+    <ul class="takeaways">
+      <li><code>class</code> is sugar over constructor functions and prototypes.</li>
+      <li><code>extends</code> wires the prototype chain; <code>super()</code> must run before <code>this</code> is used in a subclass.</li>
+      <li><code>super.method()</code> lets a subclass extend, not just replace, a parent's behavior.</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz3" data-module="3">
+    <div class="quiz-head"><h3>Module 3 Quiz</h3><span class="quiz-progress" id="qp3">0 / 4 answered</span></div>
+    <div id="qbody3"></div>
+    <div class="btn-row"><button class="btn" id="submit3" onclick="submitQuiz(3)">Submit answers</button></div>
+    <div class="quiz-result" id="qresult3">
+      <svg class="score-ring" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#1A2233" stroke-width="3"/><path id="ring3" d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#6FCF97" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/></svg>
+      <h4 id="scoreText3"></h4>
+      <p id="scoreSub3"></p>
+      <button class="btn" onclick="unlockModule(4)">Unlock Module 4 →</button>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ============ MODULE 4 ============ -->
+<section class="module" id="module4">
+  <div class="module-head"><span class="module-num">Module 04 / 04</span><h2>Advanced Patterns — Mixins, Private Fields &amp; Composition</h2></div>
+  <p class="module-sub" id="lockedMsg4">Complete Module 3's quiz to unlock this module.</p>
+  <div class="locked-panel" id="lockPanel4">🔒 Locked — finish the Module 3 quiz above.</div>
+
+  <div id="content4" style="display:none;">
+  <div class="block">
+    <h3>Explanation</h3>
+    <p>Deep inheritance chains ("God-class" hierarchies) become brittle: a change high in the chain ripples everywhere below it. Modern JS favors composition and mixins for shared behavior that doesn't cleanly fit an "is-a" relationship, alongside true encapsulation via private class fields (<code>#field</code>), which are enforced by the engine, not just convention.</p>
+    <p>A mixin is a function that takes a base class and returns a new class extending it with extra behavior — letting you compose independent capabilities instead of forcing everything into one linear inheritance tree.</p>
+  </div>
+
+  <div class="block">
+    <h3>Analogy</h3>
+    <div class="analogy"><b>Lego attachments, not a family tree —</b> instead of asking "what ancestor class already has flying?", a mixin lets you snap a Flyable module onto anything, independent of what it already inherits from.</div>
+  </div>
+
+  <div class="block">
+    <h3>Example — Mixins</h3>
+    <pre class="code"><span class="k">const</span> Swimmer = Base => <span class="k">class</span> <span class="k">extends</span> Base {
+  swim() { <span class="k">return</span> <span class="s">`${this.name} swims.`</span>; }
+};
+<span class="k">const</span> Flyer = Base => <span class="k">class</span> <span class="k">extends</span> Base {
+  fly() { <span class="k">return</span> <span class="s">`${this.name} flies.`</span>; }
+};
+
+<span class="k">class</span> Animal { constructor(name){ <span class="k">this</span>.name = name; } }
+<span class="k">class</span> Duck <span class="k">extends</span> Flyer(Swimmer(Animal)) {}
+
+<span class="k">const</span> d = <span class="k">new</span> Duck(<span class="s">"Duck"</span>);
+console.log(d.swim(), d.fly()); <span class="c">// composes two independent behaviors</span></pre>
+  </div>
+
+  <div class="block">
+    <h3>Example — Private Fields</h3>
+    <pre class="code"><span class="k">class</span> BankAccount {
+  #balance = <span class="n">0</span>; <span class="c">// truly private, not accessible outside</span>
+  deposit(amount) { <span class="k">this</span>.#balance += amount; <span class="k">return</span> <span class="k">this</span>.#balance; }
+  get balance() { <span class="k">return</span> <span class="k">this</span>.#balance; }
+}
+<span class="k">const</span> acc = <span class="k">new</span> BankAccount();
+acc.deposit(<span class="n">100</span>);
+console.log(acc.balance);   <span class="c">// 100</span>
+console.log(acc.#balance);  <span class="c">// SyntaxError — inaccessible outside the class</span></pre>
+  </div>
+
+  <div class="block">
+    <h3>Comparison</h3>
+    <div class="two-col">
+      <div class="card"><h4>Inheritance ("is-a")</h4><p>Good when the relationship is genuinely hierarchical and stable, e.g. a <code>Square</code> is always a <code>Shape</code>.</p></div>
+      <div class="card"><h4>Composition ("has-a" / "can-do")</h4><p>Better when behavior is a capability shared across unrelated types, e.g. many unrelated classes can be <code>Swimmer</code>.</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Common Misconceptions</h3>
+    <div class="misconception"><b>Myth</b>"Prefixing a property with underscore, like <code>_balance</code>, makes it private." It's still fully accessible — pure convention. Only <code>#field</code> syntax is enforced by the JS engine.</div>
+    <div class="misconception"><b>Myth</b>"Deep inheritance chains are always the most reusable design." Beyond two or three levels, chains usually get harder to reason about than a flatter composition-based design.</div>
+  </div>
+
+  <div class="block">
+    <h3>Exercise</h3>
+    <div class="exercise">
+      <h4>Try it — polymorphism in practice</h4>
+      <textarea id="ex4code">class Shape { area() { return 0; } }
+class Circle extends Shape {
+  constructor(r) { super(); this.r = r; }
+  area() { return +(Math.PI * this.r * this.r).toFixed(2); }
+}
+class Rectangle extends Shape {
+  constructor(w, h) { super(); this.w = w; this.h = h; }
+  area() { return this.w * this.h; }
+}
+const shapes = [new Circle(3), new Rectangle(4, 5)];
+shapes.forEach(s => console.log(s.constructor.name, s.area()));</textarea>
+      <div class="run-row"><button class="btn secondary" onclick="runExercise('ex4code','ex4out')">Run code</button></div>
+      <div class="output" id="ex4out"></div>
+      <button class="hint-toggle" onclick="toggleHint('ex4hint')">Show hint</button>
+      <div class="hint-text" id="ex4hint">Each shape calls its own overridden area() — that's polymorphism: one interface, many implementations.</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Key Takeaways</h3>
+    <ul class="takeaways">
+      <li>Mixins compose independent capabilities without forcing a rigid hierarchy.</li>
+      <li><code>#field</code> gives real, engine-enforced privacy — unlike underscore conventions.</li>
+      <li>Favor composition over deep inheritance when the relationship isn't a true "is-a".</li>
+      <li>Polymorphism lets one interface (<code>area()</code>) run different logic per subclass.</li>
+    </ul>
+  </div>
+
+  <div class="quiz" id="quiz4" data-module="4">
+    <div class="quiz-head"><h3>Module 4 Quiz</h3><span class="quiz-progress" id="qp4">0 / 4 answered</span></div>
+    <div id="qbody4"></div>
+    <div class="btn-row"><button class="btn" id="submit4" onclick="submitQuiz(4)">Submit answers</button></div>
+    <div class="quiz-result" id="qresult4">
+      <svg class="score-ring" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#1A2233" stroke-width="3"/><path id="ring4" d="M18 2 a16 16 0 1 1 0 32 a16 16 0 1 1 0 -32" fill="none" stroke="#6FCF97" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/></svg>
+      <h4 id="scoreText4"></h4>
+      <p id="scoreSub4"></p>
+      <button class="btn" onclick="unlockModule(5)">Unlock Final Challenge →</button>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CHALLENGE ============ -->
+<section class="module" id="module5">
+  <div class="module-head"><span class="module-num">Final</span><h2>Practical Challenge</h2></div>
+  <p class="module-sub" id="lockedMsg5">Complete Module 4's quiz to unlock the final challenge.</p>
+  <div class="locked-panel" id="lockPanel5">🔒 Locked — finish the Module 4 quiz above.</div>
+
+  <div id="content5" style="display:none;">
+  <div class="block">
+    <h3>Build: A Vehicle Fleet System</h3>
+    <p>Design a small class hierarchy for a rental fleet: a base <code>Vehicle</code> class with a private <code>#odometer</code> field, subclasses <code>Car</code> and <code>Motorcycle</code> that override a <code>rentalRate()</code> method, and a <code>Trackable</code> mixin adding a <code>logTrip(km)</code> method used by both. Write it below, then run it.</p>
+    <div class="exercise" style="margin-top:8px;">
+      <textarea id="ex5code">const Trackable = Base => class extends Base {
+  logTrip(km) { this._logTripKm(km); return `Logged ${km}km.`; }
+};
+
+class Vehicle {
+  #odometer = 0;
+  _logTripKm(km) { this.#odometer += km; }
+  get odometer() { return this.#odometer; }
+  rentalRate() { return 0; }
+}
+
+class Car extends Trackable(Vehicle) {
+  rentalRate() { return 45; }
+}
+class Motorcycle extends Trackable(Vehicle) {
+  rentalRate() { return 25; }
+}
+
+const c = new Car();
+c.logTrip(120);
+console.log("Car rate:", c.rentalRate(), "| odometer:", c.odometer);
+
+const m = new Motorcycle();
+m.logTrip(60);
+console.log("Motorcycle rate:", m.rentalRate(), "| odometer:", m.odometer);</textarea>
+      <div class="run-row"><button class="btn secondary" onclick="runExercise('ex5code','ex5out')">Run code</button></div>
+      <div class="output" id="ex5out"></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Cheat Sheet</h3>
+    <div class="cheat-grid">
+      <div class="cheat-card"><h4>Prototype Basics</h4><pre>Object.getPrototypeOf(obj)
+Object.setPrototypeOf(obj, proto)
+Object.create(proto)
+obj.hasOwnProperty(key)</pre></div>
+      <div class="cheat-card"><h4>Constructor Functions</h4><pre>function Fn(x){ this.x = x; }
+Fn.prototype.method = function(){};
+const inst = new Fn(1);</pre></div>
+      <div class="cheat-card"><h4>ES6 Classes</h4><pre>class A { constructor(){} m(){} }
+class B extends A {
+  constructor(){ super(); }
+  m(){ return super.m(); }
+}</pre></div>
+      <div class="cheat-card"><h4>Advanced</h4><pre>class C { #priv = 1; get p(){return this.#priv;} }
+const Mixin = Base => class extends Base {};
+obj instanceof Cls</pre></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Summary Notes</h3>
+    <p>JavaScript objects link to each other through a prototype chain that's resolved live at lookup time — never copied. Constructor functions plus <code>.prototype</code> were the original way to share behavior across instances; <code>class</code>/<code>extends</code>/<code>super</code> wrap that exact mechanism in cleaner syntax. Beyond basic hierarchies, private fields (<code>#field</code>) give real encapsulation, and mixins let you compose capabilities without forcing everything into one rigid "is-a" tree.</p>
+  </div>
+
+  <div class="block">
+    <h3>Continue Learning</h3>
+    <div class="res-grid">
+      <div class="res-card"><h4>Books</h4><ul><li>"You Don't Know JS: this &amp; Object Prototypes" — Kyle Simpson</li><li>"Eloquent JavaScript" — Marijn Haverbeke, ch. on objects &amp; classes</li><li>"Secrets of the JavaScript Ninja" — Resig &amp; Bibeault</li></ul></div>
+      <div class="res-card"><h4>Documentation</h4><ul><li>MDN: Object prototypes</li><li>MDN: Classes</li><li>MDN: Private class fields</li><li>ECMA-262 Language Specification</li></ul></div>
+      <div class="res-card"><h4>Research &amp; History</h4><ul><li>Self: The Power of Simplicity (Ungar &amp; Smith, 1987) — origin of prototype-based design</li><li>TC39 class-fields proposal</li></ul></div>
+      <div class="res-card"><h4>Communities</h4><ul><li>r/javascript</li><li>Stack Overflow — [javascript] [prototype] tags</li><li>TC39 GitHub discussions</li></ul></div>
+      <div class="res-card"><h4>Practice Platforms</h4><ul><li>JavaScript.info — Objects, classes chapter exercises</li><li>Codewars — OOP kata</li><li>Exercism JavaScript track</li></ul></div>
+      <div class="res-card"><h4>Search Keywords</h4><div class="keywords"><span class="kw">prototype chain</span><span class="kw">Object.create</span><span class="kw">class fields proposal</span><span class="kw">mixin pattern JS</span><span class="kw">composition over inheritance</span></div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Additional AI Prompts for Further Learning</h3>
+    <div class="two-col">
+      <div class="card"><p>"Walk me through what happens step-by-step when I call `new Dog('Rex')`, including memory and the prototype link."</p></div>
+      <div class="card"><p>"Refactor this deep inheritance hierarchy into a composition-based design and explain each tradeoff."</p></div>
+      <div class="card"><p>"Show me three real bugs caused by misunderstanding `this` in JS classes, and how to fix each."</p></div>
+      <div class="card"><p>"Compare JS prototypal inheritance to Python's MRO and Java's interfaces — what transfers and what doesn't?"</p></div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:10px;">
+    <button class="btn" onclick="window.print()">🖨 Print / Save Notes as PDF</button>
+    <button class="btn secondary" onclick="scrollToId('intro')">Back to top</button>
+  </div>
+  </div>
+</section>
+
+<footer>Interactive Learning Studio · Built for one focused sitting, not a roadmap · Object-Oriented JavaScript</footer>
+</div>
+
+<button class="btn print-btn" onclick="window.print()" title="Print notes">🖨</button>
+
+<script>
+/* ================= STATE ================= */
+const state = {
+  xp: 0,
+  badges: 0,
+  unlocked: 1, // highest unlocked module
+  quizDone: {1:false,2:false,3:false,4:false}
+};
+
+function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+
+function updateHeader(){
+  document.getElementById('xpDisplay').textContent = state.xp + ' XP';
+  document.getElementById('badgeCount').textContent = state.badges + '/8 badges';
+  const totalSteps = 5; // 4 modules + final
+  const pct = Math.min(100, (state.unlocked-1)/totalSteps*100 + (state.quizDone[4]?20:0));
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function unlockModule(n){
+  state.unlocked = Math.max(state.unlocked, n);
+  if(n<=4){
+    document.getElementById('lockPanel'+n).style.display='none';
+    document.getElementById('content'+n).style.display='block';
+    document.getElementById('lockedMsg'+n).style.display='none';
+  } else {
+    document.getElementById('lockPanel5').style.display='none';
+    document.getElementById('content5').style.display='block';
+    document.getElementById('lockedMsg5').style.display='none';
+  }
+  updateHeader();
+  scrollToId('module'+n);
+}
+
+/* ================= CODE EXERCISE RUNNER ================= */
+function runExercise(taId, outId){
+  const code = document.getElementById(taId).value;
+  const out = document.getElementById(outId);
+  const lines = [];
+  const fakeConsole = { log:(...args)=>{ lines.push(args.map(a=> typeof a==='object'? JSON.stringify(a): String(a)).join(' ')); } };
+  try{
+    const fn = new Function('console', code);
+    fn(fakeConsole);
+    out.textContent = lines.length? lines.join('\n') : '(no output)';
+  }catch(e){
+    out.textContent = 'Error: ' + e.message;
+  }
+  out.classList.add('show');
+}
+function toggleHint(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+/* ================= HERO / MODULE 1 CHAIN DEMO ================= */
+document.querySelectorAll('.pg-btn[data-lookup]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.pg-btn[data-lookup]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const key = btn.dataset.lookup;
+    const n1 = document.getElementById('n1'), n2 = document.getElementById('n2');
+    n1.setAttribute('stroke','#4FD1C5'); n2.setAttribute('stroke','#E8A33D');
+    const res = document.getElementById('lookupResult');
+    if(key==='jumps'){ n1.setAttribute('stroke','#6FCF97'); res.textContent='rabbit.jumps → true (found on rabbit)'; }
+    else if(key==='eats'){ n2.setAttribute('stroke','#6FCF97'); res.textContent='rabbit.eats → true (found on animal, via prototype chain)'; }
+    else { res.textContent='rabbit.flies → undefined (chain exhausted at null)'; }
+  });
+});
+
+/* ================= QUIZ DATA ================= */
+const quizzes = {
+  1:[
+    {q:"What does JavaScript do when a property lookup fails on an object?", opts:["Throws an error immediately","Follows the prototype chain to linked objects","Returns 0 by default","Copies the property from a global template"], correct:1, explain:"JS walks the prototype chain, checking each linked object in turn, until it finds the property or reaches null."},
+    {q:"What is the difference between __proto__ and .prototype?", opts:["They are identical in every way","__proto__ is the live link every object has; .prototype exists only on functions as a template","prototype is deprecated; __proto__ replaced it","prototype only works with arrow functions"], correct:1, explain:"__proto__ is an object's actual link to its prototype. .prototype is a property that functions carry, used to set up new objects' links."},
+    {q:"What does rabbit.hasOwnProperty('eats') return if 'eats' is only on rabbit's prototype?", opts:["true","false","undefined","Throws an error"], correct:1, explain:"hasOwnProperty checks only the object itself, not the chain, so an inherited property returns false."},
+    {q:"In the office memo chain analogy, what does reaching an empty CEO inbox represent?", opts:["A syntax error","The prototype being set to null, ending the lookup with undefined","Infinite recursion","A successful property match"], correct:1, explain:"When the chain ends at null and nothing was found, the lookup resolves to undefined — the equivalent of nobody answering."}
+  ],
+  2:[
+    {q:"What does the `new` keyword do when calling a constructor function?", opts:["Only binds `this` to the global object","Creates a new object, links its prototype, binds `this`, and returns it","Deletes the previous instance","Nothing unless `return` is used"], correct:1, explain:"new performs all four steps automatically: create, link, bind this, return."},
+    {q:"Why define shared methods on Fn.prototype instead of inside the constructor?", opts:["It's required by the JS spec","Prototype methods are shared once in memory; constructor methods are duplicated per instance","There is no functional difference","Prototype methods run faster at parse time"], correct:1, explain:"A method defined in the constructor is recreated for every instance, wasting memory; a prototype method exists once and is shared."},
+    {q:"What happens if you call a constructor function without `new`?", opts:["JS throws a clear error every time","`this` may not point to the new object, silently causing bugs","The function refuses to run","It behaves identically to using `new`"], correct:1, explain:"Without new, `this` often ends up bound to the global object (or undefined in strict mode) instead of a fresh instance."},
+    {q:"After `const rex = new Dog('Rex')`, what does Object.getPrototypeOf(rex) equal?", opts:["Dog itself","Dog.prototype","Animal.prototype","undefined"], correct:1, explain:"new sets the new instance's prototype link to the constructor function's .prototype property — here, Dog.prototype."}
+  ],
+  3:[
+    {q:"What is ES6 class syntax fundamentally built on?", opts:["A completely new inheritance model unrelated to prototypes","Constructor functions and prototype chains, wrapped in cleaner syntax","Java's class-loading system","Copy-on-write object cloning"], correct:1, explain:"class is sugar: it still produces a function with a .prototype used the same way as Module 2's manual pattern."},
+    {q:"What must happen before `this` can be used in a derived class's constructor?", opts:["Nothing, `this` always exists","super() must be called first","The class must be declared with `static`","this must be manually assigned with Object.create"], correct:1, explain:"In a subclass, this isn't initialized until super() runs, since the parent constructor is responsible for creating it."},
+    {q:"What does `extends` do under the hood?", opts:["Copies all parent methods into the child class","Wires up the prototype chain between subclass.prototype and parent.prototype","Deletes the parent class after use","Nothing — it's purely a linting hint"], correct:1, explain:"extends links the subclass's prototype to the parent's prototype, exactly like Module 2's manual chain-building."},
+    {q:"What does calling `super.speak()` inside an overridden method do?", opts:["Calls the parent class's version of speak(), letting you extend rather than replace it","Deletes the child's own speak method","Throws an error because it's redundant","Calls speak() on every instance ever created"], correct:0, explain:"super.method() explicitly calls the parent's implementation, useful for extending rather than fully overriding behavior."}
+  ],
+  4:[
+    {q:"What problem do mixins primarily solve?", opts:["They make classes run faster","They let you compose independent capabilities without forcing a rigid single-inheritance tree","They replace the need for constructors","They automatically make all fields private"], correct:1, explain:"Mixins let unrelated classes share a capability (like Swimmer or Flyer) without needing a common ancestor for that behavior."},
+    {q:"Why is `#balance` more private than `_balance`?", opts:["There is no real difference","#balance is enforced by the JS engine; _balance is only a naming convention","_balance requires a getter, #balance doesn't","#balance can only be used in arrow functions"], correct:1, explain:"Fields prefixed with # are truly inaccessible from outside the class — enforced by the language, unlike an underscore convention."},
+    {q:"When is composition generally preferred over inheritance?", opts:["Always, inheritance should never be used","When the relationship is a genuine, stable 'is-a' hierarchy","When behavior is a shared capability across otherwise unrelated types", "Never — inheritance is always simpler"], correct:2, explain:"Composition suits capabilities that cut across unrelated types; inheritance suits genuine, stable 'is-a' relationships."},
+    {q:"In the Vehicle fleet example, what does polymorphism let `shapes.forEach(s => s.area())` do?", opts:["Call the same method name but run each subclass's own overridden implementation","Force all shapes to return 0","Require a switch statement to pick the right formula","Only work if all shapes are the exact same class"], correct:0, explain:"Polymorphism means one shared interface (area()) resolves to different logic per subclass automatically, no branching needed."}
+  ]
+};
+
+function renderQuiz(n){
+  const container = document.getElementById('qbody'+n);
+  container.innerHTML='';
+  quizzes[n].forEach((item, qi)=>{
+    const div = document.createElement('div');
+    div.className='qitem';
+    div.innerHTML = `<div class="qtext">${qi+1}. ${item.q}</div>
+      <div class="qopts" data-qi="${qi}">
+        ${item.opts.map((o,oi)=>`<div class="qopt" data-oi="${oi}"><span class="letter">${String.fromCharCode(65+oi)}</span><span>${o}</span></div>`).join('')}
+      </div>
+      <div class="qexplain" id="explain-${n}-${qi}">${item.explain}</div>`;
+    container.appendChild(div);
+  });
+  container.querySelectorAll('.qopts').forEach(optsDiv=>{
+    optsDiv.addEventListener('click', e=>{
+      const opt = e.target.closest('.qopt');
+      if(!opt || optsDiv.classList.contains('locked')) return;
+      optsDiv.querySelectorAll('.qopt').forEach(o=>o.classList.remove('selected'));
+      opt.classList.add('selected');
+      updateQuizProgress(n);
+    });
+  });
+}
+function updateQuizProgress(n){
+  const total = quizzes[n].length;
+  const answered = document.querySelectorAll(`#qbody${n} .qopt.selected`).length;
+  document.getElementById('qp'+n).textContent = `${answered} / ${total} answered`;
+}
+
+function submitQuiz(n){
+  const items = quizzes[n];
+  let correctCount = 0;
+  items.forEach((item, qi)=>{
+    const optsDiv = document.querySelector(`#qbody${n} .qopts[data-qi="${qi}"]`);
+    optsDiv.classList.add('locked');
+    const selected = optsDiv.querySelector('.qopt.selected');
+    const selOi = selected ? parseInt(selected.dataset.oi) : -1;
+    optsDiv.querySelectorAll('.qopt').forEach(o=>{
+      const oi = parseInt(o.dataset.oi);
+      if(oi===item.correct) o.classList.add('correct');
+      else if(oi===selOi) o.classList.add('incorrect');
+    });
+    if(selOi===item.correct) correctCount++;
+    document.getElementById(`explain-${n}-${qi}`).classList.add('show');
+  });
+  const pct = Math.round(correctCount/items.length*100);
+  state.xp += correctCount*25;
+  if(pct>=75) state.badges++;
+  state.quizDone[n]=true;
+  document.getElementById('submit'+n).disabled=true;
+  const ring = document.getElementById('ring'+n);
+  const circumference = 100;
+  ring.setAttribute('stroke-dasharray', pct+' '+circumference);
+  ring.setAttribute('stroke', pct>=75? '#6FCF97' : pct>=50? '#E8A33D' : '#E36868');
+  document.getElementById('scoreText'+n).textContent = `${correctCount} / ${items.length} correct (${pct}%)`;
+  document.getElementById('scoreSub'+n).textContent = pct>=75 ? 'Great work — module badge earned.' : 'Solid attempt — review the explanations above, then continue.';
+  document.getElementById('qresult'+n).classList.add('show');
+  updateHeader();
+}
+
+/* init */
+[1,2,3,4].forEach(n=>renderQuiz(n));
+updateHeader();
+</script>
+</body>
+</html>
