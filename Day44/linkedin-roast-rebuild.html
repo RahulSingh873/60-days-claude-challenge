@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LinkedIn Roast & Rebuild — Rahul Singh</title>
+<style>
+:root{
+  --bg:#0A0E1A; --card:rgba(255,255,255,0.04); --card-border:rgba(255,255,255,0.08);
+  --ink:#E8EBF5; --ink-dim:#9099B0; --ink-faint:#5C6480;
+  --red:#FF6B6B; --red-dim:rgba(255,107,107,0.12);
+  --green:#3DDC97; --green-dim:rgba(61,220,151,0.12);
+  --indigo:#7C8CFF; --indigo-dim:rgba(124,140,255,0.14);
+  --amber:#FFC069;
+  --radius:16px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Outfit',-apple-system,sans-serif;
+  padding:32px 20px 80px; line-height:1.6;
+}
+.wrap{max-width:920px;margin:0 auto;}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;margin:0 0 8px;}
+.hero{text-align:center;padding:20px 0 36px;}
+.hero .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--indigo);font-weight:600;margin-bottom:10px;}
+.hero h1{font-size:32px;}
+.hero p{color:var(--ink-dim);font-size:15px;max-width:520px;margin:10px auto 0;}
+.scoreband{display:flex;justify-content:center;gap:28px;margin-top:26px;flex-wrap:wrap;}
+.scorebig{text-align:center;}
+.scorebig .num{font-family:'Space Grotesk';font-size:44px;font-weight:600;}
+.scorebig .lbl{font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;}
+.scorebig.before .num{color:var(--red);}
+.scorebig.after .num{color:var(--green);}
+.arrow{align-self:center;font-size:24px;color:var(--ink-faint);}
+
+.tabs{display:flex;gap:6px;margin:36px 0 22px;flex-wrap:wrap;border-bottom:1px solid var(--card-border);padding-bottom:0;}
+.tab{padding:10px 18px;border-radius:12px 12px 0 0;background:transparent;color:var(--ink-dim);cursor:pointer;font-size:14px;font-weight:500;border:1px solid transparent;transition:.2s;}
+.tab.active{background:var(--card);color:var(--ink);border:1px solid var(--card-border);border-bottom-color:var(--bg);}
+.panel{display:none;}
+.panel.active{display:block;animation:fade .3s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;}
+.card h3{font-size:17px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.pill{font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;white-space:nowrap;}
+.pill.bad{background:var(--red-dim);color:var(--red);}
+.pill.mid{background:rgba(255,192,105,0.14);color:var(--amber);}
+.pill.good{background:var(--green-dim);color:var(--green);}
+.quote{font-style:italic;color:var(--ink-dim);border-left:2px solid var(--red);padding:6px 14px;margin:12px 0;font-size:14px;}
+.tag{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);font-weight:600;margin-top:14px;}
+.body14{font-size:14.5px;color:var(--ink-dim);margin-top:4px;}
+
+.rebuild-opt{background:rgba(124,140,255,0.06);border:1px solid var(--indigo-dim);border-radius:12px;padding:14px 16px;margin:10px 0;font-size:14.5px;}
+.rebuild-opt b{color:var(--indigo);}
+.copybtn{background:transparent;border:1px solid var(--card-border);color:var(--ink-dim);font-size:12px;padding:5px 12px;border-radius:8px;cursor:pointer;margin-top:8px;}
+.copybtn:hover{border-color:var(--indigo);color:var(--indigo);}
+
+.beforeafter{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0;}
+.beforeafter .box{padding:12px 14px;border-radius:10px;font-size:13.5px;}
+.beforeafter .before{background:var(--red-dim);color:#FFB3B3;}
+.beforeafter .after{background:var(--green-dim);color:#A8F0D3;}
+.beforeafter .box .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.8;margin-bottom:4px;font-weight:700;}
+@media(max-width:600px){.beforeafter{grid-template-columns:1fr;}}
+
+.bar-row{display:flex;align-items:center;gap:12px;margin:14px 0;}
+.bar-row .label{width:150px;font-size:13.5px;color:var(--ink-dim);flex-shrink:0;}
+.bar-track{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:6px;position:relative;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;position:absolute;top:0;left:0;transition:width 1s ease;}
+.bar-fill.b{background:var(--red);opacity:.55;}
+.bar-fill.a{background:var(--green);}
+.bar-nums{width:90px;text-align:right;font-size:12.5px;color:var(--ink-faint);flex-shrink:0;}
+.bar-nums b{color:var(--ink);}
+
+.day{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:18px 20px;margin-bottom:14px;}
+.day-head{display:flex;align-items:center;gap:12px;cursor:pointer;}
+.day-num{width:32px;height:32px;border-radius:8px;background:var(--indigo-dim);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0;}
+.day-title{font-weight:600;font-size:15px;flex:1;}
+.day-body{margin-top:14px;padding-top:14px;border-top:1px solid var(--card-border);font-size:14px;color:var(--ink-dim);display:none;}
+.day.open .day-body{display:block;}
+.chev{color:var(--ink-faint);transition:.2s;}
+.day.open .chev{transform:rotate(90deg);}
+.checklist label{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer;font-size:14px;}
+.checklist input{margin-top:3px;}
+.draft{background:rgba(255,255,255,0.03);border:1px dashed var(--card-border);border-radius:10px;padding:14px;font-size:13.5px;color:var(--ink);margin-top:10px;white-space:pre-wrap;}
+
+.summary-card{background:linear-gradient(180deg,rgba(124,140,255,0.10),rgba(124,140,255,0.03));border:1px solid var(--indigo-dim);border-radius:20px;padding:28px;text-align:center;}
+.summary-card .big{font-family:'Space Grotesk';font-size:36px;font-weight:600;margin:10px 0;}
+.summary-card .before{color:var(--red);} .summary-card .after{color:var(--green);}
+.summary-card ol{text-align:left;max-width:420px;margin:16px auto;padding-left:22px;font-size:14px;color:var(--ink-dim);}
+.summary-card .highlight{background:rgba(255,255,255,0.05);border-radius:10px;padding:12px 16px;font-size:14px;margin-top:14px;color:var(--ink);}
+
+.fillnote{font-size:12px;color:var(--amber);margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <div class="eyebrow">LinkedIn audit — Rahul Singh</div>
+  <h1>You're invisible to the recruiters you actually want.</h1>
+  <p>Not because you lack substance — you don't. Because your profile reads like a keyword dump instead of a hire-me case file. Here's the honest breakdown, and the fix.</p>
+  <div class="scoreband">
+    <div class="scorebig before"><div class="num">34</div><div class="lbl">Before / 100</div></div>
+    <div class="arrow">→</div>
+    <div class="scorebig after"><div class="num">78</div><div class="lbl">After / 100</div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="roast">Roast</div>
+  <div class="tab" data-tab="rebuild">Rebuild</div>
+  <div class="tab" data-tab="scorecard">Scorecard</div>
+  <div class="tab" data-tab="plan">7-day plan</div>
+  <div class="tab" data-tab="summary">Summary card</div>
+</div>
+
+<div class="panel active" id="roast">
+
+  <div class="card">
+    <h3>Headline <span class="pill bad">3/10</span></h3>
+    <div class="quote">"B.Tech CSE'28| DSA with C++ | HTML| JavaScript | CSS | Blockchain | Solidity | 50+ Leetcode Questions | Deep Learning with AI"</div>
+    <div class="tag">The problem</div>
+    <div class="body14">This is a tag cloud, not a headline. A recruiter scanning search results in 3 seconds sees nine nouns fighting for attention and no sentence telling them what you actually are. Are you a DSA specialist? A blockchain dev? An AI person? You've made them guess, and recruiters don't guess — they scroll past.</div>
+    <div class="tag">Why it hurts</div>
+    <div class="body14">LinkedIn search ranks on relevance to the recruiter's query, not raw keyword count. Stuffing "Blockchain," "Solidity," and "Deep Learning" alongside each other actually dilutes your match score for any single role, because the algorithm can't tell which one is your primary identity.</div>
+    <div class="tag">Invisible cost</div>
+    <div class="body14">Walmart/JPMorgan/Deloitte recruiters searching "full-stack developer intern" or "software engineer intern" won't rank you highly, because nothing in your headline says that plainly.</div>
+  </div>
+
+  <div class="card">
+    <h3>About — first 2 lines <span class="pill bad">2/10</span></h3>
+    <div class="quote">"👋 Hi, I'm Rahul Singh, a third-year B.Tech Computer Science student with a passion for technology, creativity, and continuous learning."</div>
+    <div class="tag">The problem</div>
+    <div class="body14">This is the single most valuable line on your entire profile — it's what shows before "see more" — and you spent it on the same sentence 100,000 other CS students have. "Passion for technology and continuous learning" is filler that says nothing about you specifically.</div>
+    <div class="tag">Why it hurts</div>
+    <div class="body14">Recruiters decide whether to click "see more" in under 2 seconds. A generic opener signals a generic candidate before they've read a single real fact about you.</div>
+    <div class="tag">Invisible cost</div>
+    <div class="body14">Most readers never click "see more." Everything below this line — your UBA leadership, your project work — is currently invisible to 80%+ of profile visitors.</div>
+  </div>
+
+  <div class="card">
+    <h3>About — full section <span class="pill mid">4/10</span></h3>
+    <div class="body14">Good raw material, badly packaged:</div>
+    <ul class="body14" style="margin-top:8px;">
+      <li>Broken markdown asterisks ("**Social media coordinator**") are leaking into the live text — this looks unpolished and unedited.</li>
+      <li>Zero numbers anywhere. No project count, no CGPA, no scale of the UBA work, no LeetCode count (that's buried in your headline instead, where it doesn't belong).</li>
+      <li>The "Areas of Interest" bullet list restates the same five buzzwords already implied elsewhere — it's padding, not proof.</li>
+      <li>No CTA. The section ends on a soft "feel free to connect" instead of directing the reader toward a specific action.</li>
+    </ul>
+    <div class="tag">Invisible cost</div>
+    <div class="body14">You've actually built a self-hosted learning platform and multiple working web apps — none of that appears here. Recruiters reward evidence, and right now there is none.</div>
+  </div>
+
+  <div class="card">
+    <h3>Experience <span class="pill bad">1/10</span></h3>
+    <div class="body14">Your most recent entry (Vice Chair, UBA) currently has no description bullets at all — just a title and org name.</div>
+    <div class="tag">Why it hurts</div>
+    <div class="body14">An experience entry with no bullets reads as inactive or unimportant to a recruiter skimming your profile — even though "Vice Chair" of an IIT-affiliated national programme is genuinely a strong leadership line.</div>
+    <div class="tag">Invisible cost</div>
+    <div class="body14">You're sitting on your single best non-technical credential — real leadership responsibility — and showing recruiters a blank box instead.</div>
+  </div>
+
+  <div class="card">
+    <h3>Skills & keywords <span class="pill mid">4/10</span></h3>
+    <div class="body14">DSA, C++, Python, HTML, CSS, JS, MySQL, and Blockchain are all reasonable — but "50+ LeetCode Questions" living in your headline instead of your Skills/Featured section means it's not indexed as a skill, and it crowds out room for a clear identity statement.</div>
+    <div class="tag">Invisible cost</div>
+    <div class="body14">You're not showing up for "Full-Stack Developer" or "Software Engineer" search terms at all, despite that being your actual target.</div>
+  </div>
+
+</div>
+
+<div class="panel" id="rebuild">
+
+  <div class="card">
+    <h3>Headline — pick by goal</h3>
+    <div class="rebuild-opt">
+      <b>Option 1 · Search-optimized</b> — use this while actively applying to Walmart/JPMorgan/Deloitte<br>
+      Full-Stack Developer (in training) | JavaScript, Python, C++ | DSA · MySQL · Blockchain | B.Tech CSE '28
+      <button class="copybtn" onclick="copyText(this,'Full-Stack Developer (in training) | JavaScript, Python, C++ | DSA · MySQL · Blockchain | B.Tech CSE \'28')">Copy</button>
+    </div>
+    <div class="rebuild-opt">
+      <b>Option 2 · Value-proposition</b> — use when messaging recruiters or hiring managers directly<br>
+      Building full-stack web apps & AI-powered tools | Turning DSA fundamentals into shippable code | B.Tech CSE student
+      <button class="copybtn" onclick="copyText(this,'Building full-stack web apps & AI-powered tools | Turning DSA fundamentals into shippable code | B.Tech CSE student')">Copy</button>
+    </div>
+    <div class="rebuild-opt">
+      <b>Option 3 · Authority / networking</b> — use for the #60DayClaudeChallenge and thought-leadership posts<br>
+      Full-Stack Developer in Training | 50+ DSA Problems Solved | Vice Chair, Unnat Bharat Abhiyan | Building in Public
+      <button class="copybtn" onclick="copyText(this,'Full-Stack Developer in Training | 50+ DSA Problems Solved | Vice Chair, Unnat Bharat Abhiyan | Building in Public')">Copy</button>
+    </div>
+    <div class="body14" style="margin-top:10px;">Swap between these depending on the moment — Option 1 for the next 3 months while you're applying, Option 3 once you're posting regularly.</div>
+  </div>
+
+  <div class="card">
+    <h3>About section — full rewrite</h3>
+    <div class="draft">I build software that actually ships — from AI-powered web tools to platforms real people use.
+
+I'm a third-year B.Tech Computer Science student (CGPA 8.36) who spends more time building than studying theory in isolation. My core stack is JavaScript, Python, C++, and MySQL, with a growing focus on AI-powered applications and full-stack development. I've solved 50+ DSA problems in C++ and built several self-contained web tools spanning finance dashboards, learning platforms, and productivity apps — most designed to work fully offline, no backend required.
+
+Outside code, I serve as Vice Chair of Unnat Bharat Abhiyan (UBA), an IIT-affiliated national rural development programme, where I help coordinate technology and community outreach initiatives [ADD: number of villages/students/events reached if you have it]. I've also been an active volunteer with Samvaad Theatre & Film Group and ACES, and I edit video/design graphics as a side skill I'm sharpening.
+
+I'm currently targeting full-stack / software engineering internship roles at companies like Walmart Global Tech, JPMorgan, and Deloitte, and I document my daily build-in-public progress under #60DayClaudeChallenge.
+
+If you're hiring for full-stack, software engineering, or AI-tooling internships — or just want to talk DSA, web dev, or building things fast — message me directly.</div>
+    <button class="copybtn" onclick="copyText(this,'')" id="aboutcopy">Copy</button>
+    <div class="tag">Keywords embedded</div>
+    <div class="body14">full-stack, software engineering, JavaScript, Python, C++, MySQL, AI-powered applications, DSA, web development, internship — chosen to match how Walmart/JPM/Deloitte recruiters actually search.</div>
+    <div class="fillnote">Bracketed [ADD:] tag is a placeholder — fill with a real number if you have one. Don't leave a fabricated stat in its place.</div>
+  </div>
+
+  <div class="card">
+    <h3>Experience — Vice Chair, UBA</h3>
+    <div class="beforeafter">
+      <div class="box before"><div class="lbl">Before</div>No description — title and organization only.</div>
+      <div class="box after"><div class="lbl">After</div>Lead technology and community-outreach coordination as Vice Chair of an IIT-affiliated national rural development initiative.</div>
+    </div>
+    <div class="beforeafter">
+      <div class="box before"><div class="lbl">Before</div>(nothing)</div>
+      <div class="box after"><div class="lbl">After</div>Coordinate digital literacy and community-technology programs reaching [ADD: number] participants across [ADD: number] villages/sessions.</div>
+    </div>
+    <div class="beforeafter">
+      <div class="box before"><div class="lbl">Before</div>(nothing)</div>
+      <div class="box after"><div class="lbl">After</div>Collaborate across student and faculty teams to plan outreach content, blending technical and communication skills.</div>
+    </div>
+    <div class="fillnote">Fill in the [ADD:] numbers with your real figures — even a rough estimate ("around 5 villages," "40+ students") beats a blank space, but never invent a number you can't stand behind.</div>
+  </div>
+
+  <div class="card">
+    <h3>Skills recommendations</h3>
+    <div class="tag">Add (priority order)</div>
+    <div class="body14">1. Full-Stack Web Development · 2. Software Development · 3. Data Structures & Algorithms · 4. React / Node.js (once you're using them) · 5. REST APIs · 6. Git & GitHub · 7. SQL · 8. Problem Solving · 9. Prompt Engineering · 10. Software Engineering Internship-readiness skills (System Design basics)</div>
+    <div class="tag">Remove</div>
+    <div class="body14">Nothing needs outright removal yet — your list is short. Just stop treating "50+ LeetCode Questions" as a skill tag; it belongs in About/Featured as proof, not in Skills as a keyword.</div>
+    <div class="tag">Pin to top 3</div>
+    <div class="body14">Data Structures & Algorithms, Full-Stack Web Development, C++ — these three match your target roles most directly.</div>
+  </div>
+
+</div>
+
+<div class="panel" id="scorecard">
+  <div class="card">
+    <h3>Before vs after, by section</h3>
+    <div class="bar-row"><div class="label">Headline</div><div class="bar-track"><div class="bar-fill b" style="width:30%"></div><div class="bar-fill a" style="width:80%;opacity:.85"></div></div><div class="bar-nums"><b>3</b> → <b style="color:var(--green)">8</b></div></div>
+    <div class="bar-row"><div class="label">About (hook)</div><div class="bar-track"><div class="bar-fill b" style="width:20%"></div><div class="bar-fill a" style="width:80%"></div></div><div class="bar-nums"><b>2</b> → <b style="color:var(--green)">8</b></div></div>
+    <div class="bar-row"><div class="label">About (full)</div><div class="bar-track"><div class="bar-fill b" style="width:30%"></div><div class="bar-fill a" style="width:80%"></div></div><div class="bar-nums"><b>3</b> → <b style="color:var(--green)">8</b></div></div>
+    <div class="bar-row"><div class="label">Experience</div><div class="bar-track"><div class="bar-fill b" style="width:10%"></div><div class="bar-fill a" style="width:70%"></div></div><div class="bar-nums"><b>1</b> → <b style="color:var(--green)">7</b></div></div>
+    <div class="bar-row"><div class="label">Skills/keywords</div><div class="bar-track"><div class="bar-fill b" style="width:40%"></div><div class="bar-fill a" style="width:80%"></div></div><div class="bar-nums"><b>4</b> → <b style="color:var(--green)">8</b></div></div>
+    <div style="text-align:center;margin-top:24px;padding-top:18px;border-top:1px solid var(--card-border);">
+      <div style="font-size:13px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;">Overall profile strength</div>
+      <div style="font-family:'Space Grotesk';font-size:30px;font-weight:600;margin-top:6px;"><span style="color:var(--red)">34</span> → <span style="color:var(--green)">78</span> <span style="font-size:16px;color:var(--ink-faint);">(+44)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="plan">
+
+  <div class="day open">
+    <div class="day-head" onclick="toggleDay(this)"><div class="day-num">1</div><div class="day-title">Make all profile changes</div><i class="chev">▸</i></div>
+    <div class="day-body">
+      <div class="checklist">
+        <label><input type="checkbox">Update headline (pick Option 1 for now)</label>
+        <label><input type="checkbox">Replace About section in full</label>
+        <label><input type="checkbox">Add bullets to Vice Chair, UBA experience entry (fill in real numbers)</label>
+        <label><input type="checkbox">Add the 10 recommended skills, pin top 3</label>
+        <label><input type="checkbox">Add 2-3 projects to Featured section (screenshots + links)</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head" onclick="toggleDay(this)"><div class="day-num">2</div><div class="day-title">Post #1 — "I just rebuilt my LinkedIn"</div><i class="chev">▸</i></div>
+    <div class="day-body">
+      <div class="draft">I spent this week rewriting my LinkedIn from scratch — and it exposed exactly what recruiters were seeing (or not seeing) about me.
+
+My old headline was a keyword dump. My About section opened with a line 100,000 other CS students have written. My most recent role had zero description.
+
+None of it was lying — it just wasn't telling my actual story.
+
+Here's what changed:
+→ Headline: from a list of tools to a clear identity
+→ About: opens with what I build, not what I'm "passionate" about
+→ Experience: added real scope to my Vice Chair role at Unnat Bharat Abhiyan
+
+If you're a student and haven't looked at your profile through a recruiter's eyes in a while — do it today. 3 seconds is all you get.
+
+#60DayClaudeChallenge #LinkedInOptimization #OpenToWork</div>
+      <button class="copybtn" onclick="copyText(this,'')">Copy</button>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head" onclick="toggleDay(this)"><div class="day-num">3</div><div class="day-title">Send 10 strategic connection requests</div><i class="chev">▸</i></div>
+    <div class="day-body">
+      <div class="body14"><b style="color:var(--ink)">Who to target:</b> University recruiters/campus hiring leads at Walmart Global Tech India, JPMorgan, and Deloitte India; software engineers at those companies who studied at ABES or nearby UP colleges; 2nd/3rd-year seniors from ABES who've interned at target companies (they refer).</div>
+      <div class="draft">Hi [Name], I'm a CS student targeting SDE/full-stack internships and came across your profile at [Company]. Would love to connect and learn from your experience — happy to share what I'm building too.</div>
+      <button class="copybtn" onclick="copyText(this,'')">Copy</button>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head" onclick="toggleDay(this)"><div class="day-num">4</div><div class="day-title">Comment on 5 posts in your target space</div><i class="chev">▸</i></div>
+    <div class="day-body">
+      <div class="body14">Use the <b style="color:var(--ink)">Value Comment formula</b>: Agree with one specific point → Add an insight from your own experience (e.g. something from your project builds) → Ask a genuine question back. This gets you seen by the poster and their audience — a generic "Great post!" gets you nothing.</div>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head" onclick="toggleDay(this)"><div class="day-num">5</div><div class="day-title">Post #2 — lessons-learned / hot take</div><i class="chev">▸</i></div>
+    <div class="day-body">
+      <div class="draft">Unpopular opinion: solving 50 LeetCode problems taught me less about being a good engineer than building one full project that broke in production.
+
+DSA gets you through the interview. Debugging a self-hosted app at 1am when the offline storage silently fails — that's what actually taught me how software works.
+
+Both matter. But if you're a student and only doing one, you're building half a resume.
+
+What's the project that taught you more than any course did?
+
+#60DayClaudeChallenge #SoftwareEngineering #StudentDeveloper</div>
+      <button class="copybtn" onclick="copyText(this,'')">Copy</button>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head" onclick="toggleDay(this)"><div class="day-num">6</div><div class="day-title">Engage + send 5 more connection requests</div><i class="chev">▸</i></div>
+    <div class="day-body">
+      <div class="body14">Reply to every comment on both posts within a few hours — early engagement is what LinkedIn's algorithm rewards most. Send 5 more targeted requests using the Day 3 template, this time toward Deloitte and JPMorgan specifically if Day 3 leaned Walmart.</div>
+    </div>
+  </div>
+
+  <div class="day">
+    <div class="day-head" onclick="toggleDay(this)"><div class="day-num">7</div><div class="day-title">Review profile views & acceptance rate</div><i class="chev">▸</i></div>
+    <div class="day-body">
+      <div class="body14">Check <b style="color:var(--ink)">Who's Viewed Your Profile</b> and your connection acceptance rate.<br><br>
+      <b style="color:var(--ink)">What the numbers mean:</b> A jump in profile views right after the headline/About change confirms your keywords are now matching recruiter searches. A low acceptance rate (under ~40%) usually means your connection note is too generic or you're targeting people with no clear reason to accept — tighten the "why" in your template. High views but no messages back means your About's CTA isn't clear enough — sharpen the closing line.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="panel" id="summary">
+  <div class="summary-card">
+    <div style="font-size:13px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;">I let AI roast my LinkedIn profile today</div>
+    <div class="big"><span class="before">34</span> → <span class="after">78</span> <span style="font-size:16px;color:var(--ink-faint);">/ 100</span></div>
+    <ol>
+      <li>Headline was a keyword dump with no clear identity</li>
+      <li>About section opened with the same generic line every CS student writes</li>
+      <li>My most recent role (Vice Chair, UBA) had zero description — recruiters saw a blank box</li>
+    </ol>
+    <div class="highlight">The #1 fix that mattered most: rewriting the first two lines of my About section — that's the only part recruiters see before clicking "see more."</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function toggleDay(el){
+  const day = el.parentElement;
+  document.querySelectorAll('.day').forEach(d=>{ if(d!==day) d.classList.remove('open'); });
+  day.classList.toggle('open');
+}
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+function copyText(btn, text){
+  const content = text || btn.previousElementSibling.innerText;
+  navigator.clipboard.writeText(content).then(()=>{
+    const old = btn.innerText;
+    btn.innerText = 'Copied';
+    setTimeout(()=>btn.innerText = old, 1500);
+  });
+}
+document.getElementById('aboutcopy').addEventListener('click', function(){
+  const draft = this.previousElementSibling.innerText;
+  navigator.clipboard.writeText(draft).then(()=>{
+    this.innerText = 'Copied';
+    setTimeout(()=>this.innerText='Copy', 1500);
+  });
+});
+</script>
+</body>
+</html>
