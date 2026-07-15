@@ -12,6 +12,44 @@ Built an AI-powered Decision Framework that helps analyze complex decisions thro
 - Generate actionable recommendations instead of simple opinions.
 - Improve critical thinking through AI-assisted analysis.
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="Screenshot%202026-07-15%20191502.png" alt="Screenshot 1" width="400"/>
+    </td>
+    <td align="center">
+      <img src="Screenshot%202026-07-15%20191525.png" alt="Screenshot 2" width="400"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="Screenshot%202026-07-15%20191546.png" alt="Screenshot 3" width="400"/>
+    </td>
+    <td align="center">
+      <img src="Screenshot%202026-07-15%20191613.png" alt="Screenshot 4" width="400"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="Screenshot%202026-07-15%20191717.png" alt="Screenshot 5" width="400"/>
+    </td>
+    <td align="center">
+      <img src="Screenshot%202026-07-15%20191825.png" alt="Screenshot 6" width="400"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <img src="Screenshot%202026-07-15%20191850.png" alt="Screenshot 7" width="820"/>
+    </td>
+  </tr>
+</table>
+
+## Report Generated
+
+- [View My Decision Report](./decision_report.html)
+
 ## Key Learnings
 
 - Breaking large decisions into smaller evaluation criteria improves clarity.
