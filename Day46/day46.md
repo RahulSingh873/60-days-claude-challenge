@@ -12,6 +12,41 @@ Build an autonomous multi-agent system that coordinates specialized AI roles to 
 
 ---
 
+## Screenshots
+
+<table align="center">
+  <tr>
+    <td>
+      <img src="Screenshot%202026-07-16%20192343.png" alt="Autonomous Agent Studio - Home" width="100%">
+    </td>
+    <td>
+      <img src="Screenshot%202026-07-16%20192416.png" alt="Autonomous Agent Studio - Orchestration Cycle" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="Screenshot%202026-07-16%20192655.png" alt="Autonomous Agent Studio - Activity Log" width="100%">
+    </td>
+    <td align="center">
+      <b>Day 46<br>Autonomous Agent Studio</b>
+    </td>
+  </tr>
+</table>
+
+---
+
+## Interactive Agent Studio Generated
+
+[Autonomous Agent Studio](./autonomous-studio-agent.html)
+
+---
+
+## Deployed Page Link
+
+[Live Demo](https://rahulsingh873.github.io/60-days-claude-challenge/Day46/autonomous-agent-studio.html)
+
+---
+
 ## 🚀 Features
 
 - Multi-agent orchestration workflow
