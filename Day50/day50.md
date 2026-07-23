@@ -44,6 +44,8 @@ Built an AI-powered **Defend Your Experience** interview simulator that evaluate
 
 ## HTML Generated
 
+[Test your Knowledge](./defend-your-experience.html)
+
 
 ## 📸 Screenshots
 
