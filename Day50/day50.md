@@ -49,15 +49,29 @@ Built an AI-powered **Defend Your Experience** interview simulator that evaluate
 
 ## 📸 Screenshots
 
+## 📸 Screenshots
+
 <table>
-<tr>
-<td><img src="./Screenshot1.png" width="100%"></td>
-<td><img src="./Screenshot2.png" width="100%"></td>
-</tr>
-<tr>
-<td><img src="./Screenshot3.png" width="100%"></td>
-<td><img src="./Screenshot4.png" width="100%"></td>
-</tr>
+  <tr>
+    <td align="center">
+      <img src="./Screenshot%202026-07-22%20220231.png" alt="Home Page" width="100%">
+      <br><b>Home Page</b>
+    </td>
+    <td align="center">
+      <img src="./Screenshot%202026-07-22%20220252.png" alt="Resume Upload" width="100%">
+      <br><b>Resume Upload</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./Screenshot%202026-07-23%20154416.png" alt="Defense Report" width="100%">
+      <br><b>Defense Report</b>
+    </td>
+    <td align="center">
+      <img src="./Screenshot%202026-07-23%20154436.png" alt="Claims Analysis" width="100%">
+      <br><b>Claims Analysis</b>
+    </td>
+  </tr>
 </table>
 
 ---
