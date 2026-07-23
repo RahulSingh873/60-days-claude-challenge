@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defend Your Experience</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#0a0b0f;
+  --bg-raise: rgba(255,255,255,0.035);
+  --bg-raise2: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.09);
+  --border-hi: rgba(232,180,76,0.35);
+  --gold:#e8b44c;
+  --gold-dim:#8f6b2b;
+  --red:#e2584a;
+  --green:#47d99a;
+  --text:#f2f0ea;
+  --text-dim:#8b8e99;
+  --text-faint:#5c5f6a;
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  background:
+    radial-gradient(ellipse 900px 600px at 20% -10%, rgba(232,180,76,0.08), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 90% 100%, rgba(71,217,154,0.05), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+
+.app{ max-width:1180px; margin:0 auto; padding:32px 24px 100px; }
+
+/* ---------- top bar ---------- */
+.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; }
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{ width:34px; height:34px; border-radius:8px; background:linear-gradient(135deg,var(--gold),#a9762d); display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; color:#100b02; font-size:16px; box-shadow:0 0 24px rgba(232,180,76,0.35);}
+.brand-name{ font-family:var(--display); font-weight:600; font-size:16px; letter-spacing:0.2px;}
+.brand-sub{ font-family:var(--mono); font-size:11px; color:var(--text-faint); letter-spacing:0.5px;}
+.topbar-actions{ display:flex; gap:10px; }
+.icon-btn{ background:var(--bg-raise); border:1px solid var(--border); color:var(--text-dim); padding:8px 14px; border-radius:8px; font-family:var(--mono); font-size:12px; cursor:pointer; transition:all .15s; }
+.icon-btn:hover{ border-color:var(--border-hi); color:var(--text); }
+
+/* ---------- glass panel ---------- */
+.panel{
+  background:var(--bg-raise);
+  border:1px solid var(--border);
+  border-radius:16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ---------- WELCOME SCREEN ---------- */
+.hero{ text-align:center; padding:56px 20px 20px; }
+.hero-eyebrow{ font-family:var(--mono); font-size:12px; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; justify-content:center; gap:10px;}
+.hero-eyebrow::before, .hero-eyebrow::after{ content:''; width:28px; height:1px; background:var(--gold-dim); }
+.hero h1{ font-family:var(--display); font-weight:700; font-size:clamp(32px,5vw,54px); line-height:1.08; letter-spacing:-1px; margin-bottom:18px; }
+.hero h1 span{ color:var(--gold); }
+.hero p{ color:var(--text-dim); font-size:16px; max-width:560px; margin:0 auto; line-height:1.6; }
+
+.setup-row{ display:flex; gap:14px; justify-content:center; margin:34px 0 6px; flex-wrap:wrap; }
+.setup-group{ text-align:left; }
+.setup-label{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; display:block;}
+.pill-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.pill{ background:var(--bg-raise); border:1px solid var(--border); color:var(--text-dim); font-family:var(--body); font-size:13px; padding:9px 14px; border-radius:100px; cursor:pointer; transition:all .15s; white-space:nowrap;}
+.pill:hover{ border-color:var(--border-hi); color:var(--text);}
+.pill.active{ background:rgba(232,180,76,0.14); border-color:var(--gold); color:var(--gold); font-weight:600;}
+
+.dropzone{
+  margin:38px auto 0; max-width:640px; padding:38px 24px; border:1.5px dashed var(--border);
+  border-radius:16px; text-align:center; cursor:pointer; transition:all .2s; position:relative;
+}
+.dropzone.drag{ border-color:var(--gold); background:rgba(232,180,76,0.06); }
+.dropzone-icon{ font-size:30px; margin-bottom:12px; opacity:.8;}
+.dropzone h3{ font-family:var(--display); font-size:17px; margin-bottom:6px; }
+.dropzone p{ color:var(--text-faint); font-size:13px; }
+.dropzone input{ display:none; }
+
+.or-divider{ display:flex; align-items:center; gap:12px; max-width:640px; margin:22px auto; color:var(--text-faint); font-family:var(--mono); font-size:11px; }
+.or-divider::before, .or-divider::after{ content:''; flex:1; height:1px; background:var(--border); }
+
+textarea.paste-box{
+  width:100%; max-width:640px; display:block; margin:0 auto; min-height:120px; resize:vertical;
+  background:var(--bg-raise); border:1px solid var(--border); border-radius:12px; color:var(--text);
+  font-family:var(--mono); font-size:13px; padding:16px; line-height:1.6;
+}
+textarea.paste-box:focus{ outline:none; border-color:var(--border-hi); }
+
+.file-loaded{ max-width:640px; margin:14px auto 0; padding:12px 16px; background:rgba(71,217,154,0.08); border:1px solid rgba(71,217,154,0.3); border-radius:10px; font-family:var(--mono); font-size:12.5px; color:var(--green); display:flex; justify-content:space-between; align-items:center;}
+.file-loaded button{ background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:16px; }
+
+.cta-row{ text-align:center; margin-top:30px; }
+.btn-primary{
+  background:linear-gradient(135deg,var(--gold),#c8933a); color:#120c02; border:none; font-family:var(--display);
+  font-weight:600; font-size:15px; padding:15px 34px; border-radius:10px; cursor:pointer; transition:all .2s;
+  box-shadow:0 8px 30px rgba(232,180,76,0.25);
+}
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:0 10px 36px rgba(232,180,76,0.35); }
+.btn-primary:disabled{ opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none;}
+.btn-secondary{
+  background:transparent; border:1px solid var(--border); color:var(--text-dim); font-family:var(--body);
+  font-weight:500; font-size:13.5px; padding:11px 20px; border-radius:9px; cursor:pointer; transition:all .15s;
+}
+.btn-secondary:hover{ border-color:var(--border-hi); color:var(--text); }
+
+.session-history{ max-width:640px; margin:44px auto 0; }
+.session-history h4{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;}
+.session-item{ display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border:1px solid var(--border); border-radius:9px; margin-bottom:8px; font-size:13px; cursor:pointer;}
+.session-item:hover{ border-color:var(--border-hi); }
+.session-item span{ color:var(--text-faint); font-family:var(--mono); font-size:11.5px; }
+
+/* ---------- INTERVIEW SCREEN ---------- */
+.interview-layout{ display:grid; grid-template-columns:260px 1fr; gap:24px; align-items:start; }
+@media (max-width:860px){ .interview-layout{ grid-template-columns:1fr; } .sidebar{ order:2; } }
+
+.sidebar{ padding:20px; position:sticky; top:20px; }
+.sidebar h4{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;}
+.claim-list{ display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow-y:auto; }
+.claim-item{ display:flex; gap:9px; align-items:flex-start; padding:9px 10px; border-radius:8px; cursor:pointer; transition:background .15s; }
+.claim-item:hover{ background:var(--bg-raise2); }
+.claim-item.current{ background:rgba(232,180,76,0.1); }
+.claim-dot{ width:9px; height:9px; border-radius:50%; margin-top:4px; flex-shrink:0; }
+.claim-dot.undefended{ background:var(--text-faint); }
+.claim-dot.weak{ background:var(--red); box-shadow:0 0 8px rgba(226,88,74,0.5);}
+.claim-dot.solid{ background:var(--green); box-shadow:0 0 8px rgba(71,217,154,0.5);}
+.claim-item-text{ font-size:12px; line-height:1.4; color:var(--text-dim); }
+.claim-item.current .claim-item-text{ color:var(--text); }
+
+.overall-score{ margin-top:20px; padding-top:18px; border-top:1px solid var(--border); }
+.score-label{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;}
+.score-bar-track{ height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
+.score-bar-fill{ height:100%; background:linear-gradient(90deg,var(--red),var(--gold),var(--green)); border-radius:4px; transition:width .5s ease; }
+.score-value{ font-family:var(--display); font-size:24px; font-weight:700; margin-top:8px; }
+
+.main-stage{ padding:0; }
+.progress-strip{ display:flex; gap:5px; margin-bottom:18px; }
+.progress-seg{ flex:1; height:3px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;}
+.progress-seg.done{ background:var(--gold); }
+
+.stage-card{ padding:34px; position:relative; overflow:hidden;}
+.stage-card::before{ content:''; position:absolute; top:-40%; left:50%; transform:translateX(-50%); width:600px; height:400px;
+  background:radial-gradient(ellipse, rgba(232,180,76,0.12), transparent 65%); pointer-events:none;}
+.claim-tag{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; color:var(--gold); background:rgba(232,180,76,0.1); border:1px solid rgba(232,180,76,0.25); padding:5px 12px; border-radius:100px; margin-bottom:18px; text-transform:uppercase; letter-spacing:0.5px;}
+.claim-original{ font-size:13px; color:var(--text-faint); font-style:italic; line-height:1.5; margin-bottom:20px; padding-left:14px; border-left:2px solid var(--border);}
+
+.question-block{ margin-bottom:22px;}
+.interviewer-label{ display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+.avatar-dot{ width:26px; height:26px; border-radius:50%; background:var(--bg-raise2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:13px;}
+.interviewer-name{ font-family:var(--mono); font-size:12px; color:var(--text-dim); }
+.question-text{ font-family:var(--display); font-size:19px; line-height:1.5; font-weight:500; }
+
+.answer-area{ margin-top:20px; }
+textarea.answer-box{
+  width:100%; min-height:110px; background:var(--bg-raise); border:1px solid var(--border); border-radius:12px;
+  color:var(--text); font-family:var(--body); font-size:14.5px; padding:16px; line-height:1.6; resize:vertical;
+}
+textarea.answer-box:focus{ outline:none; border-color:var(--border-hi); }
+.answer-meta{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+.char-count{ font-family:var(--mono); font-size:11px; color:var(--text-faint); }
+.submit-row{ display:flex; gap:10px; }
+
+.feedback-block{ margin-top:22px; padding:18px; border-radius:12px; border:1px solid var(--border); background:var(--bg-raise2); animation:fadeIn .3s ease; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+.feedback-verdict{ display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+.feedback-verdict.weak{ color:var(--red); }
+.feedback-verdict.solid{ color:var(--green); }
+.feedback-text{ font-size:13.5px; line-height:1.6; color:var(--text-dim); }
+
+.loading-line{ display:flex; align-items:center; gap:10px; color:var(--text-faint); font-family:var(--mono); font-size:12.5px; margin-top:16px;}
+.spinner{ width:14px; height:14px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--gold); animation:spin .7s linear infinite;}
+@keyframes spin{ to{transform:rotate(360deg);} }
+
+.error-box{ margin-top:16px; padding:14px 16px; border-radius:10px; border:1px solid rgba(226,88,74,0.35); background:rgba(226,88,74,0.08); color:var(--red); font-size:13px; display:flex; justify-content:space-between; align-items:center; gap:10px;}
+
+/* ---------- REPORT SCREEN ---------- */
+.report-header{ text-align:center; padding:20px 0 30px; }
+.report-header h2{ font-family:var(--display); font-size:30px; font-weight:700; margin-bottom:8px; }
+.readiness-ring-wrap{ display:flex; justify-content:center; margin:20px 0 30px; }
+.report-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+@media (max-width:700px){ .report-grid{ grid-template-columns:1fr; } }
+.stat-card{ padding:20px; text-align:center; }
+.stat-num{ font-family:var(--display); font-size:32px; font-weight:700; }
+.stat-num.green{ color:var(--green);} .stat-num.red{ color:var(--red);} .stat-num.gold{ color:var(--gold);}
+.stat-label{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.8px; margin-top:6px;}
+
+.claim-report-item{ padding:20px; margin-bottom:14px; }
+.claim-report-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:10px;}
+.claim-report-text{ font-size:14px; font-weight:500; line-height:1.5; }
+.status-badge{ font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; padding:4px 10px; border-radius:100px; white-space:nowrap; flex-shrink:0;}
+.status-badge.solid{ background:rgba(71,217,154,0.12); color:var(--green); border:1px solid rgba(71,217,154,0.3);}
+.status-badge.weak{ background:rgba(226,88,74,0.12); color:var(--red); border:1px solid rgba(226,88,74,0.3);}
+.status-badge.undefended{ background:rgba(255,255,255,0.06); color:var(--text-faint); border:1px solid var(--border);}
+.claim-report-conf-bar{ height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; margin-bottom:10px;}
+.claim-report-conf-fill{ height:100%; border-radius:3px; }
+.claim-report-note{ font-size:12.5px; color:var(--text-dim); line-height:1.6; }
+
+.report-actions{ display:flex; gap:12px; justify-content:center; margin-top:32px; flex-wrap:wrap; }
+
+.empty-note{ text-align:center; color:var(--text-faint); font-size:13px; padding:30px; font-family:var(--mono);}
+
+::-webkit-scrollbar{ width:8px; } ::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* =========================================================
+   DEFEND YOUR EXPERIENCE
+   Adaptive interview engine built on the Anthropic Messages API
+   ========================================================= */
+
+const RESUME_TEXT = `RAHUL SINGH
+Ghaziabad, Uttar Pradesh, India
+
+PROFESSIONAL SUMMARY
+Computer Science & Engineering undergraduate (CGPA 8.36) at ABES Engineering College with hands-on experience building responsive web applications using HTML5, CSS3, and JavaScript. Proficient in MongoDB for back-end data management and experienced with Git & GitHub for version-controlled collaborative development. Passionate about creating clean, user-friendly digital experiences and writing efficient, reusable code. Actively developing JavaScript (ES6+) skills and familiar with REST API integration concepts. Seeking an entry-level Web Developer opportunity.
+
+SKILLS
+Front-End: HTML5, CSS3, Responsive Web Design, Cross-Browser Compatibility, Basic UI/UX Principles
+JavaScript: JavaScript (ES6+ — actively learning), Browser Developer Tools, Debugging
+Back-End/DB: MongoDB, SQL, REST API integration concepts
+Tools: Git, GitHub, VS Code
+Core CS: Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks
+Other Languages: C++, SQL
+
+EXPERIENCE
+Community Technology Coordinator (Volunteer) — Unnat Bharat Abhiyan (UBA), ABES Engineering College, 2024–Present
+- Assisted in designing and delivering technology-driven solutions for rural community projects.
+- Coordinated cross-functional team outreach and prepared structured documentation and proposals.
+- Applied problem-solving and adaptability skills across community projects.
+
+PROJECTS
+Gamified Learning Platform — Personal/Academic Project, 2024
+- Designed and developed a fully responsive web application with clean, structured HTML5 and CSS3, cross-browser and cross-device compatibility.
+- Implemented MongoDB as the back-end database for user data storage, progress tracking, and persistent state management.
+- Designed SQL-based analytics dashboards to monitor user performance metrics.
+- Built gamification features (badges, rewards, leaderboards) requiring dynamic reusable front-end components and structured back-end data integrity.
+- Managed the entire project using Git version control with clean commit histories and collaborative branching workflows.
+- Optimized the UI for usability and performance, applying basic UI/UX principles.
+
+EDUCATION
+B.Tech Computer Science & Engineering, ABES Engineering College, 2024–2028 (Expected). Current CGPA: 8.36/10.0
+
+CERTIFICATIONS
+Active participant in AI and Prompt Engineering learning programs (2024–Present). Pursuing Meta Front-End Developer, freeCodeCamp Responsive Web Design, JavaScript Algorithms & Data Structures.
+
+ACHIEVEMENTS
+- Maintained CGPA of 8.36/10 in first year of B.Tech CSE.
+- Independently built and deployed a full-stack gamified learning platform as a first-year student.
+- Recognized contributor at Unnat Bharat Abhiyan for technology-led community project coordination.`;
+
+// Pre-extracted claims (seeded from the resume above; the app can regenerate these from any pasted/uploaded document)
+const SEED_CLAIMS = [
+  { text: "Designed and developed a fully responsive Gamified Learning Platform with clean, structured HTML5/CSS3 across screen sizes", category: "Project" },
+  { text: "Implemented MongoDB as the back-end database for user data storage, progress tracking, and persistent state", category: "Project" },
+  { text: "Designed SQL-based analytics dashboards to monitor user performance metrics", category: "Project" },
+  { text: "Built gamification features — badges, rewards, leaderboards — as dynamic, reusable front-end components", category: "Project" },
+  { text: "Managed the entire project using Git with clean commit histories and collaborative branching workflows", category: "Process" },
+  { text: "Independently built and deployed a full-stack platform as a first-year student", category: "Ownership" },
+  { text: "Assisted in designing and delivering technology-driven solutions for rural community projects (UBA)", category: "Volunteer" },
+  { text: "Coordinated cross-functional team outreach and prepared structured documentation and proposals (UBA)", category: "Volunteer" },
+  { text: "Familiar with REST API integration concepts", category: "Skill" },
+  { text: "Actively developing JavaScript (ES6+) skills", category: "Skill" },
+  { text: "Maintained CGPA of 8.36/10 in first year of B.Tech CSE", category: "Academic" }
+];
+
+const STORAGE_KEY = "dye_sessions_v1";
+const MODEL = "claude-sonnet-4-6";
+
+const state = {
+  screen: "welcome",
+  resumeText: "",
+  fileNote: "",
+  audience: "panel",
+  purpose: "internship",
+  claims: [],
+  currentIdx: 0,
+  loading: false,
+  error: null,
+  sessionId: null
+};
+
+// ---------- persistence ----------
+function loadSessions(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }catch(e){ return []; } }
+function saveSession(){
+  const sessions = loadSessions();
+  const idx = sessions.findIndex(s => s.id === state.sessionId);
+  const record = {
+    id: state.sessionId,
+    ts: Date.now(),
+    audience: state.audience,
+    purpose: state.purpose,
+    claims: state.claims,
+    resumeText: state.resumeText
+  };
+  if(idx>=0) sessions[idx] = record; else sessions.unshift(record);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions.slice(0,10)));
+}
+
+// ---------- Claude API ----------
+async function callClaude(system, messages, maxTokens=800){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: maxTokens,
+      system: system,
+      messages: messages
+    })
+  });
+  if(!res.ok){
+    const err = new Error("api_error_" + res.status);
+    err.status = res.status;
+    throw err;
+  }
+  const data = await res.json();
+  const textBlock = data.content.find(b => b.type === "text");
+  return textBlock ? textBlock.text : "";
+}
+
+function extractJSON(text){
+  const cleaned = text.replace(/```json/g,"").replace(/```/g,"").trim();
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
+  const arrStart = cleaned.indexOf("[");
+  if(start>=0 && (arrStart<0 || start<arrStart)){
+    return JSON.parse(cleaned.slice(start, end+1));
+  }
+  const aEnd = cleaned.lastIndexOf("]");
+  return JSON.parse(cleaned.slice(arrStart, aEnd+1));
+}
+
+// ---------- claim extraction ----------
+async function extractClaimsFromText(text){
+  const system = `You extract discrete, defensible claims from a resume, bio, or project description. A claim is any specific assertion of skill, ownership, scale, or achievement that an interviewer could challenge. Ignore section headers and contact info. Flag claims that are vague, use passive/soft language ("assisted", "familiar with", "designed"), or lack quantification as needing extra scrutiny. Return ONLY valid JSON: an array of objects with fields "text" (the claim, tightened to one clear sentence) and "category" (one short word like Project, Skill, Ownership, Volunteer, Academic, Process).`;
+  try{
+    const out = await callClaude(system, [{role:"user", content:`Extract claims from this document:\n\n${text}`}], 1200);
+    const parsed = extractJSON(out);
+    if(Array.isArray(parsed) && parsed.length>0) return parsed;
+  }catch(e){ /* fall through to seed */ }
+  return SEED_CLAIMS;
+}
+
+// ---------- question generation ----------
+async function generateQuestion(claim, history){
+  const audienceDesc = {
+    panel: "a mixed panel: an HR recruiter, a technical interviewer, and a hiring manager, asking in turn",
+    friendly: "a warm, friendly HR recruiter doing a behavioral screen",
+    tough: "a skeptical, deep-diving technical interviewer",
+    rapid: "a rapid-fire stress interviewer who doesn't let claims slide"
+  }[state.audience] || "a mixed interview panel";
+
+  const historyText = history.map(h => `Q: ${h.q}\nA: ${h.a}\nVerdict: ${h.verdict} — ${h.feedback}`).join("\n\n");
+
+  const system = `You are ${audienceDesc}, interviewing a candidate for an entry-level web developer / software internship (target companies: Walmart Global Tech, JPMorgan, Deloitte type). You are reviewing ONE specific claim from their resume: "${claim.text}".
+
+Your job is to challenge this exact claim with a specific, pointed follow-up question — never a generic interview question. Reference details from the claim itself. If there is prior Q&A history for this claim below, your new question must build on the candidate's last answer: dig into whatever was vaguest, most unquantified, or least evidenced. Escalate specificity each round (ask for numbers, decisions made, trade-offs, what broke, what they'd do differently).
+
+${historyText ? "Prior exchange on this claim:\n" + historyText : "This is the first question on this claim."}
+
+Return ONLY valid JSON: {"question": "...", "interviewer": "HR" | "Tech" | "Hiring Manager"}`;
+
+  try{
+    const out = await callClaude(system, [{role:"user", content:"Ask your next question."}], 400);
+    return extractJSON(out);
+  }catch(e){
+    return { question: `Walk me through exactly how you approached "${claim.text.toLowerCase()}" — what specifically did you do, and what would break if I asked you to redo it today?`, interviewer:"Panel" };
+  }
+}
+
+// ---------- answer evaluation ----------
+async function evaluateAnswer(claim, question, answer){
+  const system = `You are an interview coach evaluating one answer defending the resume claim: "${claim.text}". The question asked was: "${question}". The candidate answered: "${answer}".
+
+Judge strictly like a real interviewer would: is this specific, evidenced, and confident, or vague/generic/unverifiable? Reward concrete numbers, decisions, trade-offs, named tools, and honest acknowledgment of limits. Penalize buzzwords, repetition of the resume line without new detail, and non-answers.
+
+Return ONLY valid JSON:
+{"verdict": "solid" | "weak", "confidenceDelta": integer from -25 to 25, "feedback": "2-3 sentences of direct, specific coaching in the interviewer's voice — what worked, what's still missing, and how to strengthen it"}`;
+
+  try{
+    const out = await callClaude(system, [{role:"user", content:"Evaluate."}], 400);
+    return extractJSON(out);
+  }catch(e){
+    const weak = answer.trim().length < 40;
+    return { verdict: weak ? "weak":"solid", confidenceDelta: weak? -10: 8, feedback: weak ? "That answer is thin on specifics. Add a concrete number, decision, or example next time." : "Reasonable answer — keep pushing for one more layer of specific detail to make it airtight." };
+  }
+}
+
+// ---------- render ----------
+const app = document.getElementById("app");
+function render(){
+  if(state.screen === "welcome") return renderWelcome();
+  if(state.screen === "interview") return renderInterview();
+  if(state.screen === "report") return renderReport();
+}
+
+function renderWelcome(){
+  const sessions = loadSessions();
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">DY</div>
+        <div><div class="brand-name">Defend Your Experience</div><div class="brand-sub">CASE FILE INTERVIEW ENGINE</div></div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-eyebrow">not a resume review</div>
+      <h1>Every line you wrote<br>is a <span>claim.</span> Prove it.</h1>
+      <p>Upload or paste what you want to defend. A panel built from your own words will cross-examine every claim — vague ones first — until you can back each one with a real answer.</p>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-group">
+        <span class="setup-label">Interview format</span>
+        <div class="pill-row" id="audiencePills"></div>
+      </div>
+      <div class="setup-group">
+        <span class="setup-label">Preparing for</span>
+        <div class="pill-row" id="purposePills"></div>
+      </div>
+    </div>
+
+    <div class="dropzone" id="dropzone">
+      <div class="dropzone-icon">📄</div>
+      <h3>Drop your resume, LinkedIn export, or project write-up</h3>
+      <p>.txt, .md, or .docx — or use the text box below</p>
+      <input type="file" id="fileInput" accept=".txt,.md,.docx">
+    </div>
+    <div id="fileLoaded"></div>
+
+    <div class="or-divider">OR PASTE TEXT</div>
+    <textarea class="paste-box" id="pasteBox" placeholder="Paste your resume, bio, project description, or performance review here...">${state.resumeText === RESUME_TEXT ? "" : state.resumeText}</textarea>
+
+    <div class="cta-row">
+      <button class="btn-primary" id="startBtn">Begin the interview →</button>
+    </div>
+
+    ${sessions.length ? `
+    <div class="session-history">
+      <h4>Previous sessions</h4>
+      ${sessions.map(s => `<div class="session-item" data-id="${s.id}"><div>${(s.resumeText||"").slice(0,40)}...</div><span>${new Date(s.ts).toLocaleDateString()}</span></div>`).join("")}
+    </div>` : ""}
+  `;
+
+  const audienceOpts = [["panel","Panel (HR + Tech + Manager)"],["friendly","Friendly HR"],["tough","Tough technical"],["rapid","Rapid-fire"]];
+  document.getElementById("audiencePills").innerHTML = audienceOpts.map(([v,l]) =>
+    `<div class="pill ${state.audience===v?'active':''}" data-aud="${v}">${l}</div>`).join("");
+  const purposeOpts = [["internship","Internship prep"],["specific","Specific company"],["confidence","Building confidence"],["rejection","After a tough interview"]];
+  document.getElementById("purposePills").innerHTML = purposeOpts.map(([v,l]) =>
+    `<div class="pill ${state.purpose===v?'active':''}" data-pur="${v}">${l}</div>`).join("");
+
+  document.querySelectorAll("[data-aud]").forEach(el => el.onclick = () => { state.audience = el.dataset.aud; render(); });
+  document.querySelectorAll("[data-pur]").forEach(el => el.onclick = () => { state.purpose = el.dataset.pur; render(); });
+
+  const dz = document.getElementById("dropzone");
+  const fileInput = document.getElementById("fileInput");
+  dz.onclick = () => fileInput.click();
+  dz.ondragover = e => { e.preventDefault(); dz.classList.add("drag"); };
+  dz.ondragleave = () => dz.classList.remove("drag");
+  dz.ondrop = e => { e.preventDefault(); dz.classList.remove("drag"); handleFile(e.dataTransfer.files[0]); };
+  fileInput.onchange = e => handleFile(e.target.files[0]);
+
+  document.getElementById("pasteBox").oninput = e => { state.resumeText = e.target.value; };
+
+  document.getElementById("startBtn").onclick = startInterview;
+
+  document.querySelectorAll(".session-item").forEach(el => el.onclick = () => loadSession(el.dataset.id));
+
+  if(state.fileNote){
+    document.getElementById("fileLoaded").innerHTML = `<div class="file-loaded"><span>✓ ${state.fileNote}</span><button id="clearFile">✕</button></div>`;
+    document.getElementById("clearFile").onclick = () => { state.fileNote=""; state.resumeText=""; render(); };
+  }
+}
+
+async function handleFile(file){
+  if(!file) return;
+  const name = file.name.toLowerCase();
+  try{
+    if(name.endsWith(".docx")){
+      const buf = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({arrayBuffer: buf});
+      state.resumeText = result.value;
+    } else {
+      state.resumeText = await file.text();
+    }
+    state.fileNote = `Loaded ${file.name} (${state.resumeText.length} characters)`;
+  }catch(e){
+    state.fileNote = "";
+    alert("Couldn't read that file. Try pasting the text instead.");
+  }
+  render();
+}
+
+function loadSession(id){
+  const sessions = loadSessions();
+  const s = sessions.find(s=>s.id===id);
+  if(!s) return;
+  state.sessionId = s.id;
+  state.resumeText = s.resumeText;
+  state.claims = s.claims;
+  state.audience = s.audience;
+  state.purpose = s.purpose;
+  state.currentIdx = s.claims.findIndex(c => c.status === "undefended");
+  if(state.currentIdx < 0) state.currentIdx = 0;
+  state.screen = s.claims.every(c=>c.status!=="undefended") ? "report" : "interview";
+  render();
+}
+
+async function startInterview(){
+  const text = (state.resumeText && state.resumeText.trim().length>20) ? state.resumeText : RESUME_TEXT;
+  state.resumeText = text;
+  state.sessionId = "s_" + Date.now();
+  state.loading = true;
+  state.screen = "interview";
+  state.claims = [];
+  render();
+  const extracted = await extractClaimsFromText(text);
+  state.claims = extracted.map((c,i) => ({
+    id: i, text: c.text, category: c.category || "Claim",
+    status: "undefended", confidence: 40, history: [], question: null, questionMeta: null
+  }));
+  state.currentIdx = 0;
+  state.loading = false;
+  saveSession();
+  loadNextQuestion();
+}
+
+async function loadNextQuestion(){
+  const claim = state.claims[state.currentIdx];
+  if(!claim) return;
+  state.loading = true;
+  state.error = null;
+  render();
+  try{
+    const q = await generateQuestion(claim, claim.history);
+    claim.question = q.question;
+    claim.questionMeta = q.interviewer || "Panel";
+  }catch(e){
+    state.error = "The interview panel hit a snag generating the next question (possibly a rate limit). You can retry.";
+  }
+  state.loading = false;
+  render();
+}
+
+function renderInterview(){
+  if(state.loading && state.claims.length===0){
+    app.innerHTML = `
+      <div class="topbar"><div class="brand"><div class="brand-mark">DY</div><div><div class="brand-name">Defend Your Experience</div></div></div></div>
+      <div class="panel" style="padding:60px; text-align:center;">
+        <div class="loading-line" style="justify-content:center; font-size:14px;"><div class="spinner"></div> Reading your material and identifying claims worth defending...</div>
+      </div>`;
+    return;
+  }
+
+  const claim = state.claims[state.currentIdx];
+  const total = state.claims.length;
+  const doneCount = state.claims.filter(c=>c.status!=="undefended").length;
+  const overall = Math.round(state.claims.reduce((a,c)=>a+c.confidence,0)/total);
+
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="brand"><div class="brand-mark">DY</div><div><div class="brand-name">Defend Your Experience</div><div class="brand-sub">${state.audience.toUpperCase()} INTERVIEW · ${doneCount}/${total} CLAIMS ADDRESSED</div></div></div>
+      <div class="topbar-actions"><button class="icon-btn" id="endBtn">End & view report</button></div>
+    </div>
+
+    <div class="interview-layout">
+      <div class="sidebar panel">
+        <h4>Claims under review</h4>
+        <div class="claim-list">
+          ${state.claims.map((c,i)=>`
+            <div class="claim-item ${i===state.currentIdx?'current':''}" data-idx="${i}">
+              <div class="claim-dot ${c.status}"></div>
+              <div class="claim-item-text">${c.text}</div>
+            </div>`).join("")}
+        </div>
+        <div class="overall-score">
+          <div class="score-label">Overall readiness</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:${overall}%"></div></div>
+          <div class="score-value">${overall}%</div>
+        </div>
+      </div>
+
+      <div class="main-stage">
+        <div class="progress-strip">
+          ${state.claims.map(c=>`<div class="progress-seg ${c.status!=='undefended'?'done':''}"></div>`).join("")}
+        </div>
+        <div class="stage-card panel">
+          <div class="claim-tag">${claim.category}</div>
+          <div class="claim-original">"${claim.text}"</div>
+
+          ${claim.question ? `
+          <div class="question-block">
+            <div class="interviewer-label"><div class="avatar-dot">${claim.questionMeta==='HR'?'🗂️':claim.questionMeta==='Tech'?'💻':'🧑‍💼'}</div><div class="interviewer-name">${claim.questionMeta || 'Panel'} asks</div></div>
+            <div class="question-text">${claim.question}</div>
+          </div>` : ""}
+
+          ${state.loading ? `<div class="loading-line"><div class="spinner"></div> ${claim.question ? "Reviewing your answer..." : "Preparing the next question..."}</div>` : ""}
+
+          ${state.error ? `<div class="error-box"><span>${state.error}</span><button class="btn-secondary" id="retryBtn">Retry</button></div>` : ""}
+
+          ${(!state.loading && claim.question) ? `
+          <div class="answer-area">
+            <textarea class="answer-box" id="answerBox" placeholder="Defend it. Be specific — numbers, decisions, what actually happened."></textarea>
+            <div class="answer-meta">
+              <span class="char-count" id="charCount">0 characters</span>
+              <div class="submit-row">
+                <button class="btn-secondary" id="skipBtn">Skip this claim</button>
+                <button class="btn-primary" id="submitBtn">Submit answer</button>
+              </div>
+            </div>
+          </div>` : ""}
+
+          ${claim.history.length ? `
+          <div class="feedback-block">
+            <div class="feedback-verdict ${claim.history[claim.history.length-1].verdict}">
+              ${claim.history[claim.history.length-1].verdict === 'solid' ? '✓ Well defended' : '⚠ Needs strengthening'}
+            </div>
+            <div class="feedback-text">${claim.history[claim.history.length-1].feedback}</div>
+          </div>` : ""}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.querySelectorAll("[data-idx]").forEach(el => el.onclick = () => {
+    state.currentIdx = parseInt(el.dataset.idx);
+    if(!state.claims[state.currentIdx].question) loadNextQuestion(); else render();
+  });
+
+  const answerBox = document.getElementById("answerBox");
+  if(answerBox){
+    answerBox.oninput = () => { document.getElementById("charCount").textContent = answerBox.value.length + " characters"; };
+    document.getElementById("submitBtn").onclick = () => submitAnswer(answerBox.value);
+    document.getElementById("skipBtn").onclick = () => advanceClaim();
+  }
+  const retryBtn = document.getElementById("retryBtn");
+  if(retryBtn) retryBtn.onclick = loadNextQuestion;
+  const endBtn = document.getElementById("endBtn");
+  if(endBtn) endBtn.onclick = () => { state.screen="report"; render(); };
+}
+
+async function submitAnswer(answer){
+  if(!answer || answer.trim().length<3) return;
+  const claim = state.claims[state.currentIdx];
+  state.loading = true;
+  state.error = null;
+  render();
+  try{
+    const evalResult = await evaluateAnswer(claim, claim.question, answer);
+    claim.history.push({ q: claim.question, a: answer, verdict: evalResult.verdict, feedback: evalResult.feedback });
+    claim.confidence = Math.max(0, Math.min(100, claim.confidence + (evalResult.confidenceDelta||0)));
+    claim.status = claim.confidence >= 65 ? "solid" : "weak";
+    saveSession();
+
+    if(claim.status === "solid" || claim.history.length >= 3){
+      claim.question = null;
+      state.loading = false;
+      render();
+      setTimeout(()=> advanceClaim(), 900);
+    } else {
+      claim.question = null;
+      state.loading = false;
+      render();
+      loadNextQuestion();
+    }
+  }catch(e){
+    state.error = "Couldn't evaluate that answer — possibly a temporary rate limit. Retry below.";
+    state.loading = false;
+    render();
+  }
+}
+
+function advanceClaim(){
+  const claim = state.claims[state.currentIdx];
+  if(claim.status === "undefended") claim.status = "weak";
+  saveSession();
+  const next = state.claims.findIndex((c,i) => i>state.currentIdx && c.status==="undefended");
+  if(next>=0){ state.currentIdx = next; loadNextQuestion(); }
+  else{
+    const anyLeft = state.claims.findIndex(c => c.status==="undefended");
+    if(anyLeft>=0){ state.currentIdx = anyLeft; loadNextQuestion(); }
+    else { state.screen = "report"; render(); }
+  }
+}
+
+function renderReport(){
+  const total = state.claims.length;
+  const solid = state.claims.filter(c=>c.status==="solid").length;
+  const weak = state.claims.filter(c=>c.status==="weak").length;
+  const undefended = state.claims.filter(c=>c.status==="undefended").length;
+  const overall = total ? Math.round(state.claims.reduce((a,c)=>a+c.confidence,0)/total) : 0;
+
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="brand"><div class="brand-mark">DY</div><div><div class="brand-name">Defend Your Experience</div><div class="brand-sub">DEFENSE REPORT</div></div></div>
+      <div class="topbar-actions"><button class="icon-btn" id="newBtn">New session</button></div>
+    </div>
+
+    <div class="report-header">
+      <div class="hero-eyebrow">case closed</div>
+      <h2>You can defend ${solid} of ${total} claims under pressure</h2>
+      <p style="color:var(--text-dim); font-size:14px;">Overall readiness score: <strong style="color:var(--gold);">${overall}%</strong></p>
+    </div>
+
+    <div class="report-grid">
+      <div class="stat-card panel"><div class="stat-num green">${solid}</div><div class="stat-label">Well defended</div></div>
+      <div class="stat-card panel"><div class="stat-num red">${weak}</div><div class="stat-label">Needs strengthening</div></div>
+      <div class="stat-card panel"><div class="stat-num gold">${undefended}</div><div class="stat-label">Not yet addressed</div></div>
+    </div>
+
+    <div class="claims-report-list">
+      ${state.claims.map(c => `
+        <div class="claim-report-item panel">
+          <div class="claim-report-top">
+            <div class="claim-report-text">${c.text}</div>
+            <div class="status-badge ${c.status}">${c.status === 'solid' ? 'Well defended' : c.status === 'weak' ? 'Needs work' : 'Not addressed'}</div>
+          </div>
+          <div class="claim-report-conf-bar"><div class="claim-report-conf-fill" style="width:${c.confidence}%; background:${c.status==='solid'?'var(--green)':c.status==='weak'?'var(--red)':'var(--text-faint)'}"></div></div>
+          ${c.history.length ? `<div class="claim-report-note">${c.history[c.history.length-1].feedback}</div>` : `<div class="claim-report-note">You didn't get a question in on this one this round — worth revisiting before your real interview.</div>`}
+        </div>
+      `).join("")}
+    </div>
+
+    <div class="report-actions">
+      <button class="btn-secondary" id="reviewWeakBtn">Re-drill weak claims</button>
+      <button class="btn-primary" id="exportBtn">Export report</button>
+    </div>
+  `;
+
+  document.getElementById("newBtn").onclick = () => {
+    Object.assign(state, { screen:"welcome", claims:[], currentIdx:0, resumeText:"", fileNote:"", sessionId:null });
+    render();
+  };
+  document.getElementById("reviewWeakBtn").onclick = () => {
+    const idx = state.claims.findIndex(c => c.status !== "solid");
+    if(idx>=0){ state.claims[idx].question=null; state.currentIdx = idx; state.screen="interview"; render(); loadNextQuestion(); }
+  };
+  document.getElementById("exportBtn").onclick = exportReport;
+}
+
+function exportReport(){
+  const lines = [];
+  lines.push("DEFEND YOUR EXPERIENCE — DEFENSE REPORT");
+  lines.push("Generated: " + new Date().toLocaleString());
+  lines.push("");
+  state.claims.forEach(c => {
+    lines.push(`[${c.status.toUpperCase()}] (${c.confidence}%) ${c.text}`);
+    c.history.forEach(h => {
+      lines.push(`  Q: ${h.q}`);
+      lines.push(`  A: ${h.a}`);
+      lines.push(`  Feedback: ${h.feedback}`);
+    });
+    lines.push("");
+  });
+  const blob = new Blob([lines.join("\n")], {type:"text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "defense-report.txt"; a.click();
+  URL.revokeObjectURL(url);
+}
+
+render();
+</script>
+</body>
+</html>
